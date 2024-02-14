@@ -2,7 +2,7 @@
  * @file resourceLoader.h
  * @brief A source file defining the resouce loader of the application.
  * 
- * @author SJTU-XHW
+ * @author SSRVodka
  * @date   Feb 12, 2024
  */
 

@@ -2,7 +2,7 @@
  * @file renderer.h
  * @brief A source file defining the renderer for the application.
  * 
- * @author SJTU-XHW
+ * @author SSRVodka
  * @date   Feb 12, 2024
  */
 

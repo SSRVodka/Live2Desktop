@@ -2,7 +2,7 @@
  * @file configDialog.h
  * @brief Configurations dialog for the application.
  * 
- * @author SJTU-XHW
+ * @author SSRVodka
  * @date   Feb 12, 2024
  */
 

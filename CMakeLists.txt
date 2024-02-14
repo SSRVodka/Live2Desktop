@@ -21,8 +21,12 @@ set(CMAKE_CONFIGURATION_TYPES Debug Release
 )
 
 # Debug for default.
-set(CMAKE_BUILD_TYPE Debug)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ggdb")
+if (_RELEASE)
+  set(CMAKE_BUILD_TYPE Release)
+else()
+  set(CMAKE_BUILD_TYPE Debug)
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ggdb")
+endif()
 
 # Specify version of compiler.
 set(CMAKE_CXX_STANDARD 14)

@@ -238,12 +238,12 @@ void mainWindow::closeEvent(QCloseEvent* e) {
 }
 
 void mainWindow::writeSettings() {
-    QSettings settings("SJTU-XHW Inc.", appName);
+    QSettings settings("SSRVodka Inc.", appName);
     settings.setValue("geometry", saveGeometry());
 }
 
 void mainWindow::loadSettings() {
-    QSettings settings("SJTU-XHW Inc.", appName);
+    QSettings settings("SSRVodka Inc.", appName);
     restoreGeometry(settings.value("geometry").toByteArray());
 }
 
@@ -266,7 +266,7 @@ void mainWindow::loadStyleSheet() {
 void mainWindow::aboutAuthor() {
     QMessageBox::about(0, tr("About me & my program"),
     QString("<h2>%1</h2>"
-        "<p>Copyright &copy; 2023 SJTU-XHW Inc. "
+        "<p>Copyright &copy; 2023 SSRVodka Inc. "
         "%1 is a small application that "
         "demonstrates numerous Qt classes, "
         "which is written by C++/Qt.</p>"

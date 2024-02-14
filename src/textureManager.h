@@ -2,7 +2,7 @@
  * @file textureManager.h
  * @brief A source file defining the texture manager of the application.
  * 
- * @author SJTU-XHW
+ * @author SSRVodka
  * @date   Feb 12, 2024
  */
 

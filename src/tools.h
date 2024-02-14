@@ -2,7 +2,7 @@
  * @file tools.h
  * @brief Cubism Platform Abstraction Layer.
  * 
- * @author Copyright(c) Live2D Inc. && SJTU-XHW
+ * @author Copyright(c) Live2D Inc. && SSRVodka
  * @date   Feb 12, 2024
  */
 

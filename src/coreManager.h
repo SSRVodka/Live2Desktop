@@ -2,7 +2,7 @@
  * @file coreManager.h
  * @brief A source file defining an application resouces manager.
  * 
- * @author SJTU-XHW
+ * @author SSRVodka
  * @date   Feb 12, 2024
  */
 

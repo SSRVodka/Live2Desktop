@@ -2,7 +2,7 @@
  * @file   logger.h
  * @brief  The logging utilities.
  * 
- * @author SJTU-XHW
+ * @author SSRVodka
  * @date   Jan 30, 2024
  */
 

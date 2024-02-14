@@ -2,7 +2,7 @@
  * @file wavFileHandler.h
  * @brief A source file defining the `*.wav` file handler.
  * 
- * @author Copyright(c) Live2D Inc. && SJTU-XHW
+ * @author Copyright(c) Live2D Inc. && SSRVodka
  * @date   Feb 12, 2024
  */
 

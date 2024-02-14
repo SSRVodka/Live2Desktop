@@ -13,7 +13,7 @@
  * - Manage OpenGL Context easily.
  * - Without `glew` or `glfw`.
  * 
- * @author SJTU-XHW
+ * @author SSRVodka
  * @date   Feb 12, 2024
  */
 

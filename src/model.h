@@ -2,7 +2,7 @@
  * @file model.h
  * @brief A source file defining the Live2D model.
  * 
- * @author SJTU-XHW
+ * @author SSRVodka
  * @date   Feb 12, 2024
  */
 

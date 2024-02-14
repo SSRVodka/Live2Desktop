@@ -2,7 +2,7 @@
  * @file allocator.h
  * @brief A source file providing a customized malloc-based memory allocator.
  * 
- * @author SJTU-XHW
+ * @author SSRVodka
  * @date   Feb 12, 2024
  */
 

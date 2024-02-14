@@ -2,7 +2,7 @@
  * @file modelParameters.h
  * @brief Parameters for the model.
  * 
- * @author Copyright(c) Live2D Inc. && SJTU-XHW
+ * @author Copyright(c) Live2D Inc. && SSRVodka
  * @date   Feb 12, 2024
  */
 

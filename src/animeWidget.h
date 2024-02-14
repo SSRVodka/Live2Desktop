@@ -2,7 +2,7 @@
  * @file animeWidget.h
  * @brief This file defines a widget rendering models based on the QOpenGLWidget.
  * 
- * @author SJTU-XHW
+ * @author SSRVodka
  * @date   Feb 12, 2024
  */
 

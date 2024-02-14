@@ -2,7 +2,7 @@
  * @file consts.h
  * @brief Constants for the application.
  * 
- * @author SJTU-XHW
+ * @author SSRVodka
  * @date   Feb 12, 2024
  */
 
