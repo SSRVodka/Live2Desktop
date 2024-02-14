@@ -1,0 +1,26 @@
+#include <time.h>
+#include <unistd.h>
+
+#include <QtCore/QDir>
+#include <QtWidgets/QApplication>
+
+#include "logger.h"
+#include "mainWindow.h"
+#include "resourceLoader.h"
+
+
+int main(int argc, char *argv[]) {
+    /* Initialize random seed. */
+    srand(time(NULL));
+
+    QApplication app(argc, argv);
+    chdir(QCoreApplication::applicationDirPath().toStdString().c_str());
+    if(resourceLoader::get_instance().initialize() == false) {
+        stdLogger.Exception("Failed to initialize resource loader, app aborted.");
+        return 0;
+    }
+    mainWindow win(qApp);
+    win.show();
+    stdLogger.Info("App starts...");
+    return app.exec();
+}

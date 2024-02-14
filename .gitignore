@@ -1,0 +1,8 @@
+build/**
+Resources/*
+
+# Global model configurations
+!Resources/tray.png
+!Resources/config.json
+# Test model
+!Resources/Hiyori

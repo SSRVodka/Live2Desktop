@@ -1,0 +1,9 @@
+{
+	"systemtray":	"tray.png",
+	"model":	[{
+			"name":	"Hiyori"
+		}],
+	"userdata":	{
+		"current":	"Hiyori"
+	}
+}
