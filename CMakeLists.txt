@@ -78,6 +78,8 @@ set(MOC_HEADERS
 set(MAIN_SRC
   src/main.cpp
 
+  icon.rc
+
   src/allocator.cpp
   src/animeWidget.cpp
   src/cJSON.c

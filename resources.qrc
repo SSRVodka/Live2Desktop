@@ -1,9 +1,6 @@
 <RCC>
 <qresource>
-	<file>rawResources/icons/save.png</file>
-	<file>rawResources/icons/load.png</file>
-	<file>rawResources/icons/exit.png</file>
-	<file>rawResources/icons/pause.png</file>
+	<file alias="logo.ico">rawResources/icons/logo.ico</file>
 	<file alias="style.qss">rawResources/qss/style.qss</file>
 </qresource>
 </RCC>
