@@ -47,15 +47,29 @@ cmake -B build && cd build && make -j
 cmake -B build && cmake --build build
 ```
 
-默认情况下 `CMAKE_BUILD_TYPE=Debug`。您可以传入 `-D_RELEASE=1` 的宏来编译 Release 版本，例如：
+默认情况下 `CMAKE_BUILD_TYPE=Release`。您可以传入 `-DDEBUG=ON` 的宏来编译 Debug 版本，例如：
 
 ```bash
-cmake -B build -D_RELEASE=1
+cmake -B build -DDEBUG=ON
+cd build
+make -j
+```
+
+此外还提供 `USE_SHARED_LIB` 选项，您可以选择链接第三方的动态链接库，还是静态链接库，默认静态链接库。例如：
+
+```bash
+cmake -B build -DUSE_SHARED_LIB=ON
 cd build
 make -j
 ```
 
 默认程序输出位置在 `${CMAKE_BINARY_DIR}/bin/` 目录下。
+
+## 兼容性测试
+
+- Windows: Windows 10, MSVC 19+, CMake 3.16, Qt 5.15
+
+- Linux: Ubuntu 22.04, gcc/g++ 12, CMake 3.22.1, Qt 5.15.3
 
 ## 声明
 

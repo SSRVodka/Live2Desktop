@@ -49,15 +49,30 @@ cmake -B build && cd build && make -j
 cmake -B build && cmake --build build
 ```
 
-By default `CMAKE_BUILD_TYPE=Debug`. You can pass in the `-D_RELEASE=1` macro to build the Release version, for example:
+By default `CMAKE_BUILD_TYPE=Release`. You can pass in the `-DDEBUG=ON` macro to build the Debug version, for example:
 
 ```bash
-cmake -B build -D_RELEASE=1
+cmake -B build -DDEBUG=ON
+cd build
+make -j
+```
+
+The `USE_SHARED_LIB` option is also provided, which allows you to choose whether to link a third-party dynamic or static library, with the default being static. For example:
+
+```bash
+cmake -B build -DUSE_SHARED_LIB=ON
 cd build
 make -j
 ```
 
 The default program output is in the `${CMAKE_BINARY_DIR}/bin/` directory.
+
+## Compatibility Test
+
+- Windows: Windows 10, MSVC 19+, CMake 3.16, Qt 5.15
+
+- Linux: Ubuntu 22.04, gcc/g++ 12, CMake 3.22.1, Qt 5.15.3
+
 
 ## Declaration
 
