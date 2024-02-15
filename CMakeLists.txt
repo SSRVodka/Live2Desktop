@@ -155,9 +155,6 @@ target_link_libraries(${APP_NAME}
   Qt5::OpenGL
 )
 
-# Build in multi-process.
-target_compile_options(${APP_NAME} PRIVATE /MP)
-
 # Copy resource directory to build directory.
 add_custom_command(
   TARGET ${APP_NAME}
