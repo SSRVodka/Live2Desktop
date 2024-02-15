@@ -4,6 +4,8 @@
 
 **A desktop application for Live2D model management and interaction based on Qt.**
 
+<a href="README_zh_CN.md">中文 README</a>
+
 ## Background
 
 As we all know, Live2D model display and interaction on Windows platform relies on Live2DViewerEx paid application, while Linux platform is rarely known. This application aims to build a lightweight, cross-platform desktop application for displaying and interacting with Live2D models based on the official Live2D Cubism SDK and Qt framework.

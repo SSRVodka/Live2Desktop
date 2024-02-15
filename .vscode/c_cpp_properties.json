@@ -3,8 +3,7 @@
         {
             "name": "Linux",
             "includePath": [
-                "${default}",
-                "${workspaceFolder}/thirdParty/glew/include"
+                "${default}"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/gcc",
