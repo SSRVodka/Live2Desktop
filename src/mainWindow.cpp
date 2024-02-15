@@ -9,6 +9,9 @@
 #include "modelManager.h"
 #include "resourceLoader.h"
 
+#define PREPARE_FOR_POPUP setWindowFlags(windowFlags() & ~Qt::Tool); show();
+#define HIDE_POPUP setWindowFlags(windowFlags() | Qt::Tool); show();
+
 
 mainWindow::mainWindow(QApplication* mapp)
     : QMainWindow(nullptr), app(mapp),
@@ -206,16 +209,20 @@ void mainWindow::geoEditMode(bool enter) {
 }
 
 void mainWindow::config() {
-    ConfigDialog dialog(this);
+    PREPARE_FOR_POPUP;
+    ConfigDialog dialog(0);
     dialog.setCurrentModel(
         resourceLoader::get_instance().getCurrentModelName()
     );
     int res = dialog.exec();
+    HIDE_POPUP;
 }
 
 void mainWindow::chatBegin() {
     // TODO
-    QMessageBox::information(this, appName, "Sorry, under maintenance.");
+    PREPARE_FOR_POPUP;
+    QMessageBox::information(0, appName, "Sorry, under maintenance.");
+    HIDE_POPUP;
 }
 
 void mainWindow::keyPressEvent(QKeyEvent *event) {
@@ -261,7 +268,8 @@ void mainWindow::loadStyleSheet() {
 }
 
 void mainWindow::aboutAuthor() {
-    QMessageBox::about(this, tr("About me & my program"),
+    PREPARE_FOR_POPUP;
+    QMessageBox::about(0, tr("About me & my program"),
     QString("<h2>%1</h2>"
         "<p>Copyright &copy; 2023 SSRVodka Inc. "
         "%1 is a small application that "
@@ -272,4 +280,5 @@ void mainWindow::aboutAuthor() {
         " or visit <a href='https://github.com/SSRVodka'>Github</a> :)")
         .arg(appName)
     );
+    HIDE_POPUP;
 }
