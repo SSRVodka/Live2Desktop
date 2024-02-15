@@ -23,6 +23,7 @@ mainWindow::mainWindow(QApplication* mapp)
     setWindowFlags(
         Qt::FramelessWindowHint
       | Qt::WindowStaysOnTopHint
+      | Qt::Tool
       | Qt::X11BypassWindowManagerHint
     );
     setWindowTitle(
@@ -165,7 +166,7 @@ void mainWindow::switchClicked(QAction* curAct) {
     }
 
     QMessageBox::critical(
-        0, appName,
+        this, appName,
         tr("Fatal resource error (unknown).")
     );
     stdLogger.Exception("No model available, app aborted.");
@@ -186,6 +187,7 @@ void mainWindow::geoEditMode(bool enter) {
         setWindowFlags(
             Qt::FramelessWindowHint
           | Qt::WindowStaysOnTopHint
+          | Qt::Tool
           | Qt::X11BypassWindowManagerHint
         );
         setWindowFlags(
@@ -204,21 +206,16 @@ void mainWindow::geoEditMode(bool enter) {
 }
 
 void mainWindow::config() {
-    ConfigDialog dialog;
+    ConfigDialog dialog(this);
     dialog.setCurrentModel(
         resourceLoader::get_instance().getCurrentModelName()
     );
     int res = dialog.exec();
-    if (res == QDialog::Accepted) {
-
-    } else {
-
-    }
 }
 
 void mainWindow::chatBegin() {
     // TODO
-    QMessageBox::information(0, appName, "Sorry, under maintenance.");
+    QMessageBox::information(this, appName, "Sorry, under maintenance.");
 }
 
 void mainWindow::keyPressEvent(QKeyEvent *event) {
@@ -264,7 +261,7 @@ void mainWindow::loadStyleSheet() {
 }
 
 void mainWindow::aboutAuthor() {
-    QMessageBox::about(0, tr("About me & my program"),
+    QMessageBox::about(this, tr("About me & my program"),
     QString("<h2>%1</h2>"
         "<p>Copyright &copy; 2023 SSRVodka Inc. "
         "%1 is a small application that "

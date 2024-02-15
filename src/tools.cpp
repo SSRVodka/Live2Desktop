@@ -8,7 +8,10 @@
 #include "logger.h"
 #include "tools.h"
 
-#ifdef __linux__
+#ifdef _WIN32
+#include <Windows.h>
+#pragma comment(lib, "winmm.lib")
+#else
 #include <time.h>
 unsigned int timeGetTime() {
     unsigned int uptime = 0;
@@ -17,8 +20,6 @@ unsigned int timeGetTime() {
         uptime = on.tv_sec*1000 + on.tv_nsec/1000000;
     return uptime*0.9;
 }
-#else
-#include <Windows.h>
 #endif
 
 using namespace Csm;

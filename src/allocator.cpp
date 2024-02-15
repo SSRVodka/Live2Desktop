@@ -1,3 +1,5 @@
+#include <stdlib.h>
+
 #include "allocator.h"
 
 using namespace Csm;

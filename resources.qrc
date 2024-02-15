@@ -1,6 +1,11 @@
 <RCC>
 <qresource>
 	<file alias="logo.ico">rawResources/icons/logo.ico</file>
+	<file alias="qss_imgs/go-down-symbolic.symbolic.png">rawResources/qss/qss_imgs/go-down-symbolic.symbolic.png</file>
+	<file alias="qss_imgs/go-next-symbolic.symbolic.png">rawResources/qss/qss_imgs/go-next-symbolic.symbolic.png</file>
+	<file alias="qss_imgs/go-previous-symbolic.symbolic.png">rawResources/qss/qss_imgs/go-previous-symbolic.symbolic.png</file>
+	<file alias="qss_imgs/go-up-symbolic.symbolic.png">rawResources/qss/qss_imgs/go-up-symbolic.symbolic.png</file>
+	<file alias="qss_imgs/object-select-symbolic.symbolic.png">rawResources/qss/qss_imgs/object-select-symbolic.symbolic.png</file>
 	<file alias="style.qss">rawResources/qss/style.qss</file>
 </qresource>
 </RCC>

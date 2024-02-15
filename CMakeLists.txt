@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.16)
 
+# -------------- Prebuilt-configurations --------------
+
 # Set app name.
 set(APP_NAME Live2Desktop)
 # Set directory paths.
@@ -15,53 +17,58 @@ project(${APP_NAME})
 
 # Define output directory: ${ROOT_PATH}/<-B param>/bin/
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/bin/${APP_NAME})
-# Set configuration (Release and Debug only).
-set(CMAKE_CONFIGURATION_TYPES Debug Release
-  CACHE STRING "Configurations" FORCE
-)
-
-# Debug for default.
-if (_RELEASE)
-  set(CMAKE_BUILD_TYPE Release)
-else()
-  set(CMAKE_BUILD_TYPE Debug)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ggdb")
-endif()
 
 # Specify version of compiler.
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-# Specify Cubism Framework rendering.
-set(FRAMEWORK_SOURCE OpenGL)
+if(${CMAKE_HOST_SYSTEM_PROCESSOR} MATCHES "i386")
+  set(ARCH "x86")
+elseif(${CMAKE_HOST_SYSTEM_PROCESSOR} MATCHES "x86_64")
+  set(ARCH "x86_64")
+elseif(${CMAKE_HOST_SYSTEM_PROCESSOR} MATCHES "AMD64")
+  set(ARCH "x86_64")
+elseif(${CMAKE_HOST_SYSTEM_PROCESSOR} MATCHES "aarch64")
+  set(ARCH "arm64")
+else()
+  message(WARNING "Untested architecture detected (${CMAKE_HOST_SYSTEM_PROCESSOR}). Use x86_64 libraries instead.")
+  set(ARCH "x86_64")
+endif()
+
+message(STATUS "Target architecture: ${ARCH}")
+
+if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+  set(OS "linux")
+elseif(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
+  set(OS "windows")
+else()
+  set(OS "macos")
+endif()
+
+message(STATUS "Target OS: ${OS}")
+
+if(DEBUG)
+ set(CMAKE_BUILD_TYPE "Debug")
+else()
+  set(CMAKE_BUILD_TYPE "Release")
+endif()
+
+message(STATUS "Target build type: ${CMAKE_BUILD_TYPE}")
+
+# Use shared libraries or static libraries
+if(USE_SHARED_LIB)
+  message(STATUS "Target libraries type: shared")
+else()
+  message(STATUS "Taregt libraries type: static")
+endif()
+
+set(FRAMEWORK_SOURCE "OpenGL")
+
+# -------------- Build App --------------
 
 # Find Qt libraries
 find_package(Qt5 COMPONENTS Core Gui Widgets OpenGL REQUIRED)
-
-# ----------------------------------------------------------------------------------------
-
-# Add Cubism Core.
-# Import as static library.
-add_library(Live2DCubismCore STATIC IMPORTED)
-# Find library path.
-set_target_properties(Live2DCubismCore
-  PROPERTIES
-    IMPORTED_LOCATION ${CORE_PATH}/lib/libLive2DCubismCore.a
-    INTERFACE_INCLUDE_DIRECTORIES ${CORE_PATH}/include
-)
-
-
-# Add Cubism Native Framework.
-add_subdirectory(${FRAMEWORK_PATH} ${CMAKE_CURRENT_BINARY_DIR}/Framework)
-# Add rendering definition to framework.
-target_compile_definitions(Framework PUBLIC CSM_TARGET_LINUX_GL)
-
-# Link libraries to framework.
-target_link_libraries(Framework Live2DCubismCore)
-
-# ----------------------------------------------------------------------------
-
 
 # Make executable app.
 add_executable(${APP_NAME})
@@ -137,13 +144,6 @@ target_sources(${APP_NAME}
     ${RCCd_SRC}
 )
 
-# Link libraries to app.
-target_link_libraries(${APP_NAME}
-  Framework
-  ${CMAKE_DL_LIBS}
-  X11
-  pthread
-)
 # Add thirdParty/stb_image.h
 target_include_directories(${APP_NAME} PRIVATE ${STB_PATH})
 
@@ -155,6 +155,9 @@ target_link_libraries(${APP_NAME}
   Qt5::OpenGL
 )
 
+# Build in multi-process.
+target_compile_options(${APP_NAME} PRIVATE /MP)
+
 # Copy resource directory to build directory.
 add_custom_command(
   TARGET ${APP_NAME}
@@ -164,22 +167,11 @@ add_custom_command(
       copy_directory ${RES_PATH} $<TARGET_FILE_DIR:${APP_NAME}>/Resources
 )
 
-# -----------------------------
-
-
-# You can change target that renderer draws by enabling following definition.
-#
-# * USE_RENDER_TARGET
-#   Renderer draws to target of LAppView.
-# * USE_MODEL_RENDER_TARGET
-#   Renderer draws to target of each Model.
-# * default
-#   Renderer draws to default main framebuffer.
-#
-# INFO: USE_RENDER_TARGET has higher priority than USE_MODEL_RENDER_TARGET.
-#
-# target_compile_definitions(${APP_NAME}
-#   PRIVATE
-#     USE_RENDER_TARGET
-#     USE_MODEL_RENDER_TARGET
-# )
+# Build Framework & Core at specific platform AND link.
+if(${OS} STREQUAL "windows")
+  include(cmake/win.cmake)
+  win_build()
+else()
+  include(cmake/unix.cmake)
+  unix_build()
+endif()

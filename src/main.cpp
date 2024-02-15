@@ -1,5 +1,11 @@
 #include <time.h>
+
+#ifdef _WIN32
+#include <direct.h>
+#define chdir _chdir
+#else
 #include <unistd.h>
+#endif
 
 #include <QtCore/QDir>
 #include <QtWidgets/QApplication>

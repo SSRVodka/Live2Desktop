@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>759</width>
-    <height>538</height>
+    <width>742</width>
+    <height>535</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -124,6 +124,32 @@
        </property>
       </spacer>
      </item>
+     <item row="1" column="5">
+      <layout class="QVBoxLayout" name="verticalLayout_2">
+       <item>
+        <widget class="QPushButton" name="motionAddBtn">
+         <property name="text">
+          <string>Add Item(s)</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="idleCheckBox">
+         <property name="text">
+          <string>Add to Idle
+Motion Group</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="motionRmBtn">
+         <property name="text">
+          <string>Remove</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
      <item row="1" column="1">
       <widget class="QLabel" name="motionLabel">
        <property name="text">
@@ -147,8 +173,8 @@
        </property>
       </widget>
      </item>
-     <item row="0" column="2">
-      <spacer name="horizontalSpacer_4">
+     <item row="0" column="6">
+      <spacer name="horizontalSpacer_7">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
@@ -178,31 +204,6 @@
        </item>
       </layout>
      </item>
-     <item row="1" column="5">
-      <layout class="QVBoxLayout" name="verticalLayout_2">
-       <item>
-        <widget class="QPushButton" name="motionAddBtn">
-         <property name="text">
-          <string>Add Item(s)</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QCheckBox" name="idleCheckBox">
-         <property name="text">
-          <string>Add to Idle Motion Group</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="motionRmBtn">
-         <property name="text">
-          <string>Remove</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </item>
      <item row="0" column="1">
       <widget class="QLabel" name="expressionLabel">
        <property name="text">
@@ -215,9 +216,6 @@
         <cstring>expressionList</cstring>
        </property>
       </widget>
-     </item>
-     <item row="1" column="3">
-      <widget class="QListWidget" name="motionList"/>
      </item>
      <item row="0" column="0">
       <spacer name="horizontalSpacer_6">
@@ -232,8 +230,11 @@
        </property>
       </spacer>
      </item>
-     <item row="0" column="6">
-      <spacer name="horizontalSpacer_7">
+     <item row="1" column="3">
+      <widget class="QListWidget" name="motionList"/>
+     </item>
+     <item row="0" column="2">
+      <spacer name="horizontalSpacer_4">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
@@ -347,7 +348,7 @@
    <sender>closeBtn</sender>
    <signal>clicked()</signal>
    <receiver>configDialog</receiver>
-   <slot>accept()</slot>
+   <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>553</x>
