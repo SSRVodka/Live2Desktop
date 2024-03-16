@@ -1,8 +1,8 @@
 {
 	"systemtray":	"tray.png",
-	"model":	[{
-			"name":	"Hiyori"
-		}],
+	"model":	[
+		"Hiyori"
+	],
 	"userdata":	{
 		"current":	"Hiyori"
 	}

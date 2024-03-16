@@ -10,7 +10,7 @@
 
 
 bool resourceLoader::initialize() {
-    if( isInit == true) {
+    if(isInit == true) {
         stdLogger.Warning("Resource loader has already initialized.");
         return true;
     }
@@ -57,16 +57,11 @@ bool resourceLoader::initialize() {
 
     for (int i = 0; i < cJSON_GetArraySize(node); i++) {
         cJSON* model_ptr = cJSON_GetArrayItem(node,i);
-        if (model_ptr == NULL || !cJSON_IsObject(model_ptr))
+        QString curModelName;
+        if (model_ptr == NULL || !cJSON_IsString(model_ptr))
             continue;
-        
-        cJSON* tmpNameNode = cJSON_GetObjectItem(model_ptr, "name");
-        QString tmpModelName;
-        if (tmpNameNode == NULL || !cJSON_IsString(tmpNameNode))
-            continue;
-        
-        tmpModelName = cJSON_GetStringValue(tmpNameNode);
-        modelList.push_back(tmpModelName);
+        curModelName = cJSON_GetStringValue(model_ptr);
+        modelList.push_back(curModelName);
     }
 
     if (modelList.size() == 0) {
