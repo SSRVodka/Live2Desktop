@@ -11,6 +11,7 @@
 #include <assert.h>
 #include <stdio.h>
 
+#define _ENABLE_DEBUG
 
 class Logger {
 public:

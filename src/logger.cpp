@@ -51,93 +51,101 @@ Logger::~Logger() {
 }
 
 void Logger::_debug(const char* msg, const char* fn, int lineno) const {
+#ifdef _ENABLE_DEBUG
     time_t now; tm *localP;
     std::string full = fn;
+    std::string tmp;
     size_t pos = full.find_last_of("/\\");
+    tmp = full.substr(pos + 1);
     time(&now);
     localP = localtime(&now);
 
-    fprintf(dest, BRACKET(_COLOUR_SIM("DEBUG", FG_BLUE)));
     fprintf(
-        dest, BRACKET(DATETIME_FORMAT),
+        dest,
+        BRACKET(_COLOUR_SIM("DEBUG", FG_BLUE)) BRACKET(DATETIME_FORMAT) "[ %s:%d ] %s\n",
         localP->tm_year + 1900,
         localP->tm_mon + 1,
         localP->tm_mday, localP->tm_hour,
-        localP->tm_min, localP->tm_sec
+        localP->tm_min, localP->tm_sec,
+        tmp.c_str(), lineno, msg
     );
-    fprintf(dest, "[ ");
-    fprintf(dest, full.substr(pos + 1).c_str());
-    fprintf(dest, ":%d ] ", lineno);
-    fprintf(dest, msg);
-    fprintf(dest, "\n");
     fflush(dest);
+#else
+    return;
+#endif
 }
 
 void Logger::_info(const char* msg, const char* fn, int lineno) const {
+#ifdef _ENABLE_DEBUG
     time_t now; tm *localP;
     std::string full = fn;
+    std::string tmp;
     size_t pos = full.find_last_of("/\\");
+    tmp = full.substr(pos + 1);
     time(&now);
     localP = localtime(&now);
 
-    fprintf(dest, BRACKET(_COLOUR_SIM("INFO", FG_GREEN)));
     fprintf(
-        dest, BRACKET(DATETIME_FORMAT),
+        dest,
+        BRACKET(_COLOUR_SIM("INFO", FG_GREEN)) BRACKET(DATETIME_FORMAT) "[ %s:%d ] %s\n",
         localP->tm_year + 1900,
         localP->tm_mon + 1,
         localP->tm_mday, localP->tm_hour,
-        localP->tm_min, localP->tm_sec
+        localP->tm_min, localP->tm_sec,
+        tmp.c_str(), lineno, msg
     );
-    fprintf(dest, "[ ");
-    fprintf(dest, full.substr(pos + 1).c_str());
-    fprintf(dest, ":%d ] ", lineno);
-    fprintf(dest, msg);
-    fprintf(dest, "\n");
     fflush(dest);
+#else
+    return;
+#endif
 }
 
 void Logger::_warning(const char* msg, const char* fn, int lineno) const {
+#ifdef _ENABLE_DEBUG
     time_t now; tm *localP;
     std::string full = fn;
+    std::string tmp;
     size_t pos = full.find_last_of("/\\");
+    tmp = full.substr(pos + 1);
     time(&now);
     localP = localtime(&now);
 
-    fprintf(dest, BRACKET(_COLOUR_SIM("WARNING", FG_YELLOW)));
     fprintf(
-        dest, BRACKET(DATETIME_FORMAT),
+        dest,
+        BRACKET(_COLOUR_SIM("WARNING", FG_YELLOW)) BRACKET(DATETIME_FORMAT) "[ %s:%d ] %s\n",
         localP->tm_year + 1900,
         localP->tm_mon + 1,
         localP->tm_mday, localP->tm_hour,
-        localP->tm_min, localP->tm_sec
+        localP->tm_min, localP->tm_sec,
+        tmp.c_str(), lineno, msg
     );
-    fprintf(dest, "[ ");
-    fprintf(dest, full.substr(pos + 1).c_str());
-    fprintf(dest, ":%d ] ", lineno);
-    fprintf(dest, msg);
-    fprintf(dest, "\n");
     fflush(dest);
+#else
+    return;
+#endif
 }
 
 void Logger::_error(const char* msg, const char* fn, int lineno) const {
+#ifdef _ENABLE_DEBUG
     time_t now; tm *localP;
     std::string full = fn;
+    std::string tmp;
     size_t pos = full.find_last_of("/\\");
+    tmp = full.substr(pos + 1);
     time(&now);
     localP = localtime(&now);
 
-    fprintf(dest, BRACKET(_COLOUR_SIM("ERROR", FG_RED)));
     fprintf(
-        dest, BRACKET(DATETIME_FORMAT),
+        dest,
+        BRACKET(_COLOUR_SIM("ERROR", FG_RED)) BRACKET(DATETIME_FORMAT) "[ %s:%d ] %s\n",
         localP->tm_year + 1900,
         localP->tm_mon + 1,
         localP->tm_mday, localP->tm_hour,
-        localP->tm_min, localP->tm_sec
+        localP->tm_min, localP->tm_sec,
+        tmp.c_str(), lineno, msg
     );
-    fprintf(dest, "[ ");
-    fprintf(dest, full.substr(pos + 1).c_str());
-    fprintf(dest, ":%d ] ", lineno);
-    fprintf(dest, msg);
-    fprintf(dest, "\n");
     fflush(dest);
+#else
+    return;
+#endif
 }
