@@ -9,6 +9,7 @@
 #pragma once
 
 #include <AppOpenGLWrapper.hpp>
+#include <QtWidgets/QOpenGLWidget>
 
 /**
  * @class AnimeWidget

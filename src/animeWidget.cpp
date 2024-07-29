@@ -1,5 +1,6 @@
 #include <QtGui/QtEvents>
 #include <QtGui/QMouseEvent>
+#include <QtWidgets/QApplication>
 
 #include "animeWidget.h"
 #include "coreManager.h"

@@ -68,7 +68,7 @@ set(FRAMEWORK_SOURCE "OpenGL")
 # -------------- Build App --------------
 
 # Find Qt libraries
-find_package(Qt5 COMPONENTS Core Gui Widgets OpenGL REQUIRED)
+find_package(Qt5 COMPONENTS Core Gui Widgets REQUIRED)
 
 # Make executable app.
 add_executable(${APP_NAME})
@@ -152,7 +152,6 @@ target_link_libraries(${APP_NAME}
   Qt5::Core
   Qt5::Gui
   Qt5::Widgets
-  Qt5::OpenGL
 )
 
 # Copy resource directory to build directory.

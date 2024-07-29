@@ -1,3 +1,5 @@
+#include <QtCore/QSettings>
+
 #include <QtWidgets/QMenu>
 #include <QtWidgets/QMessageBox>
 #include <QtGui/QMouseEvent>

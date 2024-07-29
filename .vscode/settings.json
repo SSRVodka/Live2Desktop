@@ -81,6 +81,8 @@
         "qaction": "cpp",
         "qmenu": "cpp",
         "qmainwindow": "cpp",
-        "qcoreapplication": "cpp"
+        "qcoreapplication": "cpp",
+        "qopenglwidget": "cpp",
+        "qopenglfunctions": "cpp"
     }
 }

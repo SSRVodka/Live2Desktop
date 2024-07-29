@@ -19,7 +19,7 @@
 
 #pragma once
 
-#include <QtOpenGL/QtOpenGL>
+#include <QtGui/QOpenGLFunctions>
 
 /**
  * @class AppOpenGLWrapper
