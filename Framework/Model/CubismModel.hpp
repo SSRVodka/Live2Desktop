@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Copyright(c) Live2D Inc. All rights reserved.
  *
  * Use of this source code is governed by the Live2D Open Software license
@@ -244,6 +244,16 @@ public:
      * @return  パラメータのインデックス
      */
     csmInt32    GetParameterIndex(CubismIdHandle parameterId);
+
+    /**
+     * @brief パラメータのIDの取得
+     *
+     * パラメータのIDを取得する。
+     *
+     * @param[in]   parameterIndex  パラメータのIndex
+     * @return  パラメータのID
+     */
+    CubismIdHandle    GetParameterId(csmUint32 parameterIndex);
 
     /**
      * @brief パラメータの個数の取得

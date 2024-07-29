@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Copyright(c) Live2D Inc. All rights reserved.
  *
  * Use of this source code is governed by the Live2D Open Software license
@@ -131,7 +131,7 @@ private:
      *
      * @return 次のまばたきを行う時刻[秒]
      */
-    csmFloat32        DeterminNextBlinkingTiming() const;
+    csmFloat32        DetermineNextBlinkingTiming() const;
 
     csmInt32                    _blinkingState;                   ///< 現在の状態
     csmVector<CubismIdHandle>   _parameterIds;                    ///< 操作対象のパラメータのIDのリスト

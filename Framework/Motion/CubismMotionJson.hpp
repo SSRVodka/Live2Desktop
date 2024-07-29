@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Copyright(c) Live2D Inc. All rights reserved.
  *
  * Use of this source code is governed by the Live2D Open Software license
@@ -19,7 +19,7 @@ namespace Live2D { namespace Cubism { namespace Framework {
 */
 enum EvaluationOptionFlag
 {
-    EvaluationOptionFlag_AreBeziersRistricted = 0,  ///< ベジェハンドルの規制状態
+    EvaluationOptionFlag_AreBeziersRestricted = 0,  ///< ベジェハンドルの規制状態
 };
 
 /**

@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Copyright(c) Live2D Inc. All rights reserved.
  *
  * Use of this source code is governed by the Live2D Open Software license
@@ -70,8 +70,12 @@ CubismPose::~CubismPose()
 
 CubismPose* CubismPose::Create(const csmByte* pose3json, csmSizeInt size)
 {
-    CubismPose*         ret = CSM_NEW CubismPose();
     Utils::CubismJson*  json = Utils::CubismJson::Create(pose3json, size);
+    if (!json)
+    {
+        return NULL;
+    }
+    CubismPose* ret = CSM_NEW CubismPose();
     Utils::Value&       root = json->GetRoot();
 
     // フェード時間の指定

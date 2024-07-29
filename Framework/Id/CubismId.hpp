@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Copyright(c) Live2D Inc. All rights reserved.
  *
  * Use of this source code is governed by the Live2D Open Software license
@@ -29,6 +29,11 @@ struct CubismId
      */
     const csmString& GetString() const;
 
+    CubismId& operator=(const CubismId& c);
+
+    csmBool operator==(const CubismId& c) const;
+    csmBool operator!=(const CubismId& c) const;
+
 private:
     /**
      * @brief コンストラクタ
@@ -54,10 +59,6 @@ private:
     ~CubismId();
 
     CubismId(const CubismId& c);
-    CubismId& operator=(const CubismId& c);
-
-    csmBool operator==(const CubismId& c) const;
-    csmBool operator!=(const CubismId& c) const;
 
     csmString _id;      ///< ID名
 };

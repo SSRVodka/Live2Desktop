@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Copyright(c) Live2D Inc. All rights reserved.
  *
  * Use of this source code is governed by the Live2D Open Software license
@@ -56,7 +56,7 @@ csmBool CubismMotionJson::IsMotionLoop() const
 
 csmBool CubismMotionJson::GetEvaluationOptionFlag(const csmInt32 flagType) const
 {
-    if (EvaluationOptionFlag_AreBeziersRistricted == flagType)
+    if (EvaluationOptionFlag_AreBeziersRestricted == flagType)
     {
         return _json->GetRoot()[Meta][AreBeziersRestricted].ToBoolean();
     }

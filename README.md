@@ -6,6 +6,14 @@
 
 <a href="README_zh_CN.md">中文 README</a>
 
+## Update Log
+
+- 2024/02/14: Live2Desktop de-coupled Live2D official `glfw / glew` and migrated to Qt Platform (`QOpenGLWidget`);
+
+- 2024/07/29: Updated Live2Desktop's Live2D Core to `5-r.1` version. May support moc3 as `5.0`, not tested.
+
+  > Warning: The OpenGL rendering module is not being updated at this time. The update schedule has been moved to the `Rendering.update` directory and will be updated in the near future.
+
 ## Background
 
 As we all know, Live2D model display and interaction on Windows platform relies on Live2DViewerEx paid application, while Linux platform is rarely known. This application aims to build a lightweight, cross-platform desktop application for displaying and interacting with Live2D models based on the official Live2D Cubism SDK and Qt framework.

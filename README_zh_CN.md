@@ -4,6 +4,19 @@
 
 **一个基于 Qt 框架的 Live2D 模型展示、互动的桌面应用。**
 
+
+
+## 更新日志
+
+- 2024/02/14：Live2Desktop 去除 Live2D 官方 `glfw / glew` 耦合，迁移至 Qt Platform（`QOpenGLWidget`）；
+
+- 2024/07/29：更新 Live2Desktop 的 Live2D 内核为 `5-r.1` 版本。可能支持 moc3 为 `5.0` 的版本，并未进行测试。
+
+  > 警告：OpenGL 渲染模块目前并未同步更新。更新计划已移至 `Rendering.update` 目录，不久的将来即将更新。
+
+
+
+
 ## 背景
 
 众所周知，Live2D 模型在 Windows 平台下的展示与互动依托于 Live2DViewerEx 收费应用，而 Linux 平台则鲜有闻之。本应用旨在依托于 Live2D Cubism 官方 SDK 和 Qt 框架，建立起一个轻量级、跨平台的 Live2D 模型展示、互动的桌面应用。

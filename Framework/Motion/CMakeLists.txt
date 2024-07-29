@@ -15,4 +15,6 @@ target_sources(${LIB_NAME}
     ${CMAKE_CURRENT_SOURCE_DIR}/CubismMotionQueueEntry.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/CubismMotionQueueManager.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/CubismMotionQueueManager.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/CubismExpressionMotionManager.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/CubismExpressionMotionManager.hpp
 )
