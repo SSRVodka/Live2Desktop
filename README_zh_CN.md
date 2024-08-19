@@ -12,7 +12,7 @@
 
 - 2024/07/29：更新 Live2Desktop 的 Live2D 内核为 `5-r.1` 版本。可能支持 moc3 为 `5.0` 的版本，并未进行测试。
 
-  > 警告：OpenGL 渲染模块目前并未同步更新。更新计划已移至 `Rendering.update` 目录，不久的将来即将更新。
+- 2024/08/19：更新 Live2Desktop 的 `Framework/Rendering`，Framework 代码接口与 `5-r.1` 完成同步，移除备份目录；
 
 
 

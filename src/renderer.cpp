@@ -33,7 +33,7 @@ Renderer::Renderer():
 }
 
 Renderer::~Renderer() {
-    _renderBuffer.DestroyOffscreenFrame();
+    _renderBuffer.DestroyOffscreenSurface();
     delete _viewMatrix;
     delete _deviceToScreen;
     delete _touchManager;
@@ -150,7 +150,7 @@ float Renderer::TransformScreenY(float deviceY) const {
 
 void Renderer::PreModelDraw(Model& refModel) {
     /* Framebuffer to use when drawing to a different render target. */
-    Csm::Rendering::CubismOffscreenFrame_OpenGLES2* useTarget = NULL;
+    Csm::Rendering::CubismOffscreenSurface_OpenGLES2* useTarget = NULL;
 
     /* When drawing to a different rendering target */
     if (_renderTarget != SelectTarget_None) {
@@ -163,7 +163,7 @@ void Renderer::PreModelDraw(Model& refModel) {
             int height = CoreManager::GetInstance()->GetWindow()->height();
             if (width != 0 && height != 0) {
                 /* Model Drawing Canvas. */
-                useTarget->CreateOffscreenFrame(static_cast<csmUint32>(width), static_cast<csmUint32>(height));
+                useTarget->CreateOffscreenSurface(static_cast<csmUint32>(width), static_cast<csmUint32>(height));
             }
         }
 
@@ -175,7 +175,7 @@ void Renderer::PreModelDraw(Model& refModel) {
 
 void Renderer::PostModelDraw(Model& refModel) {
     /* Framebuffer to use when drawing to a different render target. */
-    Csm::Rendering::CubismOffscreenFrame_OpenGLES2* useTarget = NULL;
+    Csm::Rendering::CubismOffscreenSurface_OpenGLES2* useTarget = NULL;
 
     /* When drawing to a different rendering target */
     if (_renderTarget != SelectTarget_None) {

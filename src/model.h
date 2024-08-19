@@ -123,7 +123,7 @@ public:
     /**
      * @brief Obtaining the buffer to be used when drawing to a different target.
      */
-    Csm::Rendering::CubismOffscreenFrame_OpenGLES2& GetRenderBuffer();
+    Csm::Rendering::CubismOffscreenSurface_OpenGLES2& GetRenderBuffer();
 
 protected:
     /**
@@ -196,7 +196,7 @@ private:
 
     WavFileHandler _wavFileHandler; /**< wav file handler. */
 
-    Csm::Rendering::CubismOffscreenFrame_OpenGLES2  _renderBuffer;  /**< Drawing destination other than frame buffer. */
+    Csm::Rendering::CubismOffscreenSurface_OpenGLES2  _renderBuffer;  /**< Drawing destination other than frame buffer. */
 };
 
 

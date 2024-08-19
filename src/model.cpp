@@ -58,7 +58,7 @@ Model::Model()
 }
 
 Model::~Model() {
-    _renderBuffer.DestroyOffscreenFrame();
+    _renderBuffer.DestroyOffscreenSurface();
 
     ReleaseMotions();
     ReleaseExpressions();
@@ -577,6 +577,6 @@ void Model::MotionEventFired(const csmString& eventValue) {
     CubismLogInfo("%s is fired on Model!!", eventValue.GetRawString());
 }
 
-Csm::Rendering::CubismOffscreenFrame_OpenGLES2& Model::GetRenderBuffer() {
+Csm::Rendering::CubismOffscreenSurface_OpenGLES2& Model::GetRenderBuffer() {
     return _renderBuffer;
 }

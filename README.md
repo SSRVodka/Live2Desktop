@@ -12,7 +12,7 @@
 
 - 2024/07/29: Updated Live2Desktop's Live2D Core to `5-r.1` version. May support moc3 as `5.0`, not tested.
 
-  > Warning: The OpenGL rendering module is not being updated at this time. The update schedule has been moved to the `Rendering.update` directory and will be updated in the near future.
+- 2024/08/19: Updated `Framework/Rendering` of Live2Desktop, synchronization of Framework code interface with `5-r.1` completed, backup directory removed.
 
 ## Background
 

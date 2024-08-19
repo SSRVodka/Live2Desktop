@@ -130,7 +130,7 @@ private:
     Csm::CubismViewMatrix* _viewMatrix;     /**< viewMatrix */
     GLuint _programId;                      /**< shader ID */
     
-    Csm::Rendering::CubismOffscreenFrame_OpenGLES2 _renderBuffer;   /**< Some modes render Cubism model results this way. */
+    Csm::Rendering::CubismOffscreenSurface_OpenGLES2 _renderBuffer;   /**< Some modes render Cubism model results this way. */
     SelectTarget _renderTarget;     /**< Choice of rendering destination. */
     float _clearColor[4];           /**< Rendering target clear color. */
 };
