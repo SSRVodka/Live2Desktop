@@ -134,8 +134,10 @@ bool resourceLoader::setCurrentModel(int idx) {
     currentModelName = modelList[currentModelIndex];
 
     cJSON* curNode = cJSON_GetObjectItem((cJSON*)jsonRoot, "userdata");
-    char* cur = new char[currentModelName.length() + 1] {0};
-    snprintf(cur, currentModelName.length() + 1, currentModelName.toUtf8().constData());
+    // Note: get UTF8 length (Chinese -> 2 bytes; English -> 1 byte)
+    int utf8len = currentModelName.toLocal8Bit().length();
+    char* cur = new char[utf8len + 1] {0};
+    snprintf(cur, utf8len + 1, currentModelName.toUtf8().constData());
     cJSON_ReplaceItemInObject(curNode, "current", cJSON_CreateString(cur));
     delete[] cur;
 

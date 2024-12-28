@@ -10,8 +10,10 @@
 
 /* Caller should always release the allocated space. */
 static char* QString2char(const QString& str) {
-    char* ans = new char[str.length() + 1] {0};
-    snprintf(ans, str.length() + 1, str.toUtf8().constData());
+    // Note: get UTF8 length (Chinese -> 2 bytes; English -> 1 byte)
+    int utf8len = str.toLocal8Bit().length();
+    char* ans = new char[utf8len + 1] {0};
+    snprintf(ans, utf8len + 1, "%s", str.toUtf8().constData());
     return ans;
 }
 
@@ -246,7 +248,8 @@ void ConfigDialog::rmExpression(const char* fn) {
     int exprCnt = cJSON_GetArraySize(exprArr);
     for (int i = 0; i < exprCnt; ++i) {
         entry = cJSON_GetArrayItem(exprArr, i);
-        if (strcmp(fn, cJSON_GetStringValue(entry)) == 0) {
+        cJSON *entryFile = cJSON_GetObjectItem(entry, "File");
+        if (strcmp(fn, cJSON_GetStringValue(entryFile)) == 0) {
             cJSON_DeleteItemFromArray(exprArr, i);
 
             reload();
@@ -280,7 +283,8 @@ void ConfigDialog::rmMotion(const char* fn, bool idle) {
     if (idle) {
         for (int i = 0; i < idleCnt; ++i) {
             entry = cJSON_GetArrayItem(idleArr, i);
-            if (strcmp(fn, cJSON_GetStringValue(entry)) == 0) {
+            cJSON *entryFile = cJSON_GetObjectItem(entry, "File");
+            if (strcmp(fn, cJSON_GetStringValue(entryFile)) == 0) {
                 cJSON_DeleteItemFromArray(idleArr, i);
 
                 reload();
@@ -290,7 +294,8 @@ void ConfigDialog::rmMotion(const char* fn, bool idle) {
     } else {
         for (int i = 0; i < tapCnt; ++i) {
             entry = cJSON_GetArrayItem(tapArr, i);
-            if (strcmp(fn, cJSON_GetStringValue(entry)) == 0) {
+            cJSON *entryFile = cJSON_GetObjectItem(entry, "File");
+            if (strcmp(fn, cJSON_GetStringValue(entryFile)) == 0) {
                 cJSON_DeleteItemFromArray(tapArr, i);
 
                 reload();
