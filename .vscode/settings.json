@@ -5,7 +5,7 @@
         "${workspaceFolder}/Core/include/",
         "${workspaceFolder}/Framework/",
         "${workspaceFolder}/thirdParty/stb/",
-        "${workspaceFolder}/build/"
+        "${workspaceFolder}/build/uic/",
     ],
     "files.associations": {
         "qpushbutton": "cpp",
@@ -83,6 +83,13 @@
         "qmainwindow": "cpp",
         "qcoreapplication": "cpp",
         "qopenglwidget": "cpp",
-        "qopenglfunctions": "cpp"
+        "qopenglfunctions": "cpp",
+        "qtextstream": "cpp",
+        "qstring": "cpp",
+        "qtcpserver": "cpp",
+        "qtcpsocket": "cpp",
+        "qregexpvalidator": "cpp",
+        "qmessagebox": "cpp",
+        "qsequentialanimationgroup": "cpp"
     }
 }

@@ -35,7 +35,14 @@ This application starts from the perspective of **modifying the official SDK**, 
 
 ## Quick Start
 
-You can download the compiled binaries from the Release or compile them yourself.
+Obtain this repo & submodules:
+
+```bash
+git clone https://github.com/SSRVodka/Live2Desktop
+git submodule update --init --recursive
+```
+
+Then you can download the compiled binaries from the Release or compile them yourself.
 
 Before compiling, you need to prepare the following development environment:
 

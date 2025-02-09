@@ -14,7 +14,7 @@
 #include <QtWidgets/QPushButton>
 #include <QtWidgets/QSystemTrayIcon>
 
-#include "animeWidget.h"
+#include "gui/animeWidget.h"
 
 #include "ui_mainWindow.h"
 

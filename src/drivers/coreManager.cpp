@@ -1,10 +1,10 @@
 #include <AppOpenGLWrapper.hpp>
 
-#include "coreManager.h"
-#include "modelManager.h"
-#include "renderer.h"
-#include "textureManager.h"
-#include "tools.h"
+#include "drivers/coreManager.h"
+#include "drivers/modelManager.h"
+#include "drivers/renderer.h"
+#include "drivers/textureManager.h"
+#include "drivers/tools.h"
 
 using namespace Csm;
 

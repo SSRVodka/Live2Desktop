@@ -12,12 +12,12 @@
 #include <CubismModelSettingJson.hpp>
 
 
-#include "coreManager.h"
-#include "logger.h"
-#include "model.h"
-#include "modelParameters.h"
-#include "textureManager.h"
-#include "tools.h"
+#include "drivers/coreManager.h"
+#include "utils/logger.h"
+#include "drivers/model.h"
+#include "drivers/modelParameters.h"
+#include "drivers/textureManager.h"
+#include "drivers/tools.h"
 
 using namespace Live2D::Cubism::Framework;
 using namespace Live2D::Cubism::Framework::DefaultParameterId;

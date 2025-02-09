@@ -4,9 +4,9 @@
 #include <QtCore/QFile>
 #include <QtCore/QTextStream>
 
-#include "cJSON.h"
-#include "logger.h"
-#include "resourceLoader.h"
+#include "utils/cJSON.h"
+#include "utils/logger.h"
+#include "drivers/resourceLoader.h"
 
 
 bool resourceLoader::initialize() {

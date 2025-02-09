@@ -21,6 +21,15 @@ if(USE_SHARED_LIB)
         IMPORTED_LOCATION ${CORE_LIB_PREFIX}/${DLL_NAME}
         INTERFACE_INCLUDE_DIRECTORIES ${CORE_PATH}/include
     )
+    # Copy dynamic libraries after build
+    add_custom_command(
+      TARGET ${APP_NAME}
+      POST_BUILD
+      COMMAND
+        ${CMAKE_COMMAND} -E
+          copy ${CORE_LIB_PREFIX}/${DLL_NAME} $<TARGET_FILE_DIR:${APP_NAME}>
+      COMMENT "Copying ${CORE_LIB_PREFIX}/${DLL_NAME} to destination"
+    )
 else()
     # Import as static library.
     add_library(Live2DCubismCore STATIC IMPORTED)

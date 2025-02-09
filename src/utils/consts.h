@@ -20,3 +20,12 @@
 #define DEFAULT_FADE_OUT_TIME 0.5
 
 #define IDLE_SUFFIX " (idle)"
+
+/* --- Toast Bar Parameters --- */
+
+/* Unit: Millisecond */
+const int defaultDuration = 2000;
+const int scrollInDuration = 300;
+const int scrollOutDuration = 300;
+const int popupHeight = 60;
+const double maxOpacity = 1.0;

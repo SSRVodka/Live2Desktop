@@ -4,13 +4,13 @@
 
 #include <Rendering/CubismRenderer.hpp>
 
-#include "coreManager.h"
-#include "logger.h"
-#include "model.h"
-#include "modelManager.h"
-#include "modelParameters.h"
-#include "renderer.h"
-#include "resourceLoader.h"
+#include "drivers/coreManager.h"
+#include "utils/logger.h"
+#include "drivers/model.h"
+#include "drivers/modelManager.h"
+#include "drivers/modelParameters.h"
+#include "drivers/renderer.h"
+#include "drivers/resourceLoader.h"
 
 
 using namespace Csm;

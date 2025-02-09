@@ -2,8 +2,8 @@
 #include <QtGui/QMouseEvent>
 #include <QtWidgets/QApplication>
 
-#include "animeWidget.h"
-#include "coreManager.h"
+#include "gui/animeWidget.h"
+#include "drivers/coreManager.h"
 
 
 namespace {

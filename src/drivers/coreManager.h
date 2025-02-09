@@ -7,8 +7,8 @@
  */
 
 #pragma once
-#include "allocator.h"
-#include "animeWidget.h"
+#include "drivers/allocator.h"
+#include "gui/animeWidget.h"
 
 class Renderer;
 class TextureManager;

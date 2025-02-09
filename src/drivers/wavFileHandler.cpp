@@ -1,8 +1,8 @@
 #include <cmath>
 #include <cstdint>
 
-#include "tools.h"
-#include "wavFileHandler.h"
+#include "drivers/tools.h"
+#include "drivers/wavFileHandler.h"
 
 
 WavFileHandler::WavFileHandler()

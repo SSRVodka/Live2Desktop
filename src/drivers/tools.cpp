@@ -5,8 +5,8 @@
 
 #include <Model/CubismMoc.hpp>
 
-#include "logger.h"
-#include "tools.h"
+#include "drivers/tools.h"
+#include "utils/logger.h"
 
 #ifdef _WIN32
 #include <Windows.h>

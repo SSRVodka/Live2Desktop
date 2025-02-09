@@ -3,8 +3,8 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 
-#include "textureManager.h"
-#include "tools.h"
+#include "drivers/textureManager.h"
+#include "drivers/tools.h"
 
 TextureManager::TextureManager() {
 }

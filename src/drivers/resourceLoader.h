@@ -10,7 +10,7 @@
 
 #include <QtCore/QString>
 
-#include "consts.h"
+#include "utils/consts.h"
 
 class resourceLoader {
 public:

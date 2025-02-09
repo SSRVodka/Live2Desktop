@@ -1,6 +1,6 @@
 #include <math.h>
 
-#include "eventHandler.h"
+#include "drivers/eventHandler.h"
 
 TouchManager::TouchManager()
     : _startY(0.0f)

@@ -58,6 +58,7 @@ if(${USE_SHARED_LIB})
         POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy ${CORE_LIB_PREFIX}/Live2DCubismCore.dll $<TARGET_FILE_DIR:${APP_NAME}>/
         COMMAND ${CMAKE_COMMAND} -E copy ${CORE_LIB_PREFIX}/Live2DCubismCore.lib $<TARGET_FILE_DIR:${APP_NAME}>/
+        COMMENT "Copying ${CORE_LIB_PREFIX}/Live2DCubismCore.{dll,lib} to destination"
     )
 else()
     # Import as static library.

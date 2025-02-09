@@ -10,9 +10,9 @@
 #include <QtCore/QDir>
 #include <QtWidgets/QApplication>
 
-#include "logger.h"
-#include "mainWindow.h"
-#include "resourceLoader.h"
+#include "utils/logger.h"
+#include "gui/mainWindow.h"
+#include "drivers/resourceLoader.h"
 
 
 int main(int argc, char *argv[]) {

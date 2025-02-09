@@ -4,12 +4,14 @@
 #include <QtWidgets/QMessageBox>
 #include <QtGui/QMouseEvent>
 
-#include "configDialog.h"
-#include "consts.h"
-#include "logger.h"
-#include "mainWindow.h"
-#include "modelManager.h"
-#include "resourceLoader.h"
+#include "gui/configDialog.h"
+#include "utils/consts.h"
+#include "utils/logger.h"
+#include "gui/mainWindow.h"
+#include "drivers/modelManager.h"
+#include "drivers/resourceLoader.h"
+
+#include "modules/chat/gui/chatBox.h"
 
 #define PREPARE_FOR_POPUP setWindowFlags(windowFlags() & ~Qt::Tool); show();
 #define HIDE_POPUP setWindowFlags(windowFlags() | Qt::Tool); show();
@@ -223,7 +225,8 @@ void mainWindow::config() {
 void mainWindow::chatBegin() {
     // TODO
     PREPARE_FOR_POPUP;
-    QMessageBox::information(0, appName, "Sorry, under maintenance.");
+    ChatBox chatBox(0);
+    int res = chatBox.exec();
     HIDE_POPUP;
 }
 

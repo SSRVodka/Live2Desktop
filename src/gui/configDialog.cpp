@@ -3,10 +3,10 @@
 #include <QtWidgets/QFileDialog>
 #include <QtWidgets/QMessageBox>
 
-#include "configDialog.h"
-#include "consts.h"
-#include "cJSON.h"
-#include "logger.h"
+#include "gui/configDialog.h"
+#include "utils/consts.h"
+#include "utils/cJSON.h"
+#include "utils/logger.h"
 
 /* Caller should always release the allocated space. */
 static char* QString2char(const QString& str) {

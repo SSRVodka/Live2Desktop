@@ -38,7 +38,14 @@
 
 ## 快速开始
 
-您可以从 Release 中下载已经编译好的二进制文件，也可以自行编译。
+下拉本仓库及子模块：
+
+```bash
+git clone https://github.com/SSRVodka/Live2Desktop
+git submodule update --init --recursive
+```
+
+接下来，您可以从 Release 中下载已经编译好的二进制文件，也可以自行编译。
 
 在编译前，您需要准备以下开发环境：
 

@@ -15,7 +15,7 @@
 #include <CubismFramework.hpp>
 #include <ICubismModelSetting.hpp>
 
-#include "wavFileHandler.h"
+#include "drivers/wavFileHandler.h"
 
 /**
  * @class Model

@@ -1,15 +1,15 @@
 #include <math.h>
 #include <string>
 
-#include "coreManager.h"
-#include "eventHandler.h"
-#include "logger.h"
-#include "model.h"
-#include "modelManager.h"
-#include "modelParameters.h"
-#include "renderer.h"
-#include "textureManager.h"
-#include "tools.h"
+#include "drivers/coreManager.h"
+#include "drivers/eventHandler.h"
+#include "utils/logger.h"
+#include "drivers/model.h"
+#include "drivers/modelManager.h"
+#include "drivers/modelParameters.h"
+#include "drivers/renderer.h"
+#include "drivers/textureManager.h"
+#include "drivers/tools.h"
 
 using namespace std;
 using namespace ModelParameters;

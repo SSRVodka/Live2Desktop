@@ -1,8 +1,8 @@
 #include <string>
 #include <ctime>
 
-#include "consts.h"
-#include "logger.h"
+#include "utils/consts.h"
+#include "utils/logger.h"
 
 #define CTRL_RESET "0"
 #define CTRL_BOLD "1"
