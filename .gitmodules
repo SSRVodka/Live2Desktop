@@ -1,0 +1,9 @@
+[submodule "thirdParty/stb"]
+	path = thirdParty/stb
+	url = https://github.com/nothings/stb
+[submodule "thirdParty/httplib.cpp"]
+	path = thirdParty/httplib.cpp
+	url = https://github.com/yhirose/cpp-httplib.git
+[submodule "thirdParty/sv.cpp"]
+	path = thirdParty/sv.cpp
+	url = https://github.com/SSRVodka/sense-voice.cpp
