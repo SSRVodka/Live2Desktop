@@ -7,3 +7,9 @@ modelRepo/*
 # !Resources/config.json
 # Test model
 # !Resources/Hiyori
+
+
+# GGML stuff
+*.bin
+*.gguf
+*.wav

@@ -6,7 +6,7 @@ if(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
 endif()
 
 # Add Cubism Core.
-if(USE_SHARED_LIB)
+if(BUILD_SHARED_LIBS)
     # Import as shared library.
     add_library(Live2DCubismCore SHARED IMPORTED)
     # Find library path.
@@ -20,6 +20,15 @@ if(USE_SHARED_LIB)
       PROPERTIES
         IMPORTED_LOCATION ${CORE_LIB_PREFIX}/${DLL_NAME}
         INTERFACE_INCLUDE_DIRECTORIES ${CORE_PATH}/include
+    )
+    # Copy dynamic libraries after build
+    add_custom_command(
+      TARGET ${APP_NAME}
+      POST_BUILD
+      COMMAND
+        ${CMAKE_COMMAND} -E
+          copy ${CORE_LIB_PREFIX}/${DLL_NAME} $<TARGET_FILE_DIR:${APP_NAME}>/lib
+      COMMENT "Copying ${CORE_LIB_PREFIX}/${DLL_NAME} to destination"
     )
 else()
     # Import as static library.

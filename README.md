@@ -35,7 +35,14 @@ This application starts from the perspective of **modifying the official SDK**, 
 
 ## Quick Start
 
-You can download the compiled binaries from the Release or compile them yourself.
+Obtain this repo & submodules:
+
+```bash
+git clone https://github.com/SSRVodka/Live2Desktop
+git submodule sync && git submodule update --init --recursive
+```
+
+Then you can download the compiled binaries from the Release or compile them yourself.
 
 Before compiling, you need to prepare the following development environment:
 
@@ -65,10 +72,10 @@ cd build
 make -j
 ```
 
-The `USE_SHARED_LIB` option is also provided, which allows you to choose whether to link a third-party dynamic or static library, with the default being static. For example:
+The `BUILD_SHARED_LIBS` option is also provided, which allows you to choose whether to link a third-party dynamic or static library, with the default being static. For example:
 
 ```bash
-cmake -B build -DUSE_SHARED_LIB=ON
+cmake -B build -DBUILD_SHARED_LIBS=ON
 cd build
 make -j
 ```

@@ -38,7 +38,14 @@
 
 ## 快速开始
 
-您可以从 Release 中下载已经编译好的二进制文件，也可以自行编译。
+下拉本仓库及子模块：
+
+```bash
+git clone https://github.com/SSRVodka/Live2Desktop
+git submodule sync && git submodule update --init --recursive
+```
+
+接下来，您可以从 Release 中下载已经编译好的二进制文件，也可以自行编译。
 
 在编译前，您需要准备以下开发环境：
 
@@ -68,10 +75,10 @@ cd build
 make -j
 ```
 
-此外还提供 `USE_SHARED_LIB` 选项，您可以选择链接第三方的动态链接库，还是静态链接库，默认静态链接库。例如：
+此外还提供 `BUILD_SHARED_LIBS` 选项，您可以选择链接第三方的动态链接库，还是静态链接库，默认静态链接库。例如：
 
 ```bash
-cmake -B build -DUSE_SHARED_LIB=ON
+cmake -B build -DBUILD_SHARED_LIBS=ON
 cd build
 make -j
 ```

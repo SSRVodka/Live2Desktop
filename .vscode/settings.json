@@ -4,8 +4,10 @@
         "${workspaceFolder}/src/",
         "${workspaceFolder}/Core/include/",
         "${workspaceFolder}/Framework/",
-        "${workspaceFolder}/thirdParty/stb/",
-        "${workspaceFolder}/build/"
+        "${workspaceFolder}/thirdParty/",
+        "${workspaceFolder}/build/uic/",
+        
+        "${workspaceFolder}/thirdParty/whisper.cpp/ggml/include/",
     ],
     "files.associations": {
         "qpushbutton": "cpp",
@@ -83,6 +85,25 @@
         "qmainwindow": "cpp",
         "qcoreapplication": "cpp",
         "qopenglwidget": "cpp",
-        "qopenglfunctions": "cpp"
+        "qopenglfunctions": "cpp",
+        "qtextstream": "cpp",
+        "qstring": "cpp",
+        "qtcpserver": "cpp",
+        "qtcpsocket": "cpp",
+        "qregexpvalidator": "cpp",
+        "qmessagebox": "cpp",
+        "qsequentialanimationgroup": "cpp",
+        "qtimer": "cpp",
+        "any": "cpp",
+        "bitset": "cpp",
+        "charconv": "cpp",
+        "complex": "cpp",
+        "csignal": "cpp",
+        "forward_list": "cpp",
+        "set": "cpp",
+        "regex": "cpp",
+        "ranges": "cpp",
+        "span": "cpp",
+        "valarray": "cpp"
     }
 }
