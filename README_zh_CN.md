@@ -62,7 +62,7 @@
 
 ## 配置对话模型
 
-任意支持 OpenAI API 的模型服务均可。请修改仓库目录下的 `config/mcp_config.json` 再编译（CMake 会将它复制到运行时目录），或者编译后再修改 `build/config/mcp_config.json`；
+任意支持 OpenAI API 的模型服务均可。请修改仓库目录下的 `config/mcp_config.json` 再编译（CMake 会将它复制到运行时目录），或者编译后再修改 `build/bin/config/mcp_config.json`；
 
 作出任何修改后记得重新编译。
 
