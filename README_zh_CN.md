@@ -5,6 +5,40 @@
 **一个基于 Qt 框架的 Live2D 模型展示、互动的桌面应用。**
 
 
+## 注意
+
+当前分支正在开发，且暂时没有在 Windows 平台测试。如果希望更稳定的版本，请回到 `stable` 分支。
+
+
+## 功能
+
+- Live2D 展示和有限的互动；
+
+    - 添加模型：请自行向 `Resources` 目录下放置模型目录（源码中给了 `Hiyori` 作为例子），在 `Resources/config.json` 中手动添加模型名称即可。
+
+    - 模型的表情、动作管理：模型的表情、动作等信息管理见程序托盘 `settings` 图形界面。
+
+    - 模型几何性质调整：模型展示的大小、位置参见程序托盘 `Geometry Edit`。
+
+    - 模型互动：暂时支持拖动、轻点两种动作。在程序的几何区域内（可以通过 `Geometry Edit` 自行编辑）拖动鼠标可以吸引模型视线；轻点模型随机展示表情、动作。
+
+- 与 Client 语音对话、AI Agent 输出转语音（需要配置，参见下文）；
+
+- 大语言模型对话（需要配置，参见下文）；
+
+- 无需打开对话框，全局热键录音（CTRL+SHIFT+Q，再次按下停止并提交）、大模型输出语音回复。
+
+
+## 未来可能会支持的
+
+- MCP (Model Context Protocol) 适配，或者其他实现多模态、工具调用的方法；
+
+- 图形化设置而不是手动编辑这些部分的 JSON 文件：语音转文字、文字转语音、AI 对话；
+
+- 数字人；
+
+- 更多内容请参见 [TODO 文件](./TODO);
+
 
 ## 更新日志
 
@@ -14,7 +48,7 @@
 
 - 2024/08/19：更新 Live2Desktop 的 `Framework/Rendering`，Framework 代码接口与 `5-r.1` 完成同步，移除备份目录；
 
-
+- 2025/03/28：更新语音、聊天功能（仍在测试开发中）；
 
 
 ## 背景
@@ -25,15 +59,34 @@
 
 本应用从**修改官方 SDK 的角度**出发，进行诸如将 glew 替换为 Qt 内置 `OpenGL` 函数之类的操作，为 Live2D 在 Qt 框架下的开发提供一种全新的开发途径。
 
-## 功能
 
-- 添加模型：请自行向 `Resources` 目录下放置模型目录（源码中给了 `Hiyori` 作为例子），在 `Resources/config.json` 中手动添加模型名称即可。
+## 配置对话模型
 
-- 模型的表情、动作管理：模型的表情、动作等信息管理见程序托盘 `settings` 图形界面。
+任意支持 OpenAI API 的模型服务均可。请修改仓库目录下的 `config/mcp_config.json` 再编译（CMake 会将它复制到运行时目录），或者编译后再修改 `build/config/mcp_config.json`；
 
-- 模型几何性质调整：模型展示的大小、位置参见程序托盘 `Geometry Edit`。
+作出任何修改后记得重新编译。
 
-- 模型互动：暂时支持拖动、轻点两种动作。在程序的几何区域内（可以通过 `Geometry Edit` 自行编辑）拖动鼠标可以吸引模型视线；轻点模型随机展示表情、动作。
+由于项目正在开发，且个人时间不充足，因此暂时不支持图形化设置，请见谅。
+
+## 配置模型对话时语音转文字、文字转语音
+
+出于性能考虑，本项目使用 sense-voice 本地推理进行语音转文字。
+
+由于本项目还在开发中，因此你需要手动执行 `./get_model.sh` 或者从 [huggingface](https://huggingface.co/lovemefan/sense-voice-gguf) 上手动下载任一模型，并放到 `build/bin/models` 中（如果没有则手动创建）。
+
+然后在 `config/module_config.json` 中修改 `stt -> model` 中的文件名替换为你的模型文件名称。
+
+现在就配置好了语音转文字功能。
+
+本项目目前使用 web service 的方案支持文字转语音。你可以选择任意一个遵循 OpenAI API 的语音转文字的模型服务，将完整 URL 和 API 等信息填写入 `config/module_config.json` 的 `tts` 子项中。
+
+> 例如：你可以使用 [Kokoro FastAPI](https://github.com/remsky/Kokoro-FastAPI.git) 然后用 docker 容器跑一个文字转语音的模型，并且将它的服务信息配置在上面的文件中。
+
+现在就配置好了文字转语音功能。
+
+作出任何修改后记得重新编译。
+
+预计未来将以上两种统一处理，无需再手动操作。
 
 
 ## 快速开始
@@ -67,7 +120,7 @@ cmake -B build && cd build && make -j
 cmake -B build && cmake --build build
 ```
 
-默认情况下 `CMAKE_BUILD_TYPE=Release`。您可以传入 `-DDEBUG=ON` 的宏来编译 Debug 版本，例如：
+默认情况下 `CMAKE_BUILD_TYPE=Release`。您可以传入 `-DDEBUG=ON` 的宏来编译 Debug 版本，加入了 GDB 调试符号。例如：
 
 ```bash
 cmake -B build -DDEBUG=ON
@@ -75,15 +128,12 @@ cd build
 make -j
 ```
 
-此外还提供 `BUILD_SHARED_LIBS` 选项，您可以选择链接第三方的动态链接库，还是静态链接库，默认静态链接库。例如：
+本项目引用了 ggml，如果您的机器支持 BLAS 加速，可以加入参数 `-DGGML_BLAS=ON`。
 
-```bash
-cmake -B build -DBUILD_SHARED_LIBS=ON
-cd build
-make -j
-```
+默认以动态链接库的形式编译依赖库。如果想要更换为静态链接库，请自行调试。
 
-默认程序输出位置在 `${CMAKE_BINARY_DIR}/bin/` 目录下。
+默认程序输出位置在 `${CMAKE_BINARY_DIR}/bin/` 目录下，链接库输出在 `${CMAKE_BINARY_DIR}/lib/` 目录下。
+
 
 ## 兼容性测试
 
@@ -96,3 +146,11 @@ make -j
 源文件（`*.h/*.hpp`）开头注明 `Live2D Cubism Inc.` 的源码解释权归该公司所有。
 
 注明 `@Author SSRVodka` 的遵循本项目许可证。
+
+## 致谢
+
+- [nlohmann/json.hpp](https://github.com/nlohmann/json)
+
+- [cpp-httplib](https://github.com/yhirose/cpp-httplib)
+
+- [ggml](https://github.com/ggml-org/ggml)

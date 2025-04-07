@@ -6,8 +6,6 @@
         "${workspaceFolder}/Framework/",
         "${workspaceFolder}/thirdParty/",
         "${workspaceFolder}/build/uic/",
-        
-        "${workspaceFolder}/thirdParty/whisper.cpp/ggml/include/",
     ],
     "files.associations": {
         "qpushbutton": "cpp",
@@ -104,6 +102,27 @@
         "regex": "cpp",
         "ranges": "cpp",
         "span": "cpp",
-        "valarray": "cpp"
+        "valarray": "cpp",
+        "qnetworkaccessmanager": "cpp",
+        "qnetworkrequest": "cpp",
+        "buffer": "cpp",
+        "executor": "cpp",
+        "internet": "cpp",
+        "io_context": "cpp",
+        "netfwd": "cpp",
+        "socket": "cpp",
+        "timer": "cpp",
+        "qthread": "cpp",
+        "qmutex": "cpp",
+        "qhostaddress": "cpp",
+        "qnetworkreply": "cpp",
+        "qeventloop": "cpp",
+        "qfile": "cpp",
+        "qlabel": "cpp",
+        "qatomicint": "cpp",
+        "qjsondocument": "cpp",
+        "qjsonobject": "cpp",
+        "qobject": "cpp",
+        "qmediaplayer": "cpp"
     }
 }

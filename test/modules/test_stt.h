@@ -1,28 +1,45 @@
 #pragma once
 
 #include <QtCore/QObject>
-#include <unistd.h>
+#include <QtTest/QTest>
+#include <queue>
+#include <mutex>
+
+#include "modules/audio/audio_handler.h"
 #include "modules/stt/client.h"
 
 using namespace STT;
 
-class TestSTT: public QObject {
+class TestSTT : public QObject {
     Q_OBJECT
 public:
-    bool termFlag;
-
-    TestSTT(): termFlag(false), pass(0), client("127.0.0.1", 12345) {}
+    TestSTT();
     ~TestSTT() {}
 
+    struct _server_res_t {
+        QString text;
+        bool valid;
+    };
+
+private slots:
+    void initTestCase();
+    void cleanupTestCase();
     void testNoServer();
-    void report();
+    void testNormal();
+    void testRecorder();
+
 protected slots:
-    void onReplyArrived_testNoServer(bool valid, QString transcribed_text);
+    void onReplyArrived(bool valid, QString transcribed_text);
+
 private:
+    std::queue<_server_res_t> msg_queue;
+    std::mutex msg_mutex;
+    static constexpr int TEST_UNIT_TIMEOUT = 10000; // ms
+    static constexpr int TEST_RECORD_TIME = 10;  // s
 
     static constexpr int TESTLOG_BUFSIZE = 4096;
     char logbuf[TESTLOG_BUFSIZE];
-    int pass;
-    static constexpr int total = 1;
-    Client client;
+    
+    Client *client;
+    AudioHandler *handler;
 };

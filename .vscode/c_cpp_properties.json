@@ -5,10 +5,12 @@
             "includePath": [
                 "${default}"
             ],
-            "defines": [],
+            "defines": [
+                "ASRLIB_USE_QT5"
+            ],
             "compilerPath": "/usr/bin/gcc",
             "cStandard": "c17",
-            "cppStandard": "gnu++14",
+            "cppStandard": "gnu++17",
             "intelliSenseMode": "linux-gcc-x64"
         }
     ],

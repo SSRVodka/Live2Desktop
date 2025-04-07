@@ -6,6 +6,42 @@
 
 <a href="README_zh_CN.md">中文 README</a>
 
+
+## ⚠️ Note: WIP
+
+The current branch is under development and has not been tested on Windows OS. If you want a more stable version, go back to the `stable` branch.
+
+
+## Functionality 
+
+- Live2D display and limited interaction; 
+    - Adding models: Please place the model directory in the `Resources` directory (`Hiyori` is given as an example in the source code), and add the model name manually in `Resources/config.json`.
+
+    - Managing model expressions and actions: Managing model expressions and actions can be found in the `settings` graphical interface in the program tray.
+
+    - Model Geometry Adjustment: See `Geometry Edit` in the program tray for the size and position of the model display.
+
+    - Model interaction: For the time being, two types of actions are supported: dragging and tapping. Dragging the mouse in the geometry area of the program (which can be edited by `Geometry Edit`) can attract the model's attention; tapping the model to display random expressions and actions.
+
+- Speech to Client, AI Agent output to speech (configuration required, see below); 
+
+- OpenAI Chat (configuration required, see below); 
+
+- No need to open a dialog box, global hotkey recording (CTRL+SHIFT+Q, press again to stop and submit), large model output voice response.
+
+
+## Possible future support 
+
+- MCP (Model Context Protocol) adaption, or other ways to implement multimodal, function calling; 
+
+- Graphically set up rather than manually editing the JSON files for these sections: speech to text, text to speech, AI conversations;
+
+- Digital People; 
+
+- More in [TODO file](./TODO).
+
+
+
 ## Update Log
 
 - 2024/02/14: Live2Desktop de-coupled Live2D official `glfw / glew` and migrated to Qt Platform (`QOpenGLWidget`);
@@ -13,6 +49,8 @@
 - 2024/07/29: Updated Live2Desktop's Live2D Core to `5-r.1` version. May support moc3 as `5.0`, not tested.
 
 - 2024/08/19: Updated `Framework/Rendering` of Live2Desktop, synchronization of Framework code interface with `5-r.1` completed, backup directory removed.
+
+- 2025/03/28: Updated voice, chat features (WIP).
 
 ## Background
 
@@ -22,15 +60,34 @@ In addition, the official Cubism SDK uses glew / glfw linked libraries, **not on
 
 This application starts from the perspective of **modifying the official SDK**, and does things like replacing glew with Qt's built-in `OpenGL` functions, which provides a new way to develop Live2D in the Qt framework.
 
-## Functions
 
-- Adding model: Please place the model directory in `Resources` directory by yourself (`Hiyori` is given as an example in the source code), and add the model name manually in `Resources/config.json`.
+## Configure the Chat Model 
 
-- Managing model expressions and actions: Managing model expressions and actions can be found in the `settings` graphical interface in the program tray.
+Any model service that supports the OpenAI API will work. Please modify `config/mcp_config.json` in the repository directory before compiling (CMake will copy it to the runtime directory), or modify `build/bin/config/mcp_config.json` after compiling;
 
-- Model Geometry Adjustment: See `Geometry Edit` in the program tray for the size and position of the model display.
+Don't forget to compile the project after modifications.
 
-- Model interaction: For the time being, two types of actions are supported: dragging and tapping. Dragging the mouse in the geometry area of the program (which can be edited by `Geometry Edit`) can attract the model's attention; tapping the model will show random expressions and actions.
+As the project is under development and I don't have enough time to write GUI, please forgive me :(
+
+## Configure speech-to-text and text-to-speech for Chat Model 
+
+For performance reasons, this project uses sense-voice local inference for speech-to-text.
+
+Since this project is still under development, you need to manually execute `./get_model.sh` or manually download any model from [huggingface](https://huggingface.co/lovemefan/sense-voice-gguf) and put it into `build/bin/models` (or create it manually if it doesn't exist).
+
+Then in `config/module_config.json` change the filename in `stt -> model` to replace it with the name of your model file.
+
+Now the speech-to-text feature is configured.
+
+This project currently uses a web service solution to support text-to-speech. You can choose any speech-to-text model service that follows the OpenAI API, and fill in the `tts` subsection of `config/module_config.json` with the full URL and API information.
+
+> Example: you can use [Kokoro FastAPI](https://github.com/remsky/Kokoro-FastAPI.git) to run a docker container on your machine, and fill in the configurations.
+
+The text-to-speech functionality is now configured.
+
+It is expected that in the future, both of these will be handled in a unified manner, so you won't need to do this manually.
+
+Don't forget to compile the project after modifications.
 
 
 ## Quick Start
@@ -64,23 +121,20 @@ cmake -B build && cd build && make -j
 cmake -B build && cmake --build build
 ```
 
-By default `CMAKE_BUILD_TYPE=Release`. You can pass in the `-DDEBUG=ON` macro to build the Debug version, for example:
+By default `CMAKE_BUILD_TYPE=Release`. You can pass in the `-DDEBUG=ON` macro to build the Debug version, adding the GDB debugging symbols. For example: 
 
-```bash
-cmake -B build -DDEBUG=ON
-cd build
-make -j
+```bash 
+cmake -B build -DDEBUG=ON 
+cd build 
+make -j 
 ```
 
-The `BUILD_SHARED_LIBS` option is also provided, which allows you to choose whether to link a third-party dynamic or static library, with the default being static. For example:
+This project references ggml, and if your machine supports BLAS, you can add the argument `-DGGML_BLAS=ON`.
 
-```bash
-cmake -B build -DBUILD_SHARED_LIBS=ON
-cd build
-make -j
-```
+Dependency libraries are compiled as dynamic link libraries by default. If you want to replace it with a static library, please use `-DBUILD_SHARED_LIBS=OFF` and debug it yourself.
 
-The default program output is in the `${CMAKE_BINARY_DIR}/bin/` directory.
+The default program output is in `${CMAKE_BINARY_DIR}/bin/` directory, and the link library output is in `${CMAKE_BINARY_DIR}/lib/` directory.
+
 
 ## Compatibility Test
 
@@ -94,4 +148,13 @@ The default program output is in the `${CMAKE_BINARY_DIR}/bin/` directory.
 The source files (`*.h/*.hpp`) begin with the statement `Live2D Cubism Inc.` The source code is copyrighted by that company.
 
 Statements `@Author SSRVodka` follow the license of this project.
+
+
+## Credits
+
+- [nlohmann/json.hpp](https://github.com/nlohmann/json)
+
+- [cpp-httplib](https://github.com/yhirose/cpp-httplib)
+
+- [ggml](https://github.com/ggml-org/ggml)
 

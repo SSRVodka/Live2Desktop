@@ -4,14 +4,21 @@
 #include <QtWidgets/QMessageBox>
 #include <QtGui/QMouseEvent>
 
+#include "config/mcp_config.h"
+#include "config/module_config.h"
+
+#include "gui/animeWidget.h"
 #include "gui/configDialog.h"
-#include "utils/consts.h"
-#include "utils/logger.h"
 #include "gui/mainWindow.h"
 #include "drivers/modelManager.h"
 #include "drivers/resourceLoader.h"
 
-#include "modules/chat/gui/chatBox.h"
+#include "gui/chatBox.h"
+
+#include "modules/audio/audio_recorder.h"
+#include "modules/hotkey/shortcut_handler.h"
+
+#include "utils/logger.h"
 
 #define PREPARE_FOR_POPUP setWindowFlags(windowFlags() & ~Qt::Tool); show();
 #define HIDE_POPUP setWindowFlags(windowFlags() | Qt::Tool); show();
@@ -41,11 +48,17 @@ mainWindow::mainWindow(QApplication* mapp)
 
     loadSettings();
     loadStyleSheet();
+
+    initClients();
+    initGlobalHotKey();
 }
 
 mainWindow::~mainWindow() {
     writeSettings();
     stdLogger.Debug("Geometry configurations saved.");
+
+    delete this->chat_client;
+    delete this->audio_handler;
 
     resourceLoader::get_instance().release();
     stdLogger.Info("App exited normally.");
@@ -159,7 +172,7 @@ void mainWindow::switchClicked(QAction* curAct) {
                 (Csm::csmChar*)item.toStdString().c_str()
             )
         ) {
-            QSystemTrayIcon::MessageIcon msgIcon = QSystemTrayIcon::MessageIcon(2);
+            QSystemTrayIcon::MessageIcon msgIcon = QSystemTrayIcon::MessageIcon::Warning;
             this->systemTray->showMessage(
                 appName,
                 tr("Failed to switch to selected model. Load random available model instead."),
@@ -223,9 +236,13 @@ void mainWindow::config() {
 }
 
 void mainWindow::chatBegin() {
-    // TODO
+    if (this->is_keyboard_recording) {
+        stdLogger.Exception("please stop your keyboard recording first");
+        return;
+    }
+
     PREPARE_FOR_POPUP;
-    ChatBox chatBox(0);
+    ChatBox chatBox(this);
     int res = chatBox.exec();
     HIDE_POPUP;
 }
@@ -249,11 +266,52 @@ void mainWindow::closeEvent(QCloseEvent* e) {
 void mainWindow::writeSettings() {
     QSettings settings("SSRVodka Inc.", appName);
     settings.setValue("geometry", saveGeometry());
+
+    module_config_manager->set_asr_params(this->stt_params);
+    module_config_manager->set_tts_params(this->tts_params);
+    if (module_config_manager->save()) {
+        stdLogger.Info("Module configurations saved");
+    } else {
+        stdLogger.Exception("Failed to save module configurations");
+    }
+
+    // TODO: MCP Config
 }
 
 void mainWindow::loadSettings() {
     QSettings settings("SSRVodka Inc.", appName);
     restoreGeometry(settings.value("geometry").toByteArray());
+
+    QSystemTrayIcon::MessageIcon msgIcon = QSystemTrayIcon::MessageIcon::Warning;
+    std::string loadMsg;
+    // load from config
+    module_config_manager = ModuleConfigManager::get_instance(MODULE_CONFIG_FILE_PATH);
+    if (module_config_manager->load()) {
+        this->stt_params = module_config_manager->get_asr_params();
+        loadMsg = "load STT model (local inference): " + this->stt_params.model;
+        stdLogger.Info(loadMsg);
+        this->tts_params = module_config_manager->get_tts_params();
+        loadMsg = "load TTS model service ep: " + this->tts_params.server_url;
+        stdLogger.Info(loadMsg);
+    } else {
+        stdLogger.Exception("Failed to load module configurations");
+        this->systemTray->showMessage(
+            appName,
+            tr("Failed to load module configurations"),
+            msgIcon, 5000
+        );
+    }
+
+    // MCP config
+    mcp_config = MCPConfig::getInstance();
+    if (!mcp_config->load({MCP_CONFIG_FILE_PATH})) {
+        stdLogger.Exception("Failed to load MCP configurations");
+        this->systemTray->showMessage(
+            appName,
+            tr("Failed to load MCP configurations"),
+            msgIcon, 5000
+        );
+    }
 }
 
 void mainWindow::loadStyleSheet() {
@@ -263,7 +321,7 @@ void mainWindow::loadStyleSheet() {
     	this->setStyleSheet(styleSheet);
     	file.close();
 	} else {
-        QSystemTrayIcon::MessageIcon msgIcon = QSystemTrayIcon::MessageIcon(2);
+        QSystemTrayIcon::MessageIcon msgIcon = QSystemTrayIcon::MessageIcon::Warning;
         this->systemTray->showMessage(
             appName,
             tr("Failed to load page style sheet."),
@@ -272,11 +330,109 @@ void mainWindow::loadStyleSheet() {
     }
 }
 
+void mainWindow::initClients() {
+    this->audio_handler = new AudioHandler;
+    this->chat_client = new Chat::Client;
+    this->is_receiving = false;
+    this->is_recording = false;
+
+    // naive implementation: read JSON file directly
+
+    // preparing for client parameters
+    this->audio_handler->set_stt_params(this->stt_params);
+    this->audio_handler->set_tts_params(this->tts_params);
+    Chat::Client::chat_params_t cp;
+    std::string chat_url = this->mcp_config->llm.base_url.value_or("") + "/chat/completions";
+    cp.server_url = chat_url.data();
+    cp.api_key = this->mcp_config->llm.api_key.value_or("").data();
+    cp.model = this->mcp_config->llm.model.data();
+    cp.system_prompt = this->mcp_config->system_prompt.data();
+    this->chat_client->setChatParams(cp);
+    this->chat_client->setTimeout(120000);
+
+    connect(this->audio_handler, SIGNAL(stt_reply(bool,QString)),
+        this, SLOT(recv_stt_reply(bool, QString)));
+    connect(this->audio_handler, SIGNAL(tts_reply(bool,QString)),
+        this, SLOT(recv_tts_reply(bool, QString)));
+    connect(this->chat_client, SIGNAL(asyncResponseReceived(const QString&)),
+        this, SLOT(recv_chat_reply(QString)));
+    connect(this->chat_client, SIGNAL(errorOccurred(const QString&)),
+        this, SLOT(recv_chat_error(QString)));
+}
+
+void mainWindow::initGlobalHotKey() {
+    GlobalHotKeyHandler::hotkey = XK_Q;
+    this->hotkey_handler = new GlobalHotKeyHandler;
+    this->is_keyboard_recording = false;
+
+    connect(this->hotkey_handler, SIGNAL(hotKeyActivate()),
+        this, SLOT(toggle_keyboard_record()));
+}
+void mainWindow::toggle_keyboard_record() {
+    if (this->is_recording) return; // conflict
+    QSystemTrayIcon::MessageIcon msgIcon = QSystemTrayIcon::MessageIcon::Information;
+
+    if (this->is_keyboard_recording) {
+        this->is_keyboard_recording = false;
+        QString fn = this->audio_handler->get_recorder_unsafe_ptr()->record_stop();
+        if (fn.isEmpty()) {
+            msgIcon = QSystemTrayIcon::MessageIcon::Warning;
+            stdLogger.Exception("failed to record: recorder error");
+            this->systemTray->showMessage(
+                appName,
+                tr("failed to record: recorder error"),
+                msgIcon, 5000
+            );
+            return;
+        }
+        this->audio_handler->stt_request(fn);
+    } else {
+        this->is_keyboard_recording = true;
+        this->audio_handler->get_recorder_unsafe_ptr()->record();
+        this->systemTray->showMessage(
+            appName,
+            tr("start audio recording"),
+            msgIcon, 5000
+        );
+    }
+}
+void mainWindow::recv_stt_reply(bool valid, QString transcribed_text) {
+    // whatever it comes from (keyboard or chatbox), just send it!
+    if ((valid && transcribed_text.isEmpty()) || !valid) {
+        stdLogger.Warning("empty speech text from STT client");
+        return;
+    }
+    this->is_receiving = true;
+    this->chat_client->sendMessageAsync(transcribed_text);
+}
+void mainWindow::recv_tts_reply(bool success, QString msg) {
+    if (success) {
+        // play sound from file
+        stdLogger.Info("playing generated audio");
+        this->audio_handler->get_recorder_unsafe_ptr()->play(this->last_tts_pending_audio_file);
+    } else {
+        stdLogger.Exception("failed to play audio '"
+            + this->last_tts_pending_audio_file.toStdString()
+            + "' due to: " + msg.toStdString());
+    }
+}
+void mainWindow::recv_chat_reply(QString text) {
+    this->is_receiving = false;
+    QString gen_audio_file = this->audio_handler->tts_request(text);
+    // we don't care much about exception (only log), because sound is not important :)
+    this->last_tts_pending_audio_file = gen_audio_file;
+}
+void mainWindow::recv_chat_error(QString msg) {
+    this->is_receiving = false;
+    stdLogger.Exception("failed to retrieve response message due to client error: "
+        + msg.toStdString());
+}
+
 void mainWindow::aboutAuthor() {
     PREPARE_FOR_POPUP;
     QMessageBox::about(0, tr("About me & my program"),
     QString("<h2>%1</h2>"
-        "<p>Copyright &copy; 2023 SSRVodka Inc. "
+        "<p>Copyright &copy; 2023-2025 SSRVodka Inc. "
         "%1 is a small application that "
         "demonstrates numerous Qt classes, "
         "which is written by C++/Qt.</p>"

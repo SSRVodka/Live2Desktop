@@ -56,8 +56,8 @@ if(${BUILD_SHARED_LIBS})
     add_custom_command(
         TARGET ${APP_NAME}
         POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy ${CORE_LIB_PREFIX}/Live2DCubismCore.dll $<TARGET_FILE_DIR:${APP_NAME}>/lib
-        COMMAND ${CMAKE_COMMAND} -E copy ${CORE_LIB_PREFIX}/Live2DCubismCore.lib $<TARGET_FILE_DIR:${APP_NAME}>/lib
+        COMMAND ${CMAKE_COMMAND} -E copy ${CORE_LIB_PREFIX}/Live2DCubismCore.dll ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}
+        COMMAND ${CMAKE_COMMAND} -E copy ${CORE_LIB_PREFIX}/Live2DCubismCore.lib ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}
         COMMENT "Copying ${CORE_LIB_PREFIX}/Live2DCubismCore.{dll,lib} to destination"
     )
 else()

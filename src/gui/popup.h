@@ -1,3 +1,11 @@
+/**
+ * @file popup.h
+ * @brief Popup UI widget class
+ * 
+ * @author SSRVodka
+ * @date   Mar 27, 2025
+ */
+
 #pragma once
 
 #include "ui_popup.h"

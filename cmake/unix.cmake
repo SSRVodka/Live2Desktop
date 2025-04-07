@@ -2,7 +2,7 @@ macro(unix_build)
 
 # support gdb
 if(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ggdb")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ggdb" CACHE STRING "")
 endif()
 
 # Add Cubism Core.
@@ -27,7 +27,7 @@ if(BUILD_SHARED_LIBS)
       POST_BUILD
       COMMAND
         ${CMAKE_COMMAND} -E
-          copy ${CORE_LIB_PREFIX}/${DLL_NAME} $<TARGET_FILE_DIR:${APP_NAME}>/lib
+          copy ${CORE_LIB_PREFIX}/${DLL_NAME} ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}
       COMMENT "Copying ${CORE_LIB_PREFIX}/${DLL_NAME} to destination"
     )
 else()

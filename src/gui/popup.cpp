@@ -1,6 +1,6 @@
 
 #include "utils/consts.h"
-#include "modules/chat/gui/popup.h"
+#include "gui/popup.h"
 
 Popup::Popup(const QString& showString, QWidget* parent)
   : QWidget(parent)

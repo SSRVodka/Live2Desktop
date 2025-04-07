@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>643</width>
-    <height>300</height>
+    <width>579</width>
+    <height>511</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -24,8 +24,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>623</width>
-        <height>202</height>
+        <width>559</width>
+        <height>363</height>
        </rect>
       </property>
      </widget>
@@ -34,7 +34,21 @@
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
-      <widget class="QTextEdit" name="inputEdit"/>
+      <widget class="QTextEdit" name="inputEdit">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="recordBtn">
+       <property name="text">
+        <string>Record</string>
+       </property>
+      </widget>
      </item>
      <item>
       <widget class="QPushButton" name="sendBtn">

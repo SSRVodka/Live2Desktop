@@ -8,8 +8,10 @@
 
 #pragma once
 
-#include <assert.h>
-#include <stdio.h>
+#include <cassert>
+#include <cstdio>
+#include <cstring>
+#include <string>
 
 #define _ENABLE_DEBUG
 
@@ -25,18 +27,23 @@ public:
     /** @brief Log event in debug level. */
     #define Debug(msg) _debug(msg, __FILE__, __LINE__)
     void _debug(const char* msg, const char* fn, int lineno) const;
+    void _debug(const std::string &msg, const char *fn, int lineno) const;
     /** @brief Log event in info level. */
     #define Info(msg) _info(msg, __FILE__, __LINE__)
     void _info(const char* msg, const char* fn, int lineno) const;
+    void _info(const std::string &msg, const char *fn, int lineno) const;
     /** @brief Log event in warning level. */
     #define Warning(msg) _warning(msg, __FILE__, __LINE__)
     void _warning(const char* msg, const char* fn, int lineno) const;
+    void _warning(const std::string &msg, const char *fn, int lineno) const;
     /** @brief Log event in error level. */
     #define Exception(msg) _error(msg, __FILE__, __LINE__)
     void _error(const char* msg, const char* fn, int lineno) const;
+    void _error(const std::string &msg, const char *fn, int lineno) const;
     /** @brief Log event for test. */
     #define Test(msg) _test(msg, __FILE__, __LINE__)
     void _test(const char* msg, const char* fn, int lineno) const;
+    void _test(const std::string &msg, const char *fn, int lineno) const;
 
 private:
     const char* destFn;

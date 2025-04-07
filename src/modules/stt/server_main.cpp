@@ -1,7 +1,7 @@
 
-#include "modules/stt/server.h"
+#include <sv.cpp/sense-voice/include/asr_handler.hpp>
 
-int main(int argc, char *argv[]) {
-    STT::Server server;
+int main(int argc, char **argv) {
+    ASRServer server;
     return server.cli_main(argc, argv);
 }

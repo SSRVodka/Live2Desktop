@@ -3,30 +3,18 @@
 
 find_package(Qt5 COMPONENTS Network REQUIRED)
 
-set(CHAT_FORM
-    ${PROJECT_SOURCE_DIR}/ui/chatBox.ui
-    ${PROJECT_SOURCE_DIR}/ui/popup.ui
-)
 
 set(CHAT_MOC_H
-    ${CMAKE_CURRENT_SOURCE_DIR}/gui/chatBox.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/client.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/server.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/openai_client.h
 )
 
 set(CHAT_SRC
-    ${CMAKE_CURRENT_SOURCE_DIR}/gui/chatBox.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/gui/popup.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/client.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/server.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/openai_client.cpp
 )
 set(CHAT_H
-    ${CMAKE_CURRENT_SOURCE_DIR}/gui/popup.h
 )
 
 QT5_WRAP_CPP(CHAT_MOCd ${CHAT_MOC_H})
-set(GENERATED_UI_FILES_DIR ${CMAKE_BINARY_DIR}/uic)
-QT5_WRAP_UI_SPEC(CHAT_UICd "${CHAT_FORM}" ${GENERATED_UI_FILES_DIR})
 
 if(BUILD_SHARED_LIBS)
     add_library(modulechat
@@ -50,13 +38,12 @@ endif(BUILD_SHARED_LIBS)
 target_include_directories(modulechat
     PRIVATE
     ${PROJECT_SOURCE_DIR}/src
+    ${PROJECT_SOURCE_DIR}/thirdParty
     ${GENERATED_UI_FILES_DIR}
 )
 
 target_link_libraries(modulechat
     Qt5::Core
-    Qt5::Gui
-    Qt5::Widgets
     Qt5::Network
 )
 target_link_libraries(modulechat

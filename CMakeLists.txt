@@ -20,44 +20,47 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib CACHE STRING "")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin CACHE STRING "")
 
 # Specify version of compiler.
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 if(${CMAKE_HOST_SYSTEM_PROCESSOR} MATCHES "i386")
-  set(ARCH "x86")
+  set(ARCH "x86" CACHE STRING "" FORCE)
 elseif(${CMAKE_HOST_SYSTEM_PROCESSOR} MATCHES "x86_64")
-  set(ARCH "x86_64")
+  set(ARCH "x86_64" CACHE STRING "" FORCE)
 elseif(${CMAKE_HOST_SYSTEM_PROCESSOR} MATCHES "AMD64")
-  set(ARCH "x86_64")
+  set(ARCH "x86_64" CACHE STRING "" FORCE)
 elseif(${CMAKE_HOST_SYSTEM_PROCESSOR} MATCHES "aarch64")
-  set(ARCH "arm64")
+  set(ARCH "arm64" CACHE STRING "" FORCE)
 else()
   message(WARNING "Untested architecture detected (${CMAKE_HOST_SYSTEM_PROCESSOR}). Use x86_64 libraries instead.")
-  set(ARCH "x86_64")
+  set(ARCH "x86_64" CACHE STRING "" FORCE)
 endif()
 
 message(STATUS "Target architecture: ${ARCH}")
 
 if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
-  set(OS "linux")
+  set(OS "linux" CACHE STRING "" FORCE)
 elseif(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
-  set(OS "windows")
+  set(OS "windows" CACHE STRING "" FORCE)
 else()
-  set(OS "macos")
+  set(OS "macos" CACHE STRING "" FORCE)
 endif()
 
 message(STATUS "Target OS: ${OS}")
 
 if(DEBUG)
- set(CMAKE_BUILD_TYPE "Debug")
+ set(CMAKE_BUILD_TYPE "Debug" CACHE STRING "" FORCE)
 else()
-  set(CMAKE_BUILD_TYPE "Release")
+  set(CMAKE_BUILD_TYPE "Release" CACHE STRING "" FORCE)
 endif()
 
 message(STATUS "Target build type: ${CMAKE_BUILD_TYPE}")
 
 # Use shared libraries or static libraries
+# default: shared
+option(BUILD_SHARED_LIBS "Live2Desktop Project Build Type" ON)
+
 if(BUILD_SHARED_LIBS)
   message(STATUS "Target libraries type: shared")
 else()
@@ -105,10 +108,17 @@ add_executable(${APP_NAME})
 # ----------- Build Modules -------------
 
 add_subdirectory(${PROJECT_SOURCE_DIR}/src/utils)
-add_subdirectory(${PROJECT_SOURCE_DIR}/src/modules/chat)
+add_subdirectory(${PROJECT_SOURCE_DIR}/src/modules/audio)
+add_subdirectory(${PROJECT_SOURCE_DIR}/src/modules/hotkey)
 # dependencies for module[stt]
+# USE_QT is an option (default OFF) in sv.cpp
+set(USE_QT ON CACHE BOOL "Enable Qt support in thirdParty/sv.cpp")
 add_subdirectory(${PROJECT_SOURCE_DIR}/thirdParty/sv.cpp)
 add_subdirectory(${PROJECT_SOURCE_DIR}/src/modules/stt)
+
+add_subdirectory(${PROJECT_SOURCE_DIR}/src/modules/tts)
+
+add_subdirectory(${PROJECT_SOURCE_DIR}/src/modules/chat)
 
 # -------------- Build App --------------
 
@@ -116,6 +126,8 @@ add_subdirectory(${PROJECT_SOURCE_DIR}/src/modules/stt)
 set(FORM_SRC
   ui/mainWindow.ui
   ui/configDialog.ui
+  ui/chatBox.ui
+  ui/popup.ui
 )
 
 set(QCC_QRC
@@ -124,6 +136,9 @@ set(QCC_QRC
 set(MOC_HEADERS
   src/gui/animeWidget.h
   src/gui/configDialog.h
+  src/gui/mainWindow.h
+  src/gui/chatBox.h
+  src/gui/messagebubble.h
 )
 
 set(MAIN_SRC
@@ -145,6 +160,9 @@ set(MAIN_SRC
   src/gui/animeWidget.cpp
   src/gui/configDialog.cpp
   src/gui/mainWindow.cpp
+  src/gui/chatBox.cpp
+  src/gui/messagebubble.cpp
+  src/gui/popup.cpp
 )
 set(MAIN_HEADERS
   src/drivers/allocator.h
@@ -158,7 +176,8 @@ set(MAIN_HEADERS
   src/drivers/textureManager.h
   src/drivers/wavFileHandler.h
   src/drivers/tools.h
-  src/gui/mainWindow.h
+
+  src/gui/popup.h
 )
 
 QT5_WRAP_CPP(MOCd_HEADERS ${MOC_HEADERS})
@@ -195,6 +214,8 @@ target_link_libraries(${APP_NAME}
 target_link_libraries(${APP_NAME}
   utils
   modulechat
+  moduleaudio
+  modulehotkey
 )
 
 # Copy resource directory to build directory.
@@ -215,6 +236,37 @@ else()
   include(cmake/unix.cmake)
   unix_build()
 endif()
+
+# --------- Modules Config Manager ----------
+
+# Add config manager & config tasks
+target_sources(${APP_NAME}
+  PRIVATE
+  src/config/module_config.cpp
+  src/config/module_config.h
+  src/config/mcp_config.cpp
+  src/config/mcp_config.h
+)
+
+# move configurations to destination
+file(MAKE_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/config)
+
+add_custom_command(
+    TARGET ${APP_NAME}
+    POST_BUILD
+    COMMAND
+        ${CMAKE_COMMAND} -E
+            copy ${PROJECT_SOURCE_DIR}/config/mcp_config.json ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/config/mcp_config.json
+    COMMENT "Copying configuration template mcp_config.json to destination"
+)
+add_custom_command(
+    TARGET ${APP_NAME}
+    POST_BUILD
+    COMMAND
+        ${CMAKE_COMMAND} -E
+            copy ${PROJECT_SOURCE_DIR}/config/module_config.json ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/config/module_config.json
+    COMMENT "Copying configuration template module_config.json to destination"
+)
 
 
 # -------------- Build Tests --------------

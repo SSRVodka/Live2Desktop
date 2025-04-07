@@ -14,12 +14,24 @@
 #include <QtWidgets/QPushButton>
 #include <QtWidgets/QSystemTrayIcon>
 
-#include "gui/animeWidget.h"
+#include <sv.cpp/sense-voice/include/asr_handler.hpp>
+#include "utils/consts.h"
 
 #include "ui_mainWindow.h"
 
+class AudioHandler;
+class GlobalHotKeyHandler;
+
+namespace Chat {
+class Client;
+};
+
+class MCPConfig;
+class ModuleConfigManager;
+
 class mainWindow : public QMainWindow, public Ui::mainWindow {
-    //Q_OBJECT
+    Q_OBJECT
+    friend class ChatBox;
 public:
 
     mainWindow(QApplication* mapp = nullptr);
@@ -37,6 +49,13 @@ private slots:
     void chatBegin();
 
     void aboutAuthor();
+
+    void recv_stt_reply(bool valid, QString transcribed_text);
+    void recv_tts_reply(bool success, QString msg);
+    void recv_chat_reply(QString text);
+    void recv_chat_error(QString msg);
+
+    void toggle_keyboard_record();
 private:
     void writeSettings();
     void loadSettings();
@@ -44,6 +63,9 @@ private:
     
     void loadModels();
     void setupTray();
+
+    void initClients();
+    void initGlobalHotKey();
 
     QSystemTrayIcon* systemTray;
     QMenu *mainMenu;
@@ -58,4 +80,23 @@ private:
     QAction *aboutAction;
     
     QApplication* app;
+
+    // configurations
+    MCPConfig *mcp_config;
+    ModuleConfigManager *module_config_manager;
+    ASRHandler::asr_params stt_params;
+    TTS::tts_params_t tts_params;
+
+    // audio utilities
+    AudioHandler *audio_handler;
+    bool is_recording;
+    QString last_tts_pending_audio_file;
+
+    // chat utilities
+    Chat::Client *chat_client;
+    bool is_receiving;
+
+    // global hotkey
+    GlobalHotKeyHandler *hotkey_handler;
+    bool is_keyboard_recording;
 };

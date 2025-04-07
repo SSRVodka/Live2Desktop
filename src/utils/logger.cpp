@@ -174,3 +174,19 @@ void Logger::_test(const char* msg, const char* fn, int lineno) const {
     return;
 #endif
 }
+
+void Logger::_debug(const std::string &msg, const char *fn, int lineno) const {
+    this->_debug(msg.data(), fn, lineno);
+}
+void Logger::_info(const std::string &msg, const char *fn, int lineno) const {
+    this->_info(msg.data(), fn, lineno);
+}
+void Logger::_warning(const std::string &msg, const char *fn, int lineno) const {
+    this->_warning(msg.data(), fn, lineno);
+}
+void Logger::_error(const std::string &msg, const char *fn, int lineno) const {
+    this->_error(msg.data(), fn, lineno);
+}
+void Logger::_test(const std::string &msg, const char *fn, int lineno) const {
+    this->_test(msg.data(), fn, lineno);
+}

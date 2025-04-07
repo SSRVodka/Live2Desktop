@@ -5,212 +5,61 @@
 
 namespace STT {
 
-int Client::POLLING_INTERVAL = 500 /* milli-seconds */;
+#define CLIENT_TYPE "STT Client"
 
+Client::Client(QObject *parent): QObject(parent), taskID(-1) {
+    server = new ASRServer;
+    workerThread = std::make_unique<QThread>();
+    worker = new Worker(server);
+    worker->moveToThread(workerThread.get());
 
-Client::Client(const std::string &host, uint16_t port)
-    :proxyWorker(host, port), taskID(-1) {
-    
-    this->pollingTimer.setInterval(Client::POLLING_INTERVAL);
-    connect(&this->proxyWorker, SIGNAL(started()), &this->pollingTimer, SLOT(start()));
-    connect(&this->pollingTimer, SIGNAL(timeout()), this, SLOT(polling()));
-    this->proxyWorker.start();
+    connect(this, &Client::startProcessing, worker, &Worker::process, Qt::QueuedConnection);
+    connect(worker, &Worker::resultReady, this, &Client::handleResult);
+    workerThread->start();
+    stdLogger.Info(CLIENT_TYPE ": worker thread started");
 }
+Client::Client(const std::string &host, uint16_t port): Client() {}
 
 Client::~Client() {
-    this->proxyWorker.terminateGracefully();
-    stdLogger.Info("Client: waiting for worker thread to terminate...");
-    this->proxyWorker.wait();
+    stdLogger.Debug(CLIENT_TYPE ": now prepared to shutdown worker thread");
+    workerThread->quit();
+    stdLogger.Info(CLIENT_TYPE ": waiting for the worker to stop...");
+    workerThread->wait();
+    stdLogger.Info(CLIENT_TYPE ": worker thread stopped");
+    delete worker;
+    delete server;
 }
 
-void Client::sendMp3(const std::string &mp3file, const whisper_params &params) {
-    // TODO: convert
+void Client::sendWav(const ASRHandler::asr_params &params) {
+    ++this->taskID;
+    std::string msg = CLIENT_TYPE ": worker started with task ID: "
+        + std::to_string(taskID);
+    stdLogger.Info(msg.c_str());
+    emit startProcessing(taskID, params);
 }
-void Client::sendWav(const std::string &wavfile, const whisper_params &params) {
 
-    Worker::State curState = this->proxyWorker.getState();
-    const char *errmsg;
-    switch (curState) {
-    case Worker::State::BUSY:
-        errmsg = "STT server busy. Please wait";
-        stdLogger.Warning(errmsg);
-        emit replyArrived(false, QString(errmsg));
-        return;
-    case Worker::State::OFFLINE:
-        errmsg = "STT worker offline. Try again later";
-        stdLogger.Warning(errmsg);
-        emit replyArrived(false, QString(errmsg));
-        return;
-    case Worker::State::IDLE:
-        break;
-    }
-
-    this->taskID = this->proxyWorker.submitTask(wavfile, params);
-    if (this->taskID < 0) {
-        const char errmsg[] = "Client: STT task submission failure";
-        stdLogger.Warning(errmsg);
-        emit replyArrived(false, QString(errmsg));
+void Client::handleResult(ASRHandler::asr_result result) {
+    std::string msg;
+    if (result.request_id == this->taskID) {
+        msg = CLIENT_TYPE ": [task ID " + std::to_string(result.request_id)
+            + "] receive result from server '" + result.text + "'";
+        stdLogger.Info(msg.c_str());
+        emit replyArrived(true, QString::fromStdString(result.text));
     } else {
-        std::string msg = "Client: get task ID: " + std::to_string(this->taskID);
-        stdLogger.Info(msg.c_str());
-        stdLogger.Info("Client: polling for response...");
-    }
-}
-
-void Client::polling() {
-    Worker::State curState = this->proxyWorker.getState();
-    std::string msg = std::string("Client: polling state: ") + (
-        curState == Worker::State::BUSY ? "BUSY" : (
-        curState == Worker::State::IDLE ? "IDLE" : "OFFLINE"
-    ));
-    stdLogger.Debug(msg.c_str());
-    
-    const char *errmsg;
-    switch (curState) {
-    case Worker::State::IDLE:
-        if (this->taskID == this->proxyWorker.getCurrentTaskID()) {
-            msg = this->proxyWorker.getCurrentResult();
-            emit replyArrived(true, QString(msg.c_str()));
-            // invalidate task ID until next time we send
-            this->taskID = -1;
-        }
-        break;
-    case Worker::State::OFFLINE:
-        if (this->taskID > 0) {
-            errmsg = "Worker offline. Task progress lost!";
-            stdLogger.Warning(errmsg);
-            emit replyArrived(false, QString(errmsg));
-            this->taskID = -1;
-        }
-        break;
-    case Worker::State::BUSY:
-        break;
-    }
-}
-
-int Worker::MAX_RETRY_TIMES = 5;
-int Worker::RETRY_INTERVAL = 1000 /* milli-seconds */;
-int Worker::HEARTBEAT_INTERVAL = 1000 /* milli-seconds */;
-
-Worker::Worker(const std::string &host, uint16_t port, QObject *parent)
-    : currentState(State::OFFLINE),
-    stt_client(host, port),
-    currentID(0) {
-
-    this->termFlag.store(false);
-    stdLogger.Info("STT Worker initializing...");
-}
-
-Worker::~Worker() {}
-
-void Worker::terminateGracefully() {
-    this->termFlag.store(true);
-}
-
-bool Worker::heartbeat() {
-    auto hbRes = stt_client.Get("/heartbeat");
-    
-    bool healthy = (hbRes && hbRes->status == httplib::OK_200);
-    this->currentState = healthy
-        ? (this->currentState == State::BUSY ? State::BUSY : State::IDLE)
-        : State::OFFLINE;
-    std::string msg = "Worker ping STT server [" + stt_client.host()
-        + ":" + std::to_string(stt_client.port()) + std::string("]: ")
-        + (healthy ? "Healthy" : "Offline");
-    stdLogger.Debug(msg.c_str());
-    return healthy;
-}
-
-int64_t Worker::submitTask(const std::string &wavfile, const whisper_params &params) {
-    std::string msg = "Task info: {wav: '" + wavfile + "'}";
-    if (this->currentState == State::OFFLINE) {
-        stdLogger.Warning("Worker offline. Task rejected.");
+        // TODO: add reason
+        msg = CLIENT_TYPE ": [task ID " + std::to_string(result.request_id)
+            + "] server reply with error (unknown reason)";
         stdLogger.Warning(msg.c_str());
-        return -1;
-    }
-    if (this->currentState == State::BUSY) {
-        stdLogger.Warning("Worker(singleton) busy. Task rejected.");
-        stdLogger.Warning(msg.c_str());
-        return -1;
-    }
-    this->currentFile = wavfile;
-    this->currentParams = params;
-    this->currentState = State::BUSY;
-    return this->currentID + 1;
-}
-
-void Worker::executeTask() {
-    this->currentResult = "";
-    this->resultValid = false;
-    int retryTimes = 1;
-    std::string msg = "Worker: submit '" + this->currentFile + "' to inference";
-    httplib::MultipartFormDataItems formTable = {
-        {"file", "", this->currentFile, "audio/wav"},
-        {"offset_t", std::to_string(this->currentParams.offset_t_ms), "", ""},
-        {"offset_n", std::to_string(this->currentParams.offset_n), "", ""},
-        {"duration", std::to_string(this->currentParams.duration_ms), "", ""},
-        {"max_content", std::to_string(this->currentParams.max_context), "", ""},
-        {"max_len", std::to_string(this->currentParams.max_len), "", ""},
-        {"best_of", std::to_string(this->currentParams.best_of), "", ""},
-        {"beam_size", std::to_string(this->currentParams.beam_size), "", ""},
-        {"audio_ctx", std::to_string(this->currentParams.audio_ctx), "", ""},
-        {"word_thold", std::to_string(this->currentParams.word_thold), "", ""},
-        {"entropy_thold", std::to_string(this->currentParams.entropy_thold), "", ""},
-        {"logprob_thold", std::to_string(this->currentParams.logprob_thold), "", ""},
-        {"debug_mode", std::to_string(this->currentParams.debug_mode), "", ""},
-        {"translate", std::to_string(this->currentParams.translate), "", ""},
-        {"diarize", std::to_string(this->currentParams.diarize), "", ""},
-        {"tinydiarize", std::to_string(this->currentParams.tinydiarize), "", ""},
-        {"split_on_word", std::to_string(this->currentParams.split_on_word), "", ""},
-        {"no_timestamps", std::to_string(this->currentParams.no_timestamps), "", ""},
-        {"language", this->currentParams.language, "", ""},
-        {"detect_language", std::to_string(this->currentParams.detect_language), "", ""},
-        {"prompt", this->currentParams.prompt, "", ""},
-        {"response_format", this->currentParams.response_format, "", ""},
-        {"temperature", std::to_string(this->currentParams.temperature), "", ""},
-        {"temperature_inc", std::to_string(this->currentParams.temperature_inc), "", ""},
-        {"suppress_nst", std::to_string(this->currentParams.suppress_nst), "", ""},
-    };
-    while (retryTimes > Worker::MAX_RETRY_TIMES) {
-        if (!this->heartbeat()) {
-            std::string errmsg = "Worker offline. Retry ("
-                + std::to_string(retryTimes) + "/"
-                + std::to_string(Worker::MAX_RETRY_TIMES) + ")";
-            stdLogger.Exception(errmsg.c_str());
-            this->msleep(Worker::RETRY_INTERVAL);
-            ++retryTimes;
-            continue;
-        }
-        stdLogger.Info(msg.c_str());
-        auto res = stt_client.Post("/inference", formTable);
-        if (res && res->status == httplib::OK_200) {
-            std::string ackmsg = "Worker: retrieve result successfully: " + res->body;
-            stdLogger.Info(ackmsg.c_str());
-            this->currentResult = res->body;
-            this->resultValid = true;
-            break;
-        } else {
-            std::string errmsg = "Worker: failed to obtain result from server (code: "
-                + (res ? std::to_string(res->status) : "NULL") + "). Retry: ("
-                + std::to_string(retryTimes) + "/"
-                + std::to_string(Worker::MAX_RETRY_TIMES) + ")";
-            stdLogger.Exception(errmsg.c_str());
-        }
-        ++retryTimes;
+        emit replyArrived(false, QString());
     }
 }
 
-void Worker::run() {
-    while (!this->termFlag.load()) {
-        if (this->currentState == State::BUSY) {
-            this->executeTask();
-            this->currentID++;
-            this->currentState = State::IDLE;
-        }
-        this->heartbeat();
-        this->msleep(Worker::HEARTBEAT_INTERVAL);
-    }
-}
+// void Client::on_server_output_append(ASRServer::task_id_t, QString) {
+// }
 
+void Worker::process(ASRHandler::task_id_t taskId, ASRHandler::asr_params params) {
+    ASRHandler::asr_result result = server->handle(taskId, params);
+    emit resultReady(result);
+}
 
 };
