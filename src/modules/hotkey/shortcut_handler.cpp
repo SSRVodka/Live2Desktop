@@ -119,12 +119,10 @@ void GlobalHotKeyHook::uninstallHook() {
 }
 
 LRESULT CALLBACK GlobalHotKeyHook::LowLevelKeyboardProc(int nCode, WPARAM wParam, LPARAM lParam) {
-    stdLogger.Debug("event");
     if (nCode == HC_ACTION) {
         KBDLLHOOKSTRUCT *kbStruct = reinterpret_cast<KBDLLHOOKSTRUCT*>(lParam);
         bool ctrlPressed = GetAsyncKeyState(VK_CONTROL) & 0x8000;
         bool shiftPressed = GetAsyncKeyState(VK_SHIFT) & 0x8000;
-        stdLogger.Debug("pressed");
 
         if (wParam == WM_KEYDOWN && kbStruct->vkCode == GlobalHotKeyHandler::hotKeyChar
             && (ctrlPressed || !GlobalHotKeyHandler::useCtrl)
