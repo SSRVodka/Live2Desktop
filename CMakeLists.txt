@@ -249,14 +249,27 @@ target_sources(${APP_NAME}
 )
 
 # move configurations to destination
-file(MAKE_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/config)
+if (${OS} STREQUAL "windows")
+  # Use build type directory on Windows
+  if (CMAKE_BUILD_TYPE STREQUAL "Debug" OR "$<CONFIG>" STREQUAL "Debug")
+    set(FINAL_CONFIG_DIR ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Debug/config)
+  elseif (CMAKE_BUILD_TYPE STREQUAL "Release" OR "$<CONFIG>" STREQUAL "Release")
+    set(FINAL_CONFIG_DIR ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Release/config)
+  else()
+    set(FINAL_CONFIG_DIR ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/config)
+  endif()
+else()
+  set(FINAL_CONFIG_DIR ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/config)
+endif()
+
+file(MAKE_DIRECTORY ${FINAL_CONFIG_DIR})
 
 add_custom_command(
     TARGET ${APP_NAME}
     POST_BUILD
     COMMAND
         ${CMAKE_COMMAND} -E
-            copy ${PROJECT_SOURCE_DIR}/config/mcp_config.json ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/config/mcp_config.json
+            copy ${PROJECT_SOURCE_DIR}/config/mcp_config.json ${FINAL_CONFIG_DIR}/mcp_config.json
     COMMENT "Copying configuration template mcp_config.json to destination"
 )
 add_custom_command(
@@ -264,7 +277,7 @@ add_custom_command(
     POST_BUILD
     COMMAND
         ${CMAKE_COMMAND} -E
-            copy ${PROJECT_SOURCE_DIR}/config/module_config.json ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/config/module_config.json
+            copy ${PROJECT_SOURCE_DIR}/config/module_config.json ${FINAL_CONFIG_DIR}/module_config.json
     COMMENT "Copying configuration template module_config.json to destination"
 )
 

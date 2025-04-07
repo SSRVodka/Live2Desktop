@@ -32,7 +32,7 @@
 
 ## 已知问题
 
-- Windows 下编译需要指定静态链接库 `cmake -B build -DBUILD_SHARED_LIBS=OFF`，不能使用动态链接库。
+- Windows 下需要在生成 Makefile 时指定静态链接库 `cmake -B build -DBUILD_SHARED_LIBS=OFF`，不能使用动态链接库。
 
 ## 未来可能会支持的
 
@@ -125,7 +125,7 @@ cmake -B build && cd build && make -j
 cmake -B build && cmake --build build
 ```
 
-默认情况下 `CMAKE_BUILD_TYPE=Release`。您可以传入 `-DDEBUG=ON` 的宏来编译 Debug 版本，加入了 GDB 调试符号。例如：
+默认情况下 `CMAKE_BUILD_TYPE=Release`（Windows 需要在编译时额外添加 `--config Release`）。您可以传入 `-DDEBUG=ON` 的宏来编译 Debug 版本，加入了 GDB 调试符号。例如：
 
 ```bash
 cmake -B build -DDEBUG=ON

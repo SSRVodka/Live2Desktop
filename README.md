@@ -13,6 +13,9 @@
 
 - There are no compilations from this branch in Release. If you want to try a program from this branch, compile it yourself.
 
+## Known issues
+
+- Windows must specify compilation of static link libraries `cmake -B build -DBUILD_SHARED_LIBS=OFF` when generating the Makefile, dynamic link libraries cannot be used.
 
 ## Functionality 
 
@@ -123,7 +126,7 @@ cmake -B build && cd build && make -j
 cmake -B build && cmake --build build
 ```
 
-By default `CMAKE_BUILD_TYPE=Release`. You can pass in the `-DDEBUG=ON` macro to build the Debug version, adding the GDB debugging symbols. For example: 
+By default `CMAKE_BUILD_TYPE=Release` (`--config Release` is needed on Windows). You can pass in the `-DDEBUG=ON` macro to build the Debug version, adding the GDB debugging symbols. For example: 
 
 ```bash 
 cmake -B build -DDEBUG=ON 
