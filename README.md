@@ -9,7 +9,9 @@
 
 ## ⚠️ Note: WIP
 
-The current branch is under development and has not been tested on Windows OS. If you want a more stable version, go back to the `stable` branch.
+- The current branch is under development and may have stability issues. If you want a more stable version, go back to the `stable` branch.
+
+- There are no compilations from this branch in Release. If you want to try a program from this branch, compile it yourself.
 
 
 ## Functionality 
@@ -27,7 +29,7 @@ The current branch is under development and has not been tested on Windows OS. I
 
 - OpenAI Chat (configuration required, see below); 
 
-- No need to open a dialog box, global hotkey recording (CTRL+SHIFT+Q, press again to stop and submit), large model output voice response.
+- No need to open a dialog box, global hotkey recording (CTRL+SHIFT+R, press again to stop and submit), large model output voice response.
 
 
 ## Possible future support 

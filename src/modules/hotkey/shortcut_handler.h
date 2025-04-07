@@ -23,7 +23,7 @@ class GlobalKeyListener;
 #ifdef Q_OS_WIN
 #include <windows.h>
 // #include "modules/hotkey/platform/hotkey_win.h"
-class KeyboardHookThread;
+class GlobalHotKeyHook;
 #endif
 
 
@@ -58,6 +58,6 @@ private:
     #endif
 
     #ifdef Q_OS_WIN
-    KeyboardHookThread *hookThread;
+    GlobalHotKeyHook *keyHook;
     #endif
 };

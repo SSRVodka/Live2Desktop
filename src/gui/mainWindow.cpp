@@ -361,7 +361,6 @@ void mainWindow::initClients() {
 }
 
 void mainWindow::initGlobalHotKey() {
-    GlobalHotKeyHandler::hotkey = XK_Q;
     this->hotkey_handler = new GlobalHotKeyHandler;
     this->is_keyboard_recording = false;
 

@@ -85,71 +85,72 @@ GlobalHotKeyHandler::~GlobalHotKeyHandler() {
 #ifdef Q_OS_WIN
 #include "modules/hotkey/platform/hotkey_win.h"
 
-LRESULT CALLBACK LowLevelKeyboardProc(int nCode, WPARAM wParam, LPARAM lParam) {
-    if (nCode == HC_ACTION) {
-        KBDLLHOOKSTRUCT *pKeyBoard = (KBDLLHOOKSTRUCT *)lParam;
-        bool ctrlPressed = GetAsyncKeyState(VK_CONTROL) & 0x8000;
-        bool shiftPressed = GetAsyncKeyState(VK_SHIFT) & 0x8000;
+HHOOK GlobalHotKeyHook::g_hHook = nullptr;
 
-        bool modValid = (!GlobalHotKeyHandler::useCtrl || ctrlPressed)
-                    && (!GlobalHotKeyHandler::useShift || shiftPressed);
-
-        // Check for the key combination: Ctrl + Shift + R
-        if (modValid && wParam == WM_KEYDOWN && pKeyBoard->vkCode == GlobalHotKeyHandler::hotKeyChar) {
-            qDebug() << "Global key combination Ctrl+Shift+R pressed!";
-            // TODO
-            toggleRecording();
-        }
-    }
-
-    // Pass the event to the next hook in the chain
-    return CallNextHookEx(g_hHook, nCode, wParam, lParam);
+GlobalHotKeyHook* GlobalHotKeyHook::instance() {
+    static GlobalHotKeyHook instance;
+    return &instance;
 }
 
-KeyboardHookThread::KeyboardHookThread(QObject *parent): QThread(parent), stop(false) {}
+GlobalHotKeyHook::GlobalHotKeyHook(QObject *parent) : QObject(parent) {
+    installHook();
+}
 
-void KeyboardHookThread::run() {
-    // Install the low-level keyboard hook
-    g_hHook = SetWindowsHookEx(WH_KEYBOARD_LL, LowLevelKeyboardProc, nullptr, 0);
+GlobalHotKeyHook::~GlobalHotKeyHook() {
+    uninstallHook();
+}
+
+void GlobalHotKeyHook::installHook() {
     if (!g_hHook) {
-        qFatal("Failed to install keyboard hook!");
-        return;
+        g_hHook = SetWindowsHookEx(WH_KEYBOARD_LL, LowLevelKeyboardProc, GetModuleHandle(nullptr), 0);
+        if (!g_hHook) {
+            std::string msg = "SetWindowsHookEx failed:" + std::to_string(GetLastError());
+            stdLogger.Exception(msg);
+        } else stdLogger.Info("Registered global hotkey hook");
     }
+}
 
-    // Message loop to keep the hook active
-    MSG msg;
-    while (!stop && GetMessage(&msg, nullptr, 0, 0)) {
-        TranslateMessage(&msg);
-        DispatchMessage(&msg);
-    }
-
-    // Uninstall the hook when the loop ends
+void GlobalHotKeyHook::uninstallHook() {
     if (g_hHook) {
         UnhookWindowsHookEx(g_hHook);
         g_hHook = nullptr;
+        stdLogger.Info("Unregistered global hotkey hook");
     }
 }
 
-void KeyboardHookThread::stopListening() {
-    stop = true;
-    PostThreadMessage(GetCurrentThreadId(), WM_QUIT, 0, 0); // Exit the message loop
+LRESULT CALLBACK GlobalHotKeyHook::LowLevelKeyboardProc(int nCode, WPARAM wParam, LPARAM lParam) {
+    stdLogger.Debug("event");
+    if (nCode == HC_ACTION) {
+        KBDLLHOOKSTRUCT *kbStruct = reinterpret_cast<KBDLLHOOKSTRUCT*>(lParam);
+        bool ctrlPressed = GetAsyncKeyState(VK_CONTROL) & 0x8000;
+        bool shiftPressed = GetAsyncKeyState(VK_SHIFT) & 0x8000;
+        stdLogger.Debug("pressed");
+
+        if (wParam == WM_KEYDOWN && kbStruct->vkCode == GlobalHotKeyHandler::hotKeyChar
+            && (ctrlPressed || !GlobalHotKeyHandler::useCtrl)
+            && (shiftPressed || !GlobalHotKeyHandler::useShift)) {
+            std::string msg = std::string("Hotkey '") + GlobalHotKeyHandler::hotKeyChar + "' pressed ("
+                + std::string("with ctrl=") + std::to_string(ctrlPressed) + ", shift=" + std::to_string(shiftPressed) + ")";
+            stdLogger.Info(msg);
+
+            // 通过单例触发信号（确保在主线程）
+            QMetaObject::invokeMethod(instance(), "triggerSignal", Qt::QueuedConnection);
+        }
+    }
+    return CallNextHookEx(g_hHook, nCode, wParam, lParam);
 }
+
 
 bool GlobalHotKeyHandler::useCtrl = true;
 bool GlobalHotKeyHandler::useShift = true;
 char GlobalHotKeyHandler::hotKeyChar = 'R';
 
 GlobalHotKeyHandler::GlobalHotKeyHandler(QObject *parent): QObject(parent) {
-    // Start the keyboard hook thread
-    hookThread = new KeyboardHookThread(this);
-    hookThread->start();
+    this->keyHook = GlobalHotKeyHook::instance();
+    connect(this->keyHook, SIGNAL(hotKeyPressed()), this, SIGNAL(hotKeyActivate()));
 }
 
 GlobalHotKeyHandler::~GlobalHotKeyHandler() {
-    // Stop the hook thread
-    hookThread->stopListening();
-    hookThread->wait();
-    delete hookThread;
 }
 
 #endif

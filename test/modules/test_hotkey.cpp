@@ -9,7 +9,6 @@
 int main(int argc, char *argv[]) {
     QApplication app(argc, argv);
 
-    GlobalHotKeyHandler::hotkey = XK_Q;
     GlobalHotKeyHandler handler;
 
     return app.exec();

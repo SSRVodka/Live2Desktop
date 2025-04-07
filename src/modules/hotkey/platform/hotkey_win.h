@@ -4,18 +4,25 @@
 #include <QtCore/QThread>
 
 #include <windows.h>
-static HHOOK g_hHook = nullptr;  // Handle for the keyboard hook
 
-// Low-level keyboard hook callback function
-static LRESULT CALLBACK LowLevelKeyboardProc(int nCode, WPARAM wParam, LPARAM lParam);
-
-class KeyboardHookThread : public QThread {
+class GlobalHotKeyHook : public QObject {
     Q_OBJECT
 public:
-    KeyboardHookThread(QObject *parent = nullptr);
-    void run() override;
-    void stopListening();
+    static GlobalHotKeyHook* instance();
+    void installHook();
+    void uninstallHook();
+
+private slots:
+    void triggerSignal() { emit hotKeyPressed(); }
+
+signals:
+    void hotKeyPressed();
+
 private:
-    bool stop;
+    GlobalHotKeyHook(QObject *parent = nullptr);
+    ~GlobalHotKeyHook();
+
+    static HHOOK g_hHook;
+    static LRESULT CALLBACK LowLevelKeyboardProc(int nCode, WPARAM wParam, LPARAM lParam);
 };
 

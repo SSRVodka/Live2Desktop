@@ -39,7 +39,7 @@ ChatBox::ChatBox(mainWindow *parent)
         this, SLOT(recv_chat_error(QString)));
 
     popup = new Popup(
-        QString("✨ Welcome to %1! ✨")
+        tr("🎉 Welcome to %1! 🎉")
         .arg(appName),
         this
     );
