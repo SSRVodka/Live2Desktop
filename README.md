@@ -57,6 +57,8 @@
 
 - 2025/03/28: Updated voice, chat features (WIP).
 
+- 2025/04/-8: Updated Live2Desktop's Live2D Core to `5-r.3` version.
+
 ## Background
 
 As we all know, Live2D model display and interaction on Windows platform relies on Live2DViewerEx paid application, while Linux platform is rarely known. This application aims to build a lightweight, cross-platform desktop application for displaying and interacting with Live2D models based on the official Live2D Cubism SDK and Qt framework.

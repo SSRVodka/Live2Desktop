@@ -40,6 +40,12 @@ public:
     static void DeleteInstance();
 
     /**
+     * @brief   一部の環境でこのインスタンスが管理するリソースが破棄される場合があります。
+     *          このような場合に二重解放を避け無効になったリソースを破棄します。
+     */
+    void ReleaseInvalidShaderProgram();
+
+    /**
      * @brief   描画用のシェーダプログラムの一連のセットアップを実行する
      *
      * @param[in]   renderer              ->  レンダラー

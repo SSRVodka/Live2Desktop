@@ -1,6 +1,6 @@
 {
     "stt": {
-        "model": "approot://model/sv-small-q3_k.gguf",
+        "model": "approot://models/sv-small-q3_k.gguf",
         "language": "auto"
     },
     "tts": {

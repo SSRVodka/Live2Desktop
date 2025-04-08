@@ -3,9 +3,9 @@
     "llm": {
       "provider": "openai",
       "model": "gpt-4o",
-      "api_key": "",
+      "api_key": "sk-dwjeifjiewrpijepwjiw",
       "temperature": 0.7,
-      "base_url": "https://api.openai.com/v1"
+      "base_url": "http://localhost:8000"
     },
     "mcpServers": {
       "filesystem": {
