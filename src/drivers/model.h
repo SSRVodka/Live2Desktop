@@ -61,6 +61,18 @@ public:
     void Draw(Csm::CubismMatrix44& matrix);
 
     /**
+     * @brief Allows models to read arbitrary external audio files directly to initiate lip-synchronization,
+     *  without the need for the audio always specified in the model's JSON file.
+     * 
+     * @param[in] filePath 16-bit wav audio source that can be loaded by `WavFileHandler`
+     * 
+     * @return if audio is successfully loaded
+     * 
+     * @see WavFileHandler
+     */
+    Csm::csmBool StartLipSync(const Csm::csmString& filePath);
+
+    /**
      * @brief Starts playback of the motion specified by the argument.
      *
      * @param[in]   group                       The name of motion group

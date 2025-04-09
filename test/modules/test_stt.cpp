@@ -6,7 +6,7 @@
 #include "utils/logger.h"
 
 #define TEST_MODEL "models/sv-small-q3_k.gguf"
-#define TEST_WAV "test.wav"
+#define TEST_WAV "test_data/test.wav"
 
 TestSTT::TestSTT() {}
 

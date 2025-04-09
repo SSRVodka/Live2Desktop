@@ -20,6 +20,9 @@ class AnimeWidget : public QOpenGLWidget {
 public:
     AnimeWidget(QWidget *parent = 0);
     ~AnimeWidget();
+
+    bool startLipSync(const std::string &filePath) const;
+
 protected:
     void initializeGL() override;
     void paintGL() override;

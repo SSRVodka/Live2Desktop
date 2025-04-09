@@ -80,6 +80,18 @@ public:
     void OnUpdate() const;
 
     /**
+     * @brief Initiates lip synchronization actively.
+     * 
+     * @param[in] filePath 16-bit wav audio that can be loaded by `WavFileHandler`
+     * 
+     * @note Calls to this interface may conflict with Cubism's internal autoplay audio.
+     *  The caller should take appropriate measures to avoid conflicts.
+     * 
+     * @return if the audio is successfully loaded
+     */
+    bool StartExternalLipSync(Csm::csmChar* filePath) const;
+
+    /**
     * @brief Switching Scenes.
     * 
     * The application switches between model sets.

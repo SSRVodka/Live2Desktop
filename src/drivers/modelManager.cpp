@@ -71,6 +71,16 @@ Model* ModelManager::GetModel(csmUint32 no) const {
     return NULL;
 }
 
+bool ModelManager::StartExternalLipSync(csmChar *filePath) const {
+    bool res = true;
+    for (csmUint32 i = 0; i < _models.GetSize(); i++) {
+        Model* model = GetModel(i);
+        stdLogger.Debug("Start lip-sync (external source) for model " + std::to_string(i));
+        res = model->StartLipSync(csmString(filePath));
+    }
+    return res;
+}
+
 void ModelManager::OnDrag(csmFloat32 x, csmFloat32 y) const {
     for (csmUint32 i = 0; i < _models.GetSize(); i++) {
         Model* model = GetModel(i);

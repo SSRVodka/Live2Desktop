@@ -1,6 +1,54 @@
-##### STT Test
 
 find_package(Qt5 COMPONENTS Test REQUIRED)
+
+##### Wav Driver Test
+
+add_executable(test_wavfilehandler)
+
+target_sources(test_wavfilehandler
+    PRIVATE
+    ${CMAKE_SOURCE_DIR}/test/drivers/test_wavfilehandler.cpp
+    ${CMAKE_SOURCE_DIR}/src/drivers/wavFileHandler.h
+    ${CMAKE_SOURCE_DIR}/src/drivers/wavFileHandler.cpp
+    ${CMAKE_SOURCE_DIR}/src/drivers/allocator.cpp
+    ${CMAKE_SOURCE_DIR}/src/drivers/tools.cpp
+)
+
+target_link_libraries(test_wavfilehandler
+    PRIVATE
+    utils
+    Qt5::Core
+    Qt5::Widgets
+    Framework
+)
+
+##### Prepare test data
+
+if (${OS} STREQUAL "windows")
+  # Use build type directory on Windows
+  if (CMAKE_BUILD_TYPE STREQUAL "Debug" OR "$<CONFIG>" STREQUAL "Debug")
+    set(FINAL_TEST_DATA_DIR ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Debug/test_data)
+  elseif (CMAKE_BUILD_TYPE STREQUAL "Release" OR "$<CONFIG>" STREQUAL "Release")
+    set(FINAL_TEST_DATA_DIR ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Release/test_data)
+  else()
+    set(FINAL_TEST_DATA_DIR ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_data)
+  endif()
+else()
+  set(FINAL_TEST_DATA_DIR ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_data)
+endif()
+
+file(MAKE_DIRECTORY ${FINAL_TEST_DATA_DIR})
+
+add_custom_command(
+    TARGET test_wavfilehandler
+    POST_BUILD
+    COMMAND
+        ${CMAKE_COMMAND} -E
+            copy_directory ${PROJECT_SOURCE_DIR}/test/data ${FINAL_TEST_DATA_DIR}
+    COMMENT "Copying test data to destination"
+)
+
+##### STT Test
 
 add_executable(test_stt)
 

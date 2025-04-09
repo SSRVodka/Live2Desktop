@@ -36,8 +36,11 @@ public:
      * @brief Start reading the wav file specified in the argument.
      *
      * @param[in] filePath wav file path
+     * 
+     * @retval  true    Load Success
+     * @retval  false   Load Failure
      */
-    void Start(const Csm::csmString& filePath);
+    Csm::csmBool Start(const Csm::csmString& filePath);
 
     /**
      * @brief Get current RMS value.

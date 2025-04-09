@@ -13,11 +13,13 @@
 
 
 #include "drivers/coreManager.h"
-#include "utils/logger.h"
 #include "drivers/model.h"
 #include "drivers/modelParameters.h"
 #include "drivers/textureManager.h"
 #include "drivers/tools.h"
+
+#include "utils/consts.h"
+#include "utils/logger.h"
 
 using namespace Live2D::Cubism::Framework;
 using namespace Live2D::Cubism::Framework::DefaultParameterId;
@@ -381,7 +383,7 @@ void Model::Update() {
         value = _wavFileHandler.GetRms();
 
         for (csmUint32 i = 0; i < _lipSyncIds.GetSize(); ++i) {
-            _model->AddParameterValue(_lipSyncIds[i], value, 0.8f);
+            _model->AddParameterValue(_lipSyncIds[i], value, LIP_SYNC_RMS_WEIGHT);
         }
     }
 
@@ -392,6 +394,11 @@ void Model::Update() {
 
     _model->Update();
 
+}
+
+csmBool Model::StartLipSync(const Csm::csmString& filePath) {
+    // we only need to start WavFileHandler here!
+    return _wavFileHandler.Start(filePath.GetRawString());
 }
 
 CubismMotionQueueEntryHandle Model::StartMotion(const csmChar* group, csmInt32 no, csmInt32 priority, ACubismMotion::FinishedMotionCallback onFinishedMotionHandler) {
@@ -447,7 +454,8 @@ CubismMotionQueueEntryHandle Model::StartMotion(const csmChar* group, csmInt32 n
     if (strcmp(voice.GetRawString(), "") != 0) {
         csmString path = voice;
         path = _modelHomeDir + path;
-        _wavFileHandler.Start(path);
+        stdLogger.Warning("start lip-sync (internal)");
+        _wavFileHandler.Start(path.GetRawString());
     }
 
     stdLogger.Debug(

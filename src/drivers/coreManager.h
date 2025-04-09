@@ -48,6 +48,15 @@ public:
     void mouseMoveEvent(int x, int y);
 
     /**
+     * @brief Initiate lip-sync actively
+     * 
+     * @todo TODO: make sure this will not conflict with Cubism's internal autoplay audio.
+     * 
+     * @return the audio is loaded successfully
+     */
+    bool InitiateLipSync(std::string filePath);
+
+    /**
      * @brief Register shaders.
      */
     GLuint CreateShader();

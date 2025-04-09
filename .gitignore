@@ -13,3 +13,4 @@ modelRepo/*
 *.bin
 *.gguf
 *.wav
+!test/data/*.wav

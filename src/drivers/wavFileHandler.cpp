@@ -51,10 +51,10 @@ Csm::csmBool WavFileHandler::Update(Csm::csmFloat32 deltaTimeSeconds) {
     return true;
 }
 
-void WavFileHandler::Start(const Csm::csmString& filePath) {
+Csm::csmBool WavFileHandler::Start(const Csm::csmString& filePath) {
     /* Loading WAV files. */
     if (!LoadWavFile(filePath))
-        return;
+        return false;
 
     /* Initialize sample reference position. */
     _sampleOffset = 0;
@@ -62,6 +62,8 @@ void WavFileHandler::Start(const Csm::csmString& filePath) {
 
     /* Reset RMS value. */
     _lastRms = 0.0f;
+
+    return true;
 }
 
 Csm::csmFloat32 WavFileHandler::GetRms() const {

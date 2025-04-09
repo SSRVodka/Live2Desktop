@@ -50,6 +50,8 @@ const double maxOpacity = 1.0;
 
 /* --- Model Audio Parameters --- */
 
+const float        LIP_SYNC_RMS_WEIGHT = 6.4;
+
 const uint32_t     MODEL_CAP_SAMPLE_RATE = 16000;
 const uint32_t     MODEL_CAP_CHANNEL = 1;
 const uint32_t     MODEL_CAP_BITRATE = 16;

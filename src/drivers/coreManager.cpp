@@ -99,7 +99,7 @@ CoreManager::CoreManager():
 }
 
 CoreManager::~CoreManager() {
-
+    Release();
 }
 
 void CoreManager::InitializeCubism() {
@@ -148,6 +148,10 @@ void CoreManager::mouseMoveEvent(int x, int y) {
     _view->OnTouchesMoved(x, y);
     
     dragFreezeTap = true;
+}
+
+bool CoreManager::InitiateLipSync(std::string filePath) {
+    return ModelManager::GetInstance()->StartExternalLipSync(filePath.data());
 }
 
 GLuint CoreManager::CreateShader() {

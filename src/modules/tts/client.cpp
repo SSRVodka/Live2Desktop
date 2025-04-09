@@ -3,6 +3,7 @@
 #include <QtCore/QJsonObject>
 #include <QtNetwork/QNetworkRequest>
 
+#include "modules/audio/audio_handler.h"
 #include "modules/tts/client.h"
 
 #include "utils/consts.h"
@@ -53,10 +54,20 @@ void Client::generateSpeech(const tts_params_t &params, const QString& input, co
     QObject::connect(m_currentReply, &QNetworkReply::finished, [this]() {
         if (m_currentReply->error() == QNetworkReply::NoError) {
             m_outputFile->close();
-            QString msg = CLIENT_TYPE "save data to " + m_outputFile->fileName();
-            std::string conv = msg.toStdString();
-            stdLogger.Info(conv.c_str());
-            emit finished(true, "OK");
+            std::string msg = CLIENT_TYPE "save data to " + m_outputFile->fileName().toStdString();
+            // convert to normalized file
+            std::string tmpFn = m_outputFile.get()->fileName().toStdString();
+            std::string covFn = tmpFn + ".converted.wav";
+            AudioHandler::audio2modelwav(tmpFn, covFn);
+            QFile::remove(QString::fromStdString(tmpFn));
+            if (QFile::rename(QString::fromStdString(covFn), QString::fromStdString(tmpFn))) {
+                stdLogger.Info(msg);
+                emit finished(true, "OK");
+            } else {
+                msg = "failed to convert file '" + covFn + "' to '" + tmpFn + "'";
+                stdLogger.Exception(msg);
+                handleError(QString::fromStdString(msg));
+            }
         } else {
             handleError(m_currentReply->errorString());
         }

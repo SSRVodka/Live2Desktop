@@ -409,6 +409,8 @@ void mainWindow::recv_tts_reply(bool success, QString msg) {
         // play sound from file
         stdLogger.Info("playing generated audio");
         this->audio_handler->get_recorder_unsafe_ptr()->play(this->last_tts_pending_audio_file);
+        // start model lip-sync
+        this->animeWidget->startLipSync(this->last_tts_pending_audio_file.toStdString());
     } else {
         stdLogger.Exception("failed to play audio '"
             + this->last_tts_pending_audio_file.toStdString()

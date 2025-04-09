@@ -21,6 +21,10 @@ AnimeWidget::AnimeWidget(QWidget *parent)
 
 AnimeWidget::~AnimeWidget() {}
 
+bool AnimeWidget::startLipSync(const std::string &filePath) const {
+    return CoreManager::GetInstance()->InitiateLipSync(filePath);
+}
+
 void AnimeWidget::initializeGL() {
     CoreManager::GetInstance()->Initialize(this);
     CoreManager::GetInstance()->resize(this->width(),this->height());
