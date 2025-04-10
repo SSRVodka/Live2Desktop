@@ -52,13 +52,13 @@ TextureManager::TextureInfo* TextureManager::CreateTextureFromPngFile(std::strin
     }
 
     /* Generate textures for OpenGL. */
-    AppOpenGLWrapper::get()->glGenTextures(1, &textureId);
-    AppOpenGLWrapper::get()->glBindTexture(GL_TEXTURE_2D, textureId);
-    AppOpenGLWrapper::get()->glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, png);
-    AppOpenGLWrapper::get()->glGenerateMipmap(GL_TEXTURE_2D);
-    AppOpenGLWrapper::get()->glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-    AppOpenGLWrapper::get()->glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    AppOpenGLWrapper::get()->glBindTexture(GL_TEXTURE_2D, 0);
+    APP_CALL_GLFUNC glGenTextures(1, &textureId);
+    APP_CALL_GLFUNC glBindTexture(GL_TEXTURE_2D, textureId);
+    APP_CALL_GLFUNC glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, png);
+    APP_CALL_GLFUNC glGenerateMipmap(GL_TEXTURE_2D);
+    APP_CALL_GLFUNC glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    APP_CALL_GLFUNC glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    APP_CALL_GLFUNC glBindTexture(GL_TEXTURE_2D, 0);
 
     /* Release current images. */
     stbi_image_free(png);

@@ -1,23 +1,32 @@
 /**
  * @file AppOpenGLWrapper.hpp
- * @brief This file defines the wrapper component for Qt 5 Environment.
+ * @brief This file defines the wrapper component for OpenGL Environment.
  * 
  * This file defines the wrapper component (`AppOpenGLWrapper`), 
  * which is intended to replace the Live2D Framework methods 
- * that use `glew` with `QOpenGLFunctions`.
+ * that use `glew`/`glad` with `QOpenGLFunctions`.
  * 
  * <br/>
  * 
  * Advantages:
- * - Support `QOpenGLWidget`.
+ * - Support `QOpenGLWidget` & `glad`.
  * - Manage OpenGL Context easily.
- * - Without `glew` or `glfw`.
  * 
  * @author SSRVodka
  * @date   Feb 12, 2024
  */
 
 #pragma once
+
+#ifdef USE_GLAD_GLLOADER
+
+#include <glad/glad.h>
+
+#define APP_CALL_GLFUNC
+
+#define initializeOpenGLFunctions gladLoadGL
+
+#else
 
 #include <QtGui/QOpenGLFunctions>
 
@@ -52,3 +61,7 @@ public:
 private:
     static QOpenGLFunctions* instance;  /**< The wrapper instance. */
 };
+
+#define APP_CALL_GLFUNC AppOpenGLWrapper::get()->
+
+#endif

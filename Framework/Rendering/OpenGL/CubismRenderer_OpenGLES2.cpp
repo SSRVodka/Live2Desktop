@@ -53,7 +53,7 @@ void CubismClippingManager_OpenGLES2::SetupClippingContext(CubismModel& model, C
 
     // マスク作成処理
     // 生成したOffscreenSurfaceと同じサイズでビューポートを設定
-    AppOpenGLWrapper::get()->glViewport(0, 0, _clippingMaskBufferSize.X, _clippingMaskBufferSize.Y);
+    APP_CALL_GLFUNC glViewport(0, 0, _clippingMaskBufferSize.X, _clippingMaskBufferSize.Y);
 
     // 後の計算のためにインデックスの最初をセット
     _currentMaskBuffer = renderer->GetMaskBuffer(0);
@@ -143,8 +143,8 @@ void CubismClippingManager_OpenGLES2::SetupClippingContext(CubismModel& model, C
             {
                 // マスクをクリアする
                 // 1が無効（描かれない）領域、0が有効（描かれる）領域。（シェーダーCd*Csで0に近い値をかけてマスクを作る。1をかけると何も起こらない）
-                AppOpenGLWrapper::get()->glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
-                AppOpenGLWrapper::get()->glClear(GL_COLOR_BUFFER_BIT);
+                APP_CALL_GLFUNC glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+                APP_CALL_GLFUNC glClear(GL_COLOR_BUFFER_BIT);
                 _clearedMaskBufferFlags[clipContext->_bufferIndex] = true;
             }
 
@@ -159,7 +159,7 @@ void CubismClippingManager_OpenGLES2::SetupClippingContext(CubismModel& model, C
     // --- 後処理 ---
     _currentMaskBuffer->EndDraw();
     renderer->SetClippingContextBufferForMask(NULL);
-    AppOpenGLWrapper::get()->glViewport(lastViewport[0], lastViewport[1], lastViewport[2], lastViewport[3]);
+    APP_CALL_GLFUNC glViewport(lastViewport[0], lastViewport[1], lastViewport[2], lastViewport[3]);
 }
 
 /*********************************************************************************************************************
@@ -185,60 +185,60 @@ CubismClippingManager<CubismClippingContext_OpenGLES2, CubismOffscreenSurface_Op
 ********************************************************************************************************************/
 void CubismRendererProfile_OpenGLES2::SetGlEnable(GLenum index, GLboolean enabled)
 {
-    if (enabled == GL_TRUE) AppOpenGLWrapper::get()->glEnable(index);
-    else AppOpenGLWrapper::get()->glDisable(index);
+    if (enabled == GL_TRUE) APP_CALL_GLFUNC glEnable(index);
+    else APP_CALL_GLFUNC glDisable(index);
 }
 
 void CubismRendererProfile_OpenGLES2::SetGlEnableVertexAttribArray(GLuint index, GLint enabled)
 {
-    if (enabled) AppOpenGLWrapper::get()->glEnableVertexAttribArray(index);
-    else AppOpenGLWrapper::get()->glDisableVertexAttribArray(index);
+    if (enabled) APP_CALL_GLFUNC glEnableVertexAttribArray(index);
+    else APP_CALL_GLFUNC glDisableVertexAttribArray(index);
 }
 
 void CubismRendererProfile_OpenGLES2::Save()
 {
     //-- push state --
-    AppOpenGLWrapper::get()->glGetIntegerv(GL_ARRAY_BUFFER_BINDING, &_lastArrayBufferBinding);
-    AppOpenGLWrapper::get()->glGetIntegerv(GL_ELEMENT_ARRAY_BUFFER_BINDING, &_lastElementArrayBufferBinding);
-    AppOpenGLWrapper::get()->glGetIntegerv(GL_CURRENT_PROGRAM, &_lastProgram);
+    APP_CALL_GLFUNC glGetIntegerv(GL_ARRAY_BUFFER_BINDING, &_lastArrayBufferBinding);
+    APP_CALL_GLFUNC glGetIntegerv(GL_ELEMENT_ARRAY_BUFFER_BINDING, &_lastElementArrayBufferBinding);
+    APP_CALL_GLFUNC glGetIntegerv(GL_CURRENT_PROGRAM, &_lastProgram);
 
-    AppOpenGLWrapper::get()->glGetIntegerv(GL_ACTIVE_TEXTURE, &_lastActiveTexture);
-    AppOpenGLWrapper::get()->glActiveTexture(GL_TEXTURE1); //テクスチャユニット1をアクティブに（以後の設定対象とする）
-    AppOpenGLWrapper::get()->glGetIntegerv(GL_TEXTURE_BINDING_2D, &_lastTexture1Binding2D);
+    APP_CALL_GLFUNC glGetIntegerv(GL_ACTIVE_TEXTURE, &_lastActiveTexture);
+    APP_CALL_GLFUNC glActiveTexture(GL_TEXTURE1); //テクスチャユニット1をアクティブに（以後の設定対象とする）
+    APP_CALL_GLFUNC glGetIntegerv(GL_TEXTURE_BINDING_2D, &_lastTexture1Binding2D);
 
-    AppOpenGLWrapper::get()->glActiveTexture(GL_TEXTURE0); //テクスチャユニット0をアクティブに（以後の設定対象とする）
-    AppOpenGLWrapper::get()->glGetIntegerv(GL_TEXTURE_BINDING_2D, &_lastTexture0Binding2D);
+    APP_CALL_GLFUNC glActiveTexture(GL_TEXTURE0); //テクスチャユニット0をアクティブに（以後の設定対象とする）
+    APP_CALL_GLFUNC glGetIntegerv(GL_TEXTURE_BINDING_2D, &_lastTexture0Binding2D);
 
-    AppOpenGLWrapper::get()->glGetVertexAttribiv(0, GL_VERTEX_ATTRIB_ARRAY_ENABLED, &_lastVertexAttribArrayEnabled[0]);
-    AppOpenGLWrapper::get()->glGetVertexAttribiv(1, GL_VERTEX_ATTRIB_ARRAY_ENABLED, &_lastVertexAttribArrayEnabled[1]);
-    AppOpenGLWrapper::get()->glGetVertexAttribiv(2, GL_VERTEX_ATTRIB_ARRAY_ENABLED, &_lastVertexAttribArrayEnabled[2]);
-    AppOpenGLWrapper::get()->glGetVertexAttribiv(3, GL_VERTEX_ATTRIB_ARRAY_ENABLED, &_lastVertexAttribArrayEnabled[3]);
+    APP_CALL_GLFUNC glGetVertexAttribiv(0, GL_VERTEX_ATTRIB_ARRAY_ENABLED, &_lastVertexAttribArrayEnabled[0]);
+    APP_CALL_GLFUNC glGetVertexAttribiv(1, GL_VERTEX_ATTRIB_ARRAY_ENABLED, &_lastVertexAttribArrayEnabled[1]);
+    APP_CALL_GLFUNC glGetVertexAttribiv(2, GL_VERTEX_ATTRIB_ARRAY_ENABLED, &_lastVertexAttribArrayEnabled[2]);
+    APP_CALL_GLFUNC glGetVertexAttribiv(3, GL_VERTEX_ATTRIB_ARRAY_ENABLED, &_lastVertexAttribArrayEnabled[3]);
 
-    _lastScissorTest = AppOpenGLWrapper::get()->glIsEnabled(GL_SCISSOR_TEST);
-    _lastStencilTest = AppOpenGLWrapper::get()->glIsEnabled(GL_STENCIL_TEST);
-    _lastDepthTest = AppOpenGLWrapper::get()->glIsEnabled(GL_DEPTH_TEST);
-    _lastCullFace = AppOpenGLWrapper::get()->glIsEnabled(GL_CULL_FACE);
-    _lastBlend = AppOpenGLWrapper::get()->glIsEnabled(GL_BLEND);
+    _lastScissorTest = APP_CALL_GLFUNC glIsEnabled(GL_SCISSOR_TEST);
+    _lastStencilTest = APP_CALL_GLFUNC glIsEnabled(GL_STENCIL_TEST);
+    _lastDepthTest = APP_CALL_GLFUNC glIsEnabled(GL_DEPTH_TEST);
+    _lastCullFace = APP_CALL_GLFUNC glIsEnabled(GL_CULL_FACE);
+    _lastBlend = APP_CALL_GLFUNC glIsEnabled(GL_BLEND);
 
-    AppOpenGLWrapper::get()->glGetIntegerv(GL_FRONT_FACE, &_lastFrontFace);
+    APP_CALL_GLFUNC glGetIntegerv(GL_FRONT_FACE, &_lastFrontFace);
 
-    AppOpenGLWrapper::get()->glGetBooleanv(GL_COLOR_WRITEMASK, _lastColorMask);
+    APP_CALL_GLFUNC glGetBooleanv(GL_COLOR_WRITEMASK, _lastColorMask);
 
     // backup blending
-    AppOpenGLWrapper::get()->glGetIntegerv(GL_BLEND_SRC_RGB, &_lastBlending[0]);
-    AppOpenGLWrapper::get()->glGetIntegerv(GL_BLEND_DST_RGB, &_lastBlending[1]);
-    AppOpenGLWrapper::get()->glGetIntegerv(GL_BLEND_SRC_ALPHA, &_lastBlending[2]);
-    AppOpenGLWrapper::get()->glGetIntegerv(GL_BLEND_DST_ALPHA, &_lastBlending[3]);
+    APP_CALL_GLFUNC glGetIntegerv(GL_BLEND_SRC_RGB, &_lastBlending[0]);
+    APP_CALL_GLFUNC glGetIntegerv(GL_BLEND_DST_RGB, &_lastBlending[1]);
+    APP_CALL_GLFUNC glGetIntegerv(GL_BLEND_SRC_ALPHA, &_lastBlending[2]);
+    APP_CALL_GLFUNC glGetIntegerv(GL_BLEND_DST_ALPHA, &_lastBlending[3]);
 
     // モデル描画直前のFBOとビューポートを保存
-    AppOpenGLWrapper::get()->glGetIntegerv(GL_FRAMEBUFFER_BINDING, &_lastFBO);
-    AppOpenGLWrapper::get()->glGetIntegerv(GL_VIEWPORT, _lastViewport);
+    APP_CALL_GLFUNC glGetIntegerv(GL_FRAMEBUFFER_BINDING, &_lastFBO);
+    APP_CALL_GLFUNC glGetIntegerv(GL_VIEWPORT, _lastViewport);
 
 }
 
 void CubismRendererProfile_OpenGLES2::Restore()
 {
-    AppOpenGLWrapper::get()->glUseProgram(_lastProgram);
+    APP_CALL_GLFUNC glUseProgram(_lastProgram);
 
     SetGlEnableVertexAttribArray(0, _lastVertexAttribArrayEnabled[0]);
     SetGlEnableVertexAttribArray(1, _lastVertexAttribArrayEnabled[1]);
@@ -251,23 +251,23 @@ void CubismRendererProfile_OpenGLES2::Restore()
     SetGlEnable(GL_CULL_FACE, _lastCullFace);
     SetGlEnable(GL_BLEND, _lastBlend);
 
-    AppOpenGLWrapper::get()->glFrontFace(_lastFrontFace);
+    APP_CALL_GLFUNC glFrontFace(_lastFrontFace);
 
-    AppOpenGLWrapper::get()->glColorMask(_lastColorMask[0], _lastColorMask[1], _lastColorMask[2], _lastColorMask[3]);
+    APP_CALL_GLFUNC glColorMask(_lastColorMask[0], _lastColorMask[1], _lastColorMask[2], _lastColorMask[3]);
 
-    AppOpenGLWrapper::get()->glBindBuffer(GL_ARRAY_BUFFER, _lastArrayBufferBinding); //前にバッファがバインドされていたら破棄する必要がある
-    AppOpenGLWrapper::get()->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _lastElementArrayBufferBinding);
+    APP_CALL_GLFUNC glBindBuffer(GL_ARRAY_BUFFER, _lastArrayBufferBinding); //前にバッファがバインドされていたら破棄する必要がある
+    APP_CALL_GLFUNC glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _lastElementArrayBufferBinding);
 
-    AppOpenGLWrapper::get()->glActiveTexture(GL_TEXTURE1); //テクスチャユニット1を復元
-    AppOpenGLWrapper::get()->glBindTexture(GL_TEXTURE_2D, _lastTexture1Binding2D);
+    APP_CALL_GLFUNC glActiveTexture(GL_TEXTURE1); //テクスチャユニット1を復元
+    APP_CALL_GLFUNC glBindTexture(GL_TEXTURE_2D, _lastTexture1Binding2D);
 
-    AppOpenGLWrapper::get()->glActiveTexture(GL_TEXTURE0); //テクスチャユニット0を復元
-    AppOpenGLWrapper::get()->glBindTexture(GL_TEXTURE_2D, _lastTexture0Binding2D);
+    APP_CALL_GLFUNC glActiveTexture(GL_TEXTURE0); //テクスチャユニット0を復元
+    APP_CALL_GLFUNC glBindTexture(GL_TEXTURE_2D, _lastTexture0Binding2D);
 
-    AppOpenGLWrapper::get()->glActiveTexture(_lastActiveTexture);
+    APP_CALL_GLFUNC glActiveTexture(_lastActiveTexture);
 
     // restore blending
-    AppOpenGLWrapper::get()->glBlendFuncSeparate(_lastBlending[0], _lastBlending[1], _lastBlending[2], _lastBlending[3]);
+    APP_CALL_GLFUNC glBlendFuncSeparate(_lastBlending[0], _lastBlending[1], _lastBlending[2], _lastBlending[3]);
 }
 
 /*********************************************************************************************************************
@@ -410,7 +410,7 @@ void* CubismRenderer_OpenGLES2::WinGlGetProcAddress(const csmChar* name)
 
 void CubismRenderer_OpenGLES2::CheckGlError(const csmChar* message)
 {
-    GLenum errcode = AppOpenGLWrapper::get()->glGetError();
+    GLenum errcode = APP_CALL_GLFUNC glGetError();
     if (errcode != GL_NO_ERROR)
     {
         CubismLogError("0x%04X(%4d) : %s", errcode, errcode, message);
@@ -504,27 +504,28 @@ void CubismRenderer_OpenGLES2::PreDraw()
     if (!s_isInitializeGlFunctionsSuccess) return;
 #endif
 
-    AppOpenGLWrapper::get()->glDisable(GL_SCISSOR_TEST);
-    AppOpenGLWrapper::get()->glDisable(GL_STENCIL_TEST);
-    AppOpenGLWrapper::get()->glDisable(GL_DEPTH_TEST);
+    APP_CALL_GLFUNC glDisable(GL_SCISSOR_TEST);
+    APP_CALL_GLFUNC glDisable(GL_STENCIL_TEST);
+    APP_CALL_GLFUNC glDisable(GL_DEPTH_TEST);
 
-    AppOpenGLWrapper::get()->glEnable(GL_BLEND);
-    AppOpenGLWrapper::get()->glColorMask(1, 1, 1, 1);
+    APP_CALL_GLFUNC glEnable(GL_BLEND);
+    APP_CALL_GLFUNC glColorMask(1, 1, 1, 1);
 
 #ifdef CSM_TARGET_IPHONE_ES2
     glBindVertexArrayOES(0);
 #endif
 
-    AppOpenGLWrapper::get()->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-    AppOpenGLWrapper::get()->glBindBuffer(GL_ARRAY_BUFFER, 0); //前にバッファがバインドされていたら破棄する必要がある
+    APP_CALL_GLFUNC glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+    APP_CALL_GLFUNC glBindBuffer(GL_ARRAY_BUFFER, 0); //前にバッファがバインドされていたら破棄する必要がある
 
     //異方性フィルタリング。プラットフォームのOpenGLによっては未対応の場合があるので、未設定のときは設定しない
-    if (GetAnisotropy() > 0.0f)
+    if (GetAnisotropy() >= 1.0f)
     {
         for (csmInt32 i = 0; i < _textures.GetSize(); i++)
         {
-            AppOpenGLWrapper::get()->glBindTexture(GL_TEXTURE_2D, _textures[i]);
-            AppOpenGLWrapper::get()->glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, GetAnisotropy());
+            APP_CALL_GLFUNC glBindTexture(GL_TEXTURE_2D, _textures[i]);
+            // 20250410 REPLACE GL_TEXTURE_MAX_ANISOTROPY_EXT with GL_TEXTURE_MAX_ANISOTROPY
+            APP_CALL_GLFUNC glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY, GetAnisotropy());
         }
     }
 }
@@ -592,7 +593,7 @@ void CubismRenderer_OpenGLES2::DoDrawModel()
             if(clipContext->_isUsing) // 書くことになっていた
             {
                 // 生成したOffscreenSurfaceと同じサイズでビューポートを設定
-                AppOpenGLWrapper::get()->glViewport(0, 0, _clippingManager->GetClippingMaskBufferSize().X, _clippingManager->GetClippingMaskBufferSize().Y);
+                APP_CALL_GLFUNC glViewport(0, 0, _clippingManager->GetClippingMaskBufferSize().X, _clippingManager->GetClippingMaskBufferSize().Y);
 
                 PreDraw(); // バッファをクリアする
 
@@ -602,8 +603,8 @@ void CubismRenderer_OpenGLES2::DoDrawModel()
 
                 // マスクをクリアする
                 // 1が無効（描かれない）領域、0が有効（描かれる）領域。（シェーダで Cd*Csで0に近い値をかけてマスクを作る。1をかけると何も起こらない）
-                AppOpenGLWrapper::get()->glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
-                AppOpenGLWrapper::get()->glClear(GL_COLOR_BUFFER_BIT);
+                APP_CALL_GLFUNC glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+                APP_CALL_GLFUNC glClear(GL_COLOR_BUFFER_BIT);
             }
 
             {
@@ -632,7 +633,7 @@ void CubismRenderer_OpenGLES2::DoDrawModel()
                 // --- 後処理 ---
                 GetMaskBuffer(clipContext->_bufferIndex)->EndDraw();
                 SetClippingContextBufferForMask(NULL);
-                AppOpenGLWrapper::get()->glViewport(_rendererProfile._lastViewport[0], _rendererProfile._lastViewport[1], _rendererProfile._lastViewport[2], _rendererProfile._lastViewport[3]);
+                APP_CALL_GLFUNC glViewport(_rendererProfile._lastViewport[0], _rendererProfile._lastViewport[1], _rendererProfile._lastViewport[2], _rendererProfile._lastViewport[3]);
 
                 PreDraw(); // バッファをクリアする
             }
@@ -664,14 +665,14 @@ void CubismRenderer_OpenGLES2::DrawMeshOpenGL(const CubismModel& model, const cs
     // 裏面描画の有効・無効
     if (IsCulling())
     {
-        AppOpenGLWrapper::get()->glEnable(GL_CULL_FACE);
+        APP_CALL_GLFUNC glEnable(GL_CULL_FACE);
     }
     else
     {
-        AppOpenGLWrapper::get()->glDisable(GL_CULL_FACE);
+        APP_CALL_GLFUNC glDisable(GL_CULL_FACE);
     }
 
-    AppOpenGLWrapper::get()->glFrontFace(GL_CCW);    // Cubism SDK OpenGLはマスク・アートメッシュ共にCCWが表面
+    APP_CALL_GLFUNC glFrontFace(GL_CCW);    // Cubism SDK OpenGLはマスク・アートメッシュ共にCCWが表面
 
     if (IsGeneratingMask())  // マスク生成時
     {
@@ -685,11 +686,11 @@ void CubismRenderer_OpenGLES2::DrawMeshOpenGL(const CubismModel& model, const cs
     {
         csmInt32 indexCount = model.GetDrawableVertexIndexCount(index);
         csmUint16* indexArray = const_cast<csmUint16*>(model.GetDrawableVertexIndices(index));
-        AppOpenGLWrapper::get()->glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_SHORT, indexArray);
+        APP_CALL_GLFUNC glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_SHORT, indexArray);
     }
 
     // 後処理
-    AppOpenGLWrapper::get()->glUseProgram(0);
+    APP_CALL_GLFUNC glUseProgram(0);
     SetClippingContextBufferForDraw(NULL);
     SetClippingContextBufferForMask(NULL);
 }

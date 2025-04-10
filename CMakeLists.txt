@@ -68,6 +68,11 @@ else()
 endif()
 
 set(FRAMEWORK_SOURCE "OpenGL")
+# Note: You need to set glad source & header manually if you switch this option ON !
+option(FRAMEWORK_USE_GLAD_GLLOADER "Live2Desktop Project Uses GLAD OpenGL Function Loader" OFF)
+if(FRAMEWORK_USE_GLAD_GLLOADER)
+  add_compile_definitions(USE_GLAD_GLLOADER)
+endif()
 
 # Find Qt libraries
 find_package(Qt5 COMPONENTS Core Gui Widgets REQUIRED)

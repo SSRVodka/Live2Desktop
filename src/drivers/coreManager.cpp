@@ -27,16 +27,16 @@ void CoreManager::ReleaseInstance() {
 }
 
 bool CoreManager::Initialize(AnimeWidget* window) {
-    /* Replaced `glewInit()` */
-    AppOpenGLWrapper::get()->initializeOpenGLFunctions();
+    /* Replaced `glewInit()` or `gladLoadGL()` */
+    APP_CALL_GLFUNC initializeOpenGLFunctions();
 
     /* Texture sampling settings. */
-    AppOpenGLWrapper::get()->glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    AppOpenGLWrapper::get()->glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    APP_CALL_GLFUNC glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    APP_CALL_GLFUNC glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
     /* Transparency settings. */
-    AppOpenGLWrapper::get()->glEnable(GL_BLEND);
-    AppOpenGLWrapper::get()->glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    APP_CALL_GLFUNC glEnable(GL_BLEND);
+    APP_CALL_GLFUNC glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     /* Register callback function & Window size memory. */
     _windowWidth = window->width();
     _windowHeight = window->height();
@@ -46,7 +46,7 @@ bool CoreManager::Initialize(AnimeWidget* window) {
 
     /* Initialize Cubism SDK. */
     InitializeCubism();
-    AppOpenGLWrapper::get()->glViewport(0, 0, _windowWidth, _windowHeight);
+    APP_CALL_GLFUNC glViewport(0, 0, _windowWidth, _windowHeight);
     return GL_TRUE;
 }
 
@@ -68,7 +68,7 @@ void CoreManager::resize(int width,int height) {
         _windowHeight = height;
 
         /* Viewport Change. */
-        AppOpenGLWrapper::get()->glViewport(0, 0, width, height);
+        APP_CALL_GLFUNC glViewport(0, 0, width, height);
     }
 }
 
@@ -76,9 +76,9 @@ void CoreManager::update() {
     ToolFunctions::UpdateTime();
 
     /* Reinitializes OpenGL canvas every time when it updates. */
-    AppOpenGLWrapper::get()->glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-    AppOpenGLWrapper::get()->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    AppOpenGLWrapper::get()->glClearDepthf(1.0);
+    APP_CALL_GLFUNC glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+    APP_CALL_GLFUNC glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    APP_CALL_GLFUNC glClearDepthf(1.0);
 
     /* Update render engine. */
     _view->Render();
@@ -156,7 +156,7 @@ bool CoreManager::InitiateLipSync(std::string filePath) {
 
 GLuint CoreManager::CreateShader() {
     /* Compiling Vertex Shaders. */
-    GLuint vertexShaderId = AppOpenGLWrapper::get()->glCreateShader(GL_VERTEX_SHADER);
+    GLuint vertexShaderId = APP_CALL_GLFUNC glCreateShader(GL_VERTEX_SHADER);
     const char* vertexShader =
         "#version 120\n"
         "attribute vec3 position;"
@@ -166,14 +166,14 @@ GLuint CoreManager::CreateShader() {
         "    gl_Position = vec4(position, 1.0);"
         "    vuv = uv;"
         "}";
-    AppOpenGLWrapper::get()->glShaderSource(vertexShaderId, 1, &vertexShader, NULL);
-    AppOpenGLWrapper::get()->glCompileShader(vertexShaderId);
+    APP_CALL_GLFUNC glShaderSource(vertexShaderId, 1, &vertexShader, NULL);
+    APP_CALL_GLFUNC glCompileShader(vertexShaderId);
     if(!CheckShader(vertexShaderId)) {
         return 0;
     }
 
     /* Compiling fragment shaders. */
-    GLuint fragmentShaderId = AppOpenGLWrapper::get()->glCreateShader(GL_FRAGMENT_SHADER);
+    GLuint fragmentShaderId = APP_CALL_GLFUNC glCreateShader(GL_FRAGMENT_SHADER);
     const char* fragmentShader =
         "#version 120\n"
         "varying vec2 vuv;"
@@ -182,21 +182,21 @@ GLuint CoreManager::CreateShader() {
         "void main(void){"
         "    gl_FragColor = texture2D(texture, vuv) * baseColor;"
         "}";
-    AppOpenGLWrapper::get()->glShaderSource(fragmentShaderId, 1, &fragmentShader, NULL);
-    AppOpenGLWrapper::get()->glCompileShader(fragmentShaderId);
+    APP_CALL_GLFUNC glShaderSource(fragmentShaderId, 1, &fragmentShader, NULL);
+    APP_CALL_GLFUNC glCompileShader(fragmentShaderId);
     if (!CheckShader(fragmentShaderId)) {
         return 0;
     }
 
     /* Creating Program Objects. */
-    GLuint programId = AppOpenGLWrapper::get()->glCreateProgram();
-    AppOpenGLWrapper::get()->glAttachShader(programId, vertexShaderId);
-    AppOpenGLWrapper::get()->glAttachShader(programId, fragmentShaderId);
+    GLuint programId = APP_CALL_GLFUNC glCreateProgram();
+    APP_CALL_GLFUNC glAttachShader(programId, vertexShaderId);
+    APP_CALL_GLFUNC glAttachShader(programId, fragmentShaderId);
 
     /* Link. */
-    AppOpenGLWrapper::get()->glLinkProgram(programId);
+    APP_CALL_GLFUNC glLinkProgram(programId);
 
-    AppOpenGLWrapper::get()->glUseProgram(programId);
+    APP_CALL_GLFUNC glUseProgram(programId);
 
     return programId;
 }
@@ -204,17 +204,17 @@ GLuint CoreManager::CreateShader() {
 bool CoreManager::CheckShader(GLuint shaderId) {
     GLint status;
     GLint logLength;
-    AppOpenGLWrapper::get()->glGetShaderiv(shaderId, GL_INFO_LOG_LENGTH, &logLength);
+    APP_CALL_GLFUNC glGetShaderiv(shaderId, GL_INFO_LOG_LENGTH, &logLength);
     if (logLength > 0) {
         GLchar* log = reinterpret_cast<GLchar*>(CSM_MALLOC(logLength));
-        AppOpenGLWrapper::get()->glGetShaderInfoLog(shaderId, logLength, &logLength, log);
+        APP_CALL_GLFUNC glGetShaderInfoLog(shaderId, logLength, &logLength, log);
         CubismLogError("Shader compile log: %s", log);
         CSM_FREE(log);
     }
 
-    AppOpenGLWrapper::get()->glGetShaderiv(shaderId, GL_COMPILE_STATUS, &status);
+    APP_CALL_GLFUNC glGetShaderiv(shaderId, GL_COMPILE_STATUS, &status);
     if (status == GL_FALSE) {
-        AppOpenGLWrapper::get()->glDeleteShader(shaderId);
+        APP_CALL_GLFUNC glDeleteShader(shaderId);
         return false;
     }
 

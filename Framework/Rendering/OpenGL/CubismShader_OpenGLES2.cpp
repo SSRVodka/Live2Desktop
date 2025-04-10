@@ -466,7 +466,7 @@ void CubismShader_OpenGLES2::ReleaseShaderProgram()
     {
         if (_shaderSets[i]->ShaderProgram)
         {
-            AppOpenGLWrapper::get()->glDeleteProgram(_shaderSets[i]->ShaderProgram);
+            APP_CALL_GLFUNC glDeleteProgram(_shaderSets[i]->ShaderProgram);
             _shaderSets[i]->ShaderProgram = 0;
             CSM_DELETE(_shaderSets[i]);
         }
@@ -593,212 +593,212 @@ void CubismShader_OpenGLES2::GenerateShaders()
 #endif
 
     // SetupMask
-    _shaderSets[0]->AttributePositionLocation = AppOpenGLWrapper::get()->glGetAttribLocation(_shaderSets[0]->ShaderProgram, "a_position");
-    _shaderSets[0]->AttributeTexCoordLocation = AppOpenGLWrapper::get()->glGetAttribLocation(_shaderSets[0]->ShaderProgram, "a_texCoord");
-    _shaderSets[0]->SamplerTexture0Location = AppOpenGLWrapper::get()->glGetUniformLocation(_shaderSets[0]->ShaderProgram, "s_texture0");
-    _shaderSets[0]->UniformClipMatrixLocation = AppOpenGLWrapper::get()->glGetUniformLocation(_shaderSets[0]->ShaderProgram, "u_clipMatrix");
-    _shaderSets[0]->UnifromChannelFlagLocation = AppOpenGLWrapper::get()->glGetUniformLocation(_shaderSets[0]->ShaderProgram, "u_channelFlag");
-    _shaderSets[0]->UniformBaseColorLocation = AppOpenGLWrapper::get()->glGetUniformLocation(_shaderSets[0]->ShaderProgram, "u_baseColor");
-    _shaderSets[0]->UniformMultiplyColorLocation = AppOpenGLWrapper::get()->glGetUniformLocation(_shaderSets[0]->ShaderProgram, "u_multiplyColor");
-    _shaderSets[0]->UniformScreenColorLocation = AppOpenGLWrapper::get()->glGetUniformLocation(_shaderSets[0]->ShaderProgram, "u_screenColor");
+    _shaderSets[0]->AttributePositionLocation = APP_CALL_GLFUNC glGetAttribLocation(_shaderSets[0]->ShaderProgram, "a_position");
+    _shaderSets[0]->AttributeTexCoordLocation = APP_CALL_GLFUNC glGetAttribLocation(_shaderSets[0]->ShaderProgram, "a_texCoord");
+    _shaderSets[0]->SamplerTexture0Location = APP_CALL_GLFUNC glGetUniformLocation(_shaderSets[0]->ShaderProgram, "s_texture0");
+    _shaderSets[0]->UniformClipMatrixLocation = APP_CALL_GLFUNC glGetUniformLocation(_shaderSets[0]->ShaderProgram, "u_clipMatrix");
+    _shaderSets[0]->UnifromChannelFlagLocation = APP_CALL_GLFUNC glGetUniformLocation(_shaderSets[0]->ShaderProgram, "u_channelFlag");
+    _shaderSets[0]->UniformBaseColorLocation = APP_CALL_GLFUNC glGetUniformLocation(_shaderSets[0]->ShaderProgram, "u_baseColor");
+    _shaderSets[0]->UniformMultiplyColorLocation = APP_CALL_GLFUNC glGetUniformLocation(_shaderSets[0]->ShaderProgram, "u_multiplyColor");
+    _shaderSets[0]->UniformScreenColorLocation = APP_CALL_GLFUNC glGetUniformLocation(_shaderSets[0]->ShaderProgram, "u_screenColor");
 
     // 通常
-    _shaderSets[1]->AttributePositionLocation = AppOpenGLWrapper::get()->glGetAttribLocation(_shaderSets[1]->ShaderProgram, "a_position");
-    _shaderSets[1]->AttributeTexCoordLocation = AppOpenGLWrapper::get()->glGetAttribLocation(_shaderSets[1]->ShaderProgram, "a_texCoord");
-    _shaderSets[1]->SamplerTexture0Location = AppOpenGLWrapper::get()->glGetUniformLocation(_shaderSets[1]->ShaderProgram, "s_texture0");
-    _shaderSets[1]->UniformMatrixLocation = AppOpenGLWrapper::get()->glGetUniformLocation(_shaderSets[1]->ShaderProgram, "u_matrix");
-    _shaderSets[1]->UniformBaseColorLocation = AppOpenGLWrapper::get()->glGetUniformLocation(_shaderSets[1]->ShaderProgram, "u_baseColor");
-    _shaderSets[1]->UniformMultiplyColorLocation = AppOpenGLWrapper::get()->glGetUniformLocation(_shaderSets[1]->ShaderProgram, "u_multiplyColor");
-    _shaderSets[1]->UniformScreenColorLocation = AppOpenGLWrapper::get()->glGetUniformLocation(_shaderSets[1]->ShaderProgram, "u_screenColor");
+    _shaderSets[1]->AttributePositionLocation = APP_CALL_GLFUNC glGetAttribLocation(_shaderSets[1]->ShaderProgram, "a_position");
+    _shaderSets[1]->AttributeTexCoordLocation = APP_CALL_GLFUNC glGetAttribLocation(_shaderSets[1]->ShaderProgram, "a_texCoord");
+    _shaderSets[1]->SamplerTexture0Location = APP_CALL_GLFUNC glGetUniformLocation(_shaderSets[1]->ShaderProgram, "s_texture0");
+    _shaderSets[1]->UniformMatrixLocation = APP_CALL_GLFUNC glGetUniformLocation(_shaderSets[1]->ShaderProgram, "u_matrix");
+    _shaderSets[1]->UniformBaseColorLocation = APP_CALL_GLFUNC glGetUniformLocation(_shaderSets[1]->ShaderProgram, "u_baseColor");
+    _shaderSets[1]->UniformMultiplyColorLocation = APP_CALL_GLFUNC glGetUniformLocation(_shaderSets[1]->ShaderProgram, "u_multiplyColor");
+    _shaderSets[1]->UniformScreenColorLocation = APP_CALL_GLFUNC glGetUniformLocation(_shaderSets[1]->ShaderProgram, "u_screenColor");
 
     // 通常（クリッピング）
-    _shaderSets[2]->AttributePositionLocation = AppOpenGLWrapper::get()->glGetAttribLocation(_shaderSets[2]->ShaderProgram, "a_position");
-    _shaderSets[2]->AttributeTexCoordLocation = AppOpenGLWrapper::get()->glGetAttribLocation(_shaderSets[2]->ShaderProgram, "a_texCoord");
-    _shaderSets[2]->SamplerTexture0Location = AppOpenGLWrapper::get()->glGetUniformLocation(_shaderSets[2]->ShaderProgram, "s_texture0");
-    _shaderSets[2]->SamplerTexture1Location = AppOpenGLWrapper::get()->glGetUniformLocation(_shaderSets[2]->ShaderProgram, "s_texture1");
-    _shaderSets[2]->UniformMatrixLocation = AppOpenGLWrapper::get()->glGetUniformLocation(_shaderSets[2]->ShaderProgram, "u_matrix");
-    _shaderSets[2]->UniformClipMatrixLocation = AppOpenGLWrapper::get()->glGetUniformLocation(_shaderSets[2]->ShaderProgram, "u_clipMatrix");
-    _shaderSets[2]->UnifromChannelFlagLocation = AppOpenGLWrapper::get()->glGetUniformLocation(_shaderSets[2]->ShaderProgram, "u_channelFlag");
-    _shaderSets[2]->UniformBaseColorLocation = AppOpenGLWrapper::get()->glGetUniformLocation(_shaderSets[2]->ShaderProgram, "u_baseColor");
-    _shaderSets[2]->UniformMultiplyColorLocation = AppOpenGLWrapper::get()->glGetUniformLocation(_shaderSets[2]->ShaderProgram, "u_multiplyColor");
-    _shaderSets[2]->UniformScreenColorLocation = AppOpenGLWrapper::get()->glGetUniformLocation(_shaderSets[2]->ShaderProgram, "u_screenColor");
+    _shaderSets[2]->AttributePositionLocation = APP_CALL_GLFUNC glGetAttribLocation(_shaderSets[2]->ShaderProgram, "a_position");
+    _shaderSets[2]->AttributeTexCoordLocation = APP_CALL_GLFUNC glGetAttribLocation(_shaderSets[2]->ShaderProgram, "a_texCoord");
+    _shaderSets[2]->SamplerTexture0Location = APP_CALL_GLFUNC glGetUniformLocation(_shaderSets[2]->ShaderProgram, "s_texture0");
+    _shaderSets[2]->SamplerTexture1Location = APP_CALL_GLFUNC glGetUniformLocation(_shaderSets[2]->ShaderProgram, "s_texture1");
+    _shaderSets[2]->UniformMatrixLocation = APP_CALL_GLFUNC glGetUniformLocation(_shaderSets[2]->ShaderProgram, "u_matrix");
+    _shaderSets[2]->UniformClipMatrixLocation = APP_CALL_GLFUNC glGetUniformLocation(_shaderSets[2]->ShaderProgram, "u_clipMatrix");
+    _shaderSets[2]->UnifromChannelFlagLocation = APP_CALL_GLFUNC glGetUniformLocation(_shaderSets[2]->ShaderProgram, "u_channelFlag");
+    _shaderSets[2]->UniformBaseColorLocation = APP_CALL_GLFUNC glGetUniformLocation(_shaderSets[2]->ShaderProgram, "u_baseColor");
+    _shaderSets[2]->UniformMultiplyColorLocation = APP_CALL_GLFUNC glGetUniformLocation(_shaderSets[2]->ShaderProgram, "u_multiplyColor");
+    _shaderSets[2]->UniformScreenColorLocation = APP_CALL_GLFUNC glGetUniformLocation(_shaderSets[2]->ShaderProgram, "u_screenColor");
 
     // 通常（クリッピング・反転）
-    _shaderSets[3]->AttributePositionLocation = AppOpenGLWrapper::get()->glGetAttribLocation(_shaderSets[3]->ShaderProgram, "a_position");
-    _shaderSets[3]->AttributeTexCoordLocation = AppOpenGLWrapper::get()->glGetAttribLocation(_shaderSets[3]->ShaderProgram, "a_texCoord");
-    _shaderSets[3]->SamplerTexture0Location = AppOpenGLWrapper::get()->glGetUniformLocation(_shaderSets[3]->ShaderProgram, "s_texture0");
-    _shaderSets[3]->SamplerTexture1Location = AppOpenGLWrapper::get()->glGetUniformLocation(_shaderSets[3]->ShaderProgram, "s_texture1");
-    _shaderSets[3]->UniformMatrixLocation = AppOpenGLWrapper::get()->glGetUniformLocation(_shaderSets[3]->ShaderProgram, "u_matrix");
-    _shaderSets[3]->UniformClipMatrixLocation = AppOpenGLWrapper::get()->glGetUniformLocation(_shaderSets[3]->ShaderProgram, "u_clipMatrix");
-    _shaderSets[3]->UnifromChannelFlagLocation = AppOpenGLWrapper::get()->glGetUniformLocation(_shaderSets[3]->ShaderProgram, "u_channelFlag");
-    _shaderSets[3]->UniformBaseColorLocation = AppOpenGLWrapper::get()->glGetUniformLocation(_shaderSets[3]->ShaderProgram, "u_baseColor");
-    _shaderSets[3]->UniformMultiplyColorLocation = AppOpenGLWrapper::get()->glGetUniformLocation(_shaderSets[3]->ShaderProgram, "u_multiplyColor");
-    _shaderSets[3]->UniformScreenColorLocation = AppOpenGLWrapper::get()->glGetUniformLocation(_shaderSets[3]->ShaderProgram, "u_screenColor");
+    _shaderSets[3]->AttributePositionLocation = APP_CALL_GLFUNC glGetAttribLocation(_shaderSets[3]->ShaderProgram, "a_position");
+    _shaderSets[3]->AttributeTexCoordLocation = APP_CALL_GLFUNC glGetAttribLocation(_shaderSets[3]->ShaderProgram, "a_texCoord");
+    _shaderSets[3]->SamplerTexture0Location = APP_CALL_GLFUNC glGetUniformLocation(_shaderSets[3]->ShaderProgram, "s_texture0");
+    _shaderSets[3]->SamplerTexture1Location = APP_CALL_GLFUNC glGetUniformLocation(_shaderSets[3]->ShaderProgram, "s_texture1");
+    _shaderSets[3]->UniformMatrixLocation = APP_CALL_GLFUNC glGetUniformLocation(_shaderSets[3]->ShaderProgram, "u_matrix");
+    _shaderSets[3]->UniformClipMatrixLocation = APP_CALL_GLFUNC glGetUniformLocation(_shaderSets[3]->ShaderProgram, "u_clipMatrix");
+    _shaderSets[3]->UnifromChannelFlagLocation = APP_CALL_GLFUNC glGetUniformLocation(_shaderSets[3]->ShaderProgram, "u_channelFlag");
+    _shaderSets[3]->UniformBaseColorLocation = APP_CALL_GLFUNC glGetUniformLocation(_shaderSets[3]->ShaderProgram, "u_baseColor");
+    _shaderSets[3]->UniformMultiplyColorLocation = APP_CALL_GLFUNC glGetUniformLocation(_shaderSets[3]->ShaderProgram, "u_multiplyColor");
+    _shaderSets[3]->UniformScreenColorLocation = APP_CALL_GLFUNC glGetUniformLocation(_shaderSets[3]->ShaderProgram, "u_screenColor");
 
     // 通常（PremultipliedAlpha）
-    _shaderSets[4]->AttributePositionLocation = AppOpenGLWrapper::get()->glGetAttribLocation(_shaderSets[4]->ShaderProgram, "a_position");
-    _shaderSets[4]->AttributeTexCoordLocation = AppOpenGLWrapper::get()->glGetAttribLocation(_shaderSets[4]->ShaderProgram, "a_texCoord");
-    _shaderSets[4]->SamplerTexture0Location = AppOpenGLWrapper::get()->glGetUniformLocation(_shaderSets[4]->ShaderProgram, "s_texture0");
-    _shaderSets[4]->UniformMatrixLocation = AppOpenGLWrapper::get()->glGetUniformLocation(_shaderSets[4]->ShaderProgram, "u_matrix");
-    _shaderSets[4]->UniformBaseColorLocation = AppOpenGLWrapper::get()->glGetUniformLocation(_shaderSets[4]->ShaderProgram, "u_baseColor");
-    _shaderSets[4]->UniformMultiplyColorLocation = AppOpenGLWrapper::get()->glGetUniformLocation(_shaderSets[4]->ShaderProgram, "u_multiplyColor");
-    _shaderSets[4]->UniformScreenColorLocation = AppOpenGLWrapper::get()->glGetUniformLocation(_shaderSets[4]->ShaderProgram, "u_screenColor");
+    _shaderSets[4]->AttributePositionLocation = APP_CALL_GLFUNC glGetAttribLocation(_shaderSets[4]->ShaderProgram, "a_position");
+    _shaderSets[4]->AttributeTexCoordLocation = APP_CALL_GLFUNC glGetAttribLocation(_shaderSets[4]->ShaderProgram, "a_texCoord");
+    _shaderSets[4]->SamplerTexture0Location = APP_CALL_GLFUNC glGetUniformLocation(_shaderSets[4]->ShaderProgram, "s_texture0");
+    _shaderSets[4]->UniformMatrixLocation = APP_CALL_GLFUNC glGetUniformLocation(_shaderSets[4]->ShaderProgram, "u_matrix");
+    _shaderSets[4]->UniformBaseColorLocation = APP_CALL_GLFUNC glGetUniformLocation(_shaderSets[4]->ShaderProgram, "u_baseColor");
+    _shaderSets[4]->UniformMultiplyColorLocation = APP_CALL_GLFUNC glGetUniformLocation(_shaderSets[4]->ShaderProgram, "u_multiplyColor");
+    _shaderSets[4]->UniformScreenColorLocation = APP_CALL_GLFUNC glGetUniformLocation(_shaderSets[4]->ShaderProgram, "u_screenColor");
 
     // 通常（クリッピング、PremultipliedAlpha）
-    _shaderSets[5]->AttributePositionLocation = AppOpenGLWrapper::get()->glGetAttribLocation(_shaderSets[5]->ShaderProgram, "a_position");
-    _shaderSets[5]->AttributeTexCoordLocation = AppOpenGLWrapper::get()->glGetAttribLocation(_shaderSets[5]->ShaderProgram, "a_texCoord");
-    _shaderSets[5]->SamplerTexture0Location = AppOpenGLWrapper::get()->glGetUniformLocation(_shaderSets[5]->ShaderProgram, "s_texture0");
-    _shaderSets[5]->SamplerTexture1Location = AppOpenGLWrapper::get()->glGetUniformLocation(_shaderSets[5]->ShaderProgram, "s_texture1");
-    _shaderSets[5]->UniformMatrixLocation = AppOpenGLWrapper::get()->glGetUniformLocation(_shaderSets[5]->ShaderProgram, "u_matrix");
-    _shaderSets[5]->UniformClipMatrixLocation = AppOpenGLWrapper::get()->glGetUniformLocation(_shaderSets[5]->ShaderProgram, "u_clipMatrix");
-    _shaderSets[5]->UnifromChannelFlagLocation = AppOpenGLWrapper::get()->glGetUniformLocation(_shaderSets[5]->ShaderProgram, "u_channelFlag");
-    _shaderSets[5]->UniformBaseColorLocation = AppOpenGLWrapper::get()->glGetUniformLocation(_shaderSets[5]->ShaderProgram, "u_baseColor");
-    _shaderSets[5]->UniformMultiplyColorLocation = AppOpenGLWrapper::get()->glGetUniformLocation(_shaderSets[5]->ShaderProgram, "u_multiplyColor");
-    _shaderSets[5]->UniformScreenColorLocation = AppOpenGLWrapper::get()->glGetUniformLocation(_shaderSets[5]->ShaderProgram, "u_screenColor");
+    _shaderSets[5]->AttributePositionLocation = APP_CALL_GLFUNC glGetAttribLocation(_shaderSets[5]->ShaderProgram, "a_position");
+    _shaderSets[5]->AttributeTexCoordLocation = APP_CALL_GLFUNC glGetAttribLocation(_shaderSets[5]->ShaderProgram, "a_texCoord");
+    _shaderSets[5]->SamplerTexture0Location = APP_CALL_GLFUNC glGetUniformLocation(_shaderSets[5]->ShaderProgram, "s_texture0");
+    _shaderSets[5]->SamplerTexture1Location = APP_CALL_GLFUNC glGetUniformLocation(_shaderSets[5]->ShaderProgram, "s_texture1");
+    _shaderSets[5]->UniformMatrixLocation = APP_CALL_GLFUNC glGetUniformLocation(_shaderSets[5]->ShaderProgram, "u_matrix");
+    _shaderSets[5]->UniformClipMatrixLocation = APP_CALL_GLFUNC glGetUniformLocation(_shaderSets[5]->ShaderProgram, "u_clipMatrix");
+    _shaderSets[5]->UnifromChannelFlagLocation = APP_CALL_GLFUNC glGetUniformLocation(_shaderSets[5]->ShaderProgram, "u_channelFlag");
+    _shaderSets[5]->UniformBaseColorLocation = APP_CALL_GLFUNC glGetUniformLocation(_shaderSets[5]->ShaderProgram, "u_baseColor");
+    _shaderSets[5]->UniformMultiplyColorLocation = APP_CALL_GLFUNC glGetUniformLocation(_shaderSets[5]->ShaderProgram, "u_multiplyColor");
+    _shaderSets[5]->UniformScreenColorLocation = APP_CALL_GLFUNC glGetUniformLocation(_shaderSets[5]->ShaderProgram, "u_screenColor");
 
     // 通常（クリッピング・反転、PremultipliedAlpha）
-    _shaderSets[6]->AttributePositionLocation = AppOpenGLWrapper::get()->glGetAttribLocation(_shaderSets[6]->ShaderProgram, "a_position");
-    _shaderSets[6]->AttributeTexCoordLocation = AppOpenGLWrapper::get()->glGetAttribLocation(_shaderSets[6]->ShaderProgram, "a_texCoord");
-    _shaderSets[6]->SamplerTexture0Location = AppOpenGLWrapper::get()->glGetUniformLocation(_shaderSets[6]->ShaderProgram, "s_texture0");
-    _shaderSets[6]->SamplerTexture1Location = AppOpenGLWrapper::get()->glGetUniformLocation(_shaderSets[6]->ShaderProgram, "s_texture1");
-    _shaderSets[6]->UniformMatrixLocation = AppOpenGLWrapper::get()->glGetUniformLocation(_shaderSets[6]->ShaderProgram, "u_matrix");
-    _shaderSets[6]->UniformClipMatrixLocation = AppOpenGLWrapper::get()->glGetUniformLocation(_shaderSets[6]->ShaderProgram, "u_clipMatrix");
-    _shaderSets[6]->UnifromChannelFlagLocation = AppOpenGLWrapper::get()->glGetUniformLocation(_shaderSets[6]->ShaderProgram, "u_channelFlag");
-    _shaderSets[6]->UniformBaseColorLocation = AppOpenGLWrapper::get()->glGetUniformLocation(_shaderSets[6]->ShaderProgram, "u_baseColor");
-    _shaderSets[6]->UniformMultiplyColorLocation = AppOpenGLWrapper::get()->glGetUniformLocation(_shaderSets[6]->ShaderProgram, "u_multiplyColor");
-    _shaderSets[6]->UniformScreenColorLocation = AppOpenGLWrapper::get()->glGetUniformLocation(_shaderSets[6]->ShaderProgram, "u_screenColor");
+    _shaderSets[6]->AttributePositionLocation = APP_CALL_GLFUNC glGetAttribLocation(_shaderSets[6]->ShaderProgram, "a_position");
+    _shaderSets[6]->AttributeTexCoordLocation = APP_CALL_GLFUNC glGetAttribLocation(_shaderSets[6]->ShaderProgram, "a_texCoord");
+    _shaderSets[6]->SamplerTexture0Location = APP_CALL_GLFUNC glGetUniformLocation(_shaderSets[6]->ShaderProgram, "s_texture0");
+    _shaderSets[6]->SamplerTexture1Location = APP_CALL_GLFUNC glGetUniformLocation(_shaderSets[6]->ShaderProgram, "s_texture1");
+    _shaderSets[6]->UniformMatrixLocation = APP_CALL_GLFUNC glGetUniformLocation(_shaderSets[6]->ShaderProgram, "u_matrix");
+    _shaderSets[6]->UniformClipMatrixLocation = APP_CALL_GLFUNC glGetUniformLocation(_shaderSets[6]->ShaderProgram, "u_clipMatrix");
+    _shaderSets[6]->UnifromChannelFlagLocation = APP_CALL_GLFUNC glGetUniformLocation(_shaderSets[6]->ShaderProgram, "u_channelFlag");
+    _shaderSets[6]->UniformBaseColorLocation = APP_CALL_GLFUNC glGetUniformLocation(_shaderSets[6]->ShaderProgram, "u_baseColor");
+    _shaderSets[6]->UniformMultiplyColorLocation = APP_CALL_GLFUNC glGetUniformLocation(_shaderSets[6]->ShaderProgram, "u_multiplyColor");
+    _shaderSets[6]->UniformScreenColorLocation = APP_CALL_GLFUNC glGetUniformLocation(_shaderSets[6]->ShaderProgram, "u_screenColor");
 
     // 加算
-    _shaderSets[7]->AttributePositionLocation = AppOpenGLWrapper::get()->glGetAttribLocation(_shaderSets[7]->ShaderProgram, "a_position");
-    _shaderSets[7]->AttributeTexCoordLocation = AppOpenGLWrapper::get()->glGetAttribLocation(_shaderSets[7]->ShaderProgram, "a_texCoord");
-    _shaderSets[7]->SamplerTexture0Location = AppOpenGLWrapper::get()->glGetUniformLocation(_shaderSets[7]->ShaderProgram, "s_texture0");
-    _shaderSets[7]->UniformMatrixLocation = AppOpenGLWrapper::get()->glGetUniformLocation(_shaderSets[7]->ShaderProgram, "u_matrix");
-    _shaderSets[7]->UniformBaseColorLocation = AppOpenGLWrapper::get()->glGetUniformLocation(_shaderSets[7]->ShaderProgram, "u_baseColor");
-    _shaderSets[7]->UniformMultiplyColorLocation = AppOpenGLWrapper::get()->glGetUniformLocation(_shaderSets[7]->ShaderProgram, "u_multiplyColor");
-    _shaderSets[7]->UniformScreenColorLocation = AppOpenGLWrapper::get()->glGetUniformLocation(_shaderSets[7]->ShaderProgram, "u_screenColor");
+    _shaderSets[7]->AttributePositionLocation = APP_CALL_GLFUNC glGetAttribLocation(_shaderSets[7]->ShaderProgram, "a_position");
+    _shaderSets[7]->AttributeTexCoordLocation = APP_CALL_GLFUNC glGetAttribLocation(_shaderSets[7]->ShaderProgram, "a_texCoord");
+    _shaderSets[7]->SamplerTexture0Location = APP_CALL_GLFUNC glGetUniformLocation(_shaderSets[7]->ShaderProgram, "s_texture0");
+    _shaderSets[7]->UniformMatrixLocation = APP_CALL_GLFUNC glGetUniformLocation(_shaderSets[7]->ShaderProgram, "u_matrix");
+    _shaderSets[7]->UniformBaseColorLocation = APP_CALL_GLFUNC glGetUniformLocation(_shaderSets[7]->ShaderProgram, "u_baseColor");
+    _shaderSets[7]->UniformMultiplyColorLocation = APP_CALL_GLFUNC glGetUniformLocation(_shaderSets[7]->ShaderProgram, "u_multiplyColor");
+    _shaderSets[7]->UniformScreenColorLocation = APP_CALL_GLFUNC glGetUniformLocation(_shaderSets[7]->ShaderProgram, "u_screenColor");
 
     // 加算（クリッピング）
-    _shaderSets[8]->AttributePositionLocation = AppOpenGLWrapper::get()->glGetAttribLocation(_shaderSets[8]->ShaderProgram, "a_position");
-    _shaderSets[8]->AttributeTexCoordLocation = AppOpenGLWrapper::get()->glGetAttribLocation(_shaderSets[8]->ShaderProgram, "a_texCoord");
-    _shaderSets[8]->SamplerTexture0Location = AppOpenGLWrapper::get()->glGetUniformLocation(_shaderSets[8]->ShaderProgram, "s_texture0");
-    _shaderSets[8]->SamplerTexture1Location = AppOpenGLWrapper::get()->glGetUniformLocation(_shaderSets[8]->ShaderProgram, "s_texture1");
-    _shaderSets[8]->UniformMatrixLocation = AppOpenGLWrapper::get()->glGetUniformLocation(_shaderSets[8]->ShaderProgram, "u_matrix");
-    _shaderSets[8]->UniformClipMatrixLocation = AppOpenGLWrapper::get()->glGetUniformLocation(_shaderSets[8]->ShaderProgram, "u_clipMatrix");
-    _shaderSets[8]->UnifromChannelFlagLocation = AppOpenGLWrapper::get()->glGetUniformLocation(_shaderSets[8]->ShaderProgram, "u_channelFlag");
-    _shaderSets[8]->UniformBaseColorLocation = AppOpenGLWrapper::get()->glGetUniformLocation(_shaderSets[8]->ShaderProgram, "u_baseColor");
-    _shaderSets[8]->UniformMultiplyColorLocation = AppOpenGLWrapper::get()->glGetUniformLocation(_shaderSets[8]->ShaderProgram, "u_multiplyColor");
-    _shaderSets[8]->UniformScreenColorLocation = AppOpenGLWrapper::get()->glGetUniformLocation(_shaderSets[8]->ShaderProgram, "u_screenColor");
+    _shaderSets[8]->AttributePositionLocation = APP_CALL_GLFUNC glGetAttribLocation(_shaderSets[8]->ShaderProgram, "a_position");
+    _shaderSets[8]->AttributeTexCoordLocation = APP_CALL_GLFUNC glGetAttribLocation(_shaderSets[8]->ShaderProgram, "a_texCoord");
+    _shaderSets[8]->SamplerTexture0Location = APP_CALL_GLFUNC glGetUniformLocation(_shaderSets[8]->ShaderProgram, "s_texture0");
+    _shaderSets[8]->SamplerTexture1Location = APP_CALL_GLFUNC glGetUniformLocation(_shaderSets[8]->ShaderProgram, "s_texture1");
+    _shaderSets[8]->UniformMatrixLocation = APP_CALL_GLFUNC glGetUniformLocation(_shaderSets[8]->ShaderProgram, "u_matrix");
+    _shaderSets[8]->UniformClipMatrixLocation = APP_CALL_GLFUNC glGetUniformLocation(_shaderSets[8]->ShaderProgram, "u_clipMatrix");
+    _shaderSets[8]->UnifromChannelFlagLocation = APP_CALL_GLFUNC glGetUniformLocation(_shaderSets[8]->ShaderProgram, "u_channelFlag");
+    _shaderSets[8]->UniformBaseColorLocation = APP_CALL_GLFUNC glGetUniformLocation(_shaderSets[8]->ShaderProgram, "u_baseColor");
+    _shaderSets[8]->UniformMultiplyColorLocation = APP_CALL_GLFUNC glGetUniformLocation(_shaderSets[8]->ShaderProgram, "u_multiplyColor");
+    _shaderSets[8]->UniformScreenColorLocation = APP_CALL_GLFUNC glGetUniformLocation(_shaderSets[8]->ShaderProgram, "u_screenColor");
 
     // 加算（クリッピング・反転）
-    _shaderSets[9]->AttributePositionLocation = AppOpenGLWrapper::get()->glGetAttribLocation(_shaderSets[9]->ShaderProgram, "a_position");
-    _shaderSets[9]->AttributeTexCoordLocation = AppOpenGLWrapper::get()->glGetAttribLocation(_shaderSets[9]->ShaderProgram, "a_texCoord");
-    _shaderSets[9]->SamplerTexture0Location = AppOpenGLWrapper::get()->glGetUniformLocation(_shaderSets[9]->ShaderProgram, "s_texture0");
-    _shaderSets[9]->SamplerTexture1Location = AppOpenGLWrapper::get()->glGetUniformLocation(_shaderSets[9]->ShaderProgram, "s_texture1");
-    _shaderSets[9]->UniformMatrixLocation = AppOpenGLWrapper::get()->glGetUniformLocation(_shaderSets[9]->ShaderProgram, "u_matrix");
-    _shaderSets[9]->UniformClipMatrixLocation = AppOpenGLWrapper::get()->glGetUniformLocation(_shaderSets[9]->ShaderProgram, "u_clipMatrix");
-    _shaderSets[9]->UnifromChannelFlagLocation = AppOpenGLWrapper::get()->glGetUniformLocation(_shaderSets[9]->ShaderProgram, "u_channelFlag");
-    _shaderSets[9]->UniformBaseColorLocation = AppOpenGLWrapper::get()->glGetUniformLocation(_shaderSets[9]->ShaderProgram, "u_baseColor");
-    _shaderSets[9]->UniformMultiplyColorLocation = AppOpenGLWrapper::get()->glGetUniformLocation(_shaderSets[9]->ShaderProgram, "u_multiplyColor");
-    _shaderSets[9]->UniformScreenColorLocation = AppOpenGLWrapper::get()->glGetUniformLocation(_shaderSets[9]->ShaderProgram, "u_screenColor");
+    _shaderSets[9]->AttributePositionLocation = APP_CALL_GLFUNC glGetAttribLocation(_shaderSets[9]->ShaderProgram, "a_position");
+    _shaderSets[9]->AttributeTexCoordLocation = APP_CALL_GLFUNC glGetAttribLocation(_shaderSets[9]->ShaderProgram, "a_texCoord");
+    _shaderSets[9]->SamplerTexture0Location = APP_CALL_GLFUNC glGetUniformLocation(_shaderSets[9]->ShaderProgram, "s_texture0");
+    _shaderSets[9]->SamplerTexture1Location = APP_CALL_GLFUNC glGetUniformLocation(_shaderSets[9]->ShaderProgram, "s_texture1");
+    _shaderSets[9]->UniformMatrixLocation = APP_CALL_GLFUNC glGetUniformLocation(_shaderSets[9]->ShaderProgram, "u_matrix");
+    _shaderSets[9]->UniformClipMatrixLocation = APP_CALL_GLFUNC glGetUniformLocation(_shaderSets[9]->ShaderProgram, "u_clipMatrix");
+    _shaderSets[9]->UnifromChannelFlagLocation = APP_CALL_GLFUNC glGetUniformLocation(_shaderSets[9]->ShaderProgram, "u_channelFlag");
+    _shaderSets[9]->UniformBaseColorLocation = APP_CALL_GLFUNC glGetUniformLocation(_shaderSets[9]->ShaderProgram, "u_baseColor");
+    _shaderSets[9]->UniformMultiplyColorLocation = APP_CALL_GLFUNC glGetUniformLocation(_shaderSets[9]->ShaderProgram, "u_multiplyColor");
+    _shaderSets[9]->UniformScreenColorLocation = APP_CALL_GLFUNC glGetUniformLocation(_shaderSets[9]->ShaderProgram, "u_screenColor");
 
     // 加算（PremultipliedAlpha）
-    _shaderSets[10]->AttributePositionLocation = AppOpenGLWrapper::get()->glGetAttribLocation(_shaderSets[10]->ShaderProgram, "a_position");
-    _shaderSets[10]->AttributeTexCoordLocation = AppOpenGLWrapper::get()->glGetAttribLocation(_shaderSets[10]->ShaderProgram, "a_texCoord");
-    _shaderSets[10]->SamplerTexture0Location = AppOpenGLWrapper::get()->glGetUniformLocation(_shaderSets[10]->ShaderProgram, "s_texture0");
-    _shaderSets[10]->UniformMatrixLocation = AppOpenGLWrapper::get()->glGetUniformLocation(_shaderSets[10]->ShaderProgram, "u_matrix");
-    _shaderSets[10]->UniformBaseColorLocation = AppOpenGLWrapper::get()->glGetUniformLocation(_shaderSets[10]->ShaderProgram, "u_baseColor");
-    _shaderSets[10]->UniformMultiplyColorLocation = AppOpenGLWrapper::get()->glGetUniformLocation(_shaderSets[10]->ShaderProgram, "u_multiplyColor");
-    _shaderSets[10]->UniformScreenColorLocation = AppOpenGLWrapper::get()->glGetUniformLocation(_shaderSets[10]->ShaderProgram, "u_screenColor");
+    _shaderSets[10]->AttributePositionLocation = APP_CALL_GLFUNC glGetAttribLocation(_shaderSets[10]->ShaderProgram, "a_position");
+    _shaderSets[10]->AttributeTexCoordLocation = APP_CALL_GLFUNC glGetAttribLocation(_shaderSets[10]->ShaderProgram, "a_texCoord");
+    _shaderSets[10]->SamplerTexture0Location = APP_CALL_GLFUNC glGetUniformLocation(_shaderSets[10]->ShaderProgram, "s_texture0");
+    _shaderSets[10]->UniformMatrixLocation = APP_CALL_GLFUNC glGetUniformLocation(_shaderSets[10]->ShaderProgram, "u_matrix");
+    _shaderSets[10]->UniformBaseColorLocation = APP_CALL_GLFUNC glGetUniformLocation(_shaderSets[10]->ShaderProgram, "u_baseColor");
+    _shaderSets[10]->UniformMultiplyColorLocation = APP_CALL_GLFUNC glGetUniformLocation(_shaderSets[10]->ShaderProgram, "u_multiplyColor");
+    _shaderSets[10]->UniformScreenColorLocation = APP_CALL_GLFUNC glGetUniformLocation(_shaderSets[10]->ShaderProgram, "u_screenColor");
 
     // 加算（クリッピング、PremultipliedAlpha）
-    _shaderSets[11]->AttributePositionLocation = AppOpenGLWrapper::get()->glGetAttribLocation(_shaderSets[11]->ShaderProgram, "a_position");
-    _shaderSets[11]->AttributeTexCoordLocation = AppOpenGLWrapper::get()->glGetAttribLocation(_shaderSets[11]->ShaderProgram, "a_texCoord");
-    _shaderSets[11]->SamplerTexture0Location = AppOpenGLWrapper::get()->glGetUniformLocation(_shaderSets[11]->ShaderProgram, "s_texture0");
-    _shaderSets[11]->SamplerTexture1Location = AppOpenGLWrapper::get()->glGetUniformLocation(_shaderSets[11]->ShaderProgram, "s_texture1");
-    _shaderSets[11]->UniformMatrixLocation = AppOpenGLWrapper::get()->glGetUniformLocation(_shaderSets[11]->ShaderProgram, "u_matrix");
-    _shaderSets[11]->UniformClipMatrixLocation = AppOpenGLWrapper::get()->glGetUniformLocation(_shaderSets[11]->ShaderProgram, "u_clipMatrix");
-    _shaderSets[11]->UnifromChannelFlagLocation = AppOpenGLWrapper::get()->glGetUniformLocation(_shaderSets[11]->ShaderProgram, "u_channelFlag");
-    _shaderSets[11]->UniformBaseColorLocation = AppOpenGLWrapper::get()->glGetUniformLocation(_shaderSets[11]->ShaderProgram, "u_baseColor");
-    _shaderSets[11]->UniformMultiplyColorLocation = AppOpenGLWrapper::get()->glGetUniformLocation(_shaderSets[11]->ShaderProgram, "u_multiplyColor");
-    _shaderSets[11]->UniformScreenColorLocation = AppOpenGLWrapper::get()->glGetUniformLocation(_shaderSets[11]->ShaderProgram, "u_screenColor");
+    _shaderSets[11]->AttributePositionLocation = APP_CALL_GLFUNC glGetAttribLocation(_shaderSets[11]->ShaderProgram, "a_position");
+    _shaderSets[11]->AttributeTexCoordLocation = APP_CALL_GLFUNC glGetAttribLocation(_shaderSets[11]->ShaderProgram, "a_texCoord");
+    _shaderSets[11]->SamplerTexture0Location = APP_CALL_GLFUNC glGetUniformLocation(_shaderSets[11]->ShaderProgram, "s_texture0");
+    _shaderSets[11]->SamplerTexture1Location = APP_CALL_GLFUNC glGetUniformLocation(_shaderSets[11]->ShaderProgram, "s_texture1");
+    _shaderSets[11]->UniformMatrixLocation = APP_CALL_GLFUNC glGetUniformLocation(_shaderSets[11]->ShaderProgram, "u_matrix");
+    _shaderSets[11]->UniformClipMatrixLocation = APP_CALL_GLFUNC glGetUniformLocation(_shaderSets[11]->ShaderProgram, "u_clipMatrix");
+    _shaderSets[11]->UnifromChannelFlagLocation = APP_CALL_GLFUNC glGetUniformLocation(_shaderSets[11]->ShaderProgram, "u_channelFlag");
+    _shaderSets[11]->UniformBaseColorLocation = APP_CALL_GLFUNC glGetUniformLocation(_shaderSets[11]->ShaderProgram, "u_baseColor");
+    _shaderSets[11]->UniformMultiplyColorLocation = APP_CALL_GLFUNC glGetUniformLocation(_shaderSets[11]->ShaderProgram, "u_multiplyColor");
+    _shaderSets[11]->UniformScreenColorLocation = APP_CALL_GLFUNC glGetUniformLocation(_shaderSets[11]->ShaderProgram, "u_screenColor");
 
     // 加算（クリッピング・反転、PremultipliedAlpha）
-    _shaderSets[12]->AttributePositionLocation = AppOpenGLWrapper::get()->glGetAttribLocation(_shaderSets[12]->ShaderProgram, "a_position");
-    _shaderSets[12]->AttributeTexCoordLocation = AppOpenGLWrapper::get()->glGetAttribLocation(_shaderSets[12]->ShaderProgram, "a_texCoord");
-    _shaderSets[12]->SamplerTexture0Location = AppOpenGLWrapper::get()->glGetUniformLocation(_shaderSets[12]->ShaderProgram, "s_texture0");
-    _shaderSets[12]->SamplerTexture1Location = AppOpenGLWrapper::get()->glGetUniformLocation(_shaderSets[12]->ShaderProgram, "s_texture1");
-    _shaderSets[12]->UniformMatrixLocation = AppOpenGLWrapper::get()->glGetUniformLocation(_shaderSets[12]->ShaderProgram, "u_matrix");
-    _shaderSets[12]->UniformClipMatrixLocation = AppOpenGLWrapper::get()->glGetUniformLocation(_shaderSets[12]->ShaderProgram, "u_clipMatrix");
-    _shaderSets[12]->UnifromChannelFlagLocation = AppOpenGLWrapper::get()->glGetUniformLocation(_shaderSets[12]->ShaderProgram, "u_channelFlag");
-    _shaderSets[12]->UniformBaseColorLocation = AppOpenGLWrapper::get()->glGetUniformLocation(_shaderSets[12]->ShaderProgram, "u_baseColor");
-    _shaderSets[12]->UniformMultiplyColorLocation = AppOpenGLWrapper::get()->glGetUniformLocation(_shaderSets[12]->ShaderProgram, "u_multiplyColor");
-    _shaderSets[12]->UniformScreenColorLocation = AppOpenGLWrapper::get()->glGetUniformLocation(_shaderSets[12]->ShaderProgram, "u_screenColor");
+    _shaderSets[12]->AttributePositionLocation = APP_CALL_GLFUNC glGetAttribLocation(_shaderSets[12]->ShaderProgram, "a_position");
+    _shaderSets[12]->AttributeTexCoordLocation = APP_CALL_GLFUNC glGetAttribLocation(_shaderSets[12]->ShaderProgram, "a_texCoord");
+    _shaderSets[12]->SamplerTexture0Location = APP_CALL_GLFUNC glGetUniformLocation(_shaderSets[12]->ShaderProgram, "s_texture0");
+    _shaderSets[12]->SamplerTexture1Location = APP_CALL_GLFUNC glGetUniformLocation(_shaderSets[12]->ShaderProgram, "s_texture1");
+    _shaderSets[12]->UniformMatrixLocation = APP_CALL_GLFUNC glGetUniformLocation(_shaderSets[12]->ShaderProgram, "u_matrix");
+    _shaderSets[12]->UniformClipMatrixLocation = APP_CALL_GLFUNC glGetUniformLocation(_shaderSets[12]->ShaderProgram, "u_clipMatrix");
+    _shaderSets[12]->UnifromChannelFlagLocation = APP_CALL_GLFUNC glGetUniformLocation(_shaderSets[12]->ShaderProgram, "u_channelFlag");
+    _shaderSets[12]->UniformBaseColorLocation = APP_CALL_GLFUNC glGetUniformLocation(_shaderSets[12]->ShaderProgram, "u_baseColor");
+    _shaderSets[12]->UniformMultiplyColorLocation = APP_CALL_GLFUNC glGetUniformLocation(_shaderSets[12]->ShaderProgram, "u_multiplyColor");
+    _shaderSets[12]->UniformScreenColorLocation = APP_CALL_GLFUNC glGetUniformLocation(_shaderSets[12]->ShaderProgram, "u_screenColor");
 
     // 乗算
-    _shaderSets[13]->AttributePositionLocation = AppOpenGLWrapper::get()->glGetAttribLocation(_shaderSets[13]->ShaderProgram, "a_position");
-    _shaderSets[13]->AttributeTexCoordLocation = AppOpenGLWrapper::get()->glGetAttribLocation(_shaderSets[13]->ShaderProgram, "a_texCoord");
-    _shaderSets[13]->SamplerTexture0Location = AppOpenGLWrapper::get()->glGetUniformLocation(_shaderSets[13]->ShaderProgram, "s_texture0");
-    _shaderSets[13]->UniformMatrixLocation = AppOpenGLWrapper::get()->glGetUniformLocation(_shaderSets[13]->ShaderProgram, "u_matrix");
-    _shaderSets[13]->UniformBaseColorLocation = AppOpenGLWrapper::get()->glGetUniformLocation(_shaderSets[13]->ShaderProgram, "u_baseColor");
-    _shaderSets[13]->UniformMultiplyColorLocation = AppOpenGLWrapper::get()->glGetUniformLocation(_shaderSets[13]->ShaderProgram, "u_multiplyColor");
-    _shaderSets[13]->UniformScreenColorLocation = AppOpenGLWrapper::get()->glGetUniformLocation(_shaderSets[13]->ShaderProgram, "u_screenColor");
+    _shaderSets[13]->AttributePositionLocation = APP_CALL_GLFUNC glGetAttribLocation(_shaderSets[13]->ShaderProgram, "a_position");
+    _shaderSets[13]->AttributeTexCoordLocation = APP_CALL_GLFUNC glGetAttribLocation(_shaderSets[13]->ShaderProgram, "a_texCoord");
+    _shaderSets[13]->SamplerTexture0Location = APP_CALL_GLFUNC glGetUniformLocation(_shaderSets[13]->ShaderProgram, "s_texture0");
+    _shaderSets[13]->UniformMatrixLocation = APP_CALL_GLFUNC glGetUniformLocation(_shaderSets[13]->ShaderProgram, "u_matrix");
+    _shaderSets[13]->UniformBaseColorLocation = APP_CALL_GLFUNC glGetUniformLocation(_shaderSets[13]->ShaderProgram, "u_baseColor");
+    _shaderSets[13]->UniformMultiplyColorLocation = APP_CALL_GLFUNC glGetUniformLocation(_shaderSets[13]->ShaderProgram, "u_multiplyColor");
+    _shaderSets[13]->UniformScreenColorLocation = APP_CALL_GLFUNC glGetUniformLocation(_shaderSets[13]->ShaderProgram, "u_screenColor");
 
     // 乗算（クリッピング）
-    _shaderSets[14]->AttributePositionLocation = AppOpenGLWrapper::get()->glGetAttribLocation(_shaderSets[14]->ShaderProgram, "a_position");
-    _shaderSets[14]->AttributeTexCoordLocation = AppOpenGLWrapper::get()->glGetAttribLocation(_shaderSets[14]->ShaderProgram, "a_texCoord");
-    _shaderSets[14]->SamplerTexture0Location = AppOpenGLWrapper::get()->glGetUniformLocation(_shaderSets[14]->ShaderProgram, "s_texture0");
-    _shaderSets[14]->SamplerTexture1Location = AppOpenGLWrapper::get()->glGetUniformLocation(_shaderSets[14]->ShaderProgram, "s_texture1");
-    _shaderSets[14]->UniformMatrixLocation = AppOpenGLWrapper::get()->glGetUniformLocation(_shaderSets[14]->ShaderProgram, "u_matrix");
-    _shaderSets[14]->UniformClipMatrixLocation = AppOpenGLWrapper::get()->glGetUniformLocation(_shaderSets[14]->ShaderProgram, "u_clipMatrix");
-    _shaderSets[14]->UnifromChannelFlagLocation = AppOpenGLWrapper::get()->glGetUniformLocation(_shaderSets[14]->ShaderProgram, "u_channelFlag");
-    _shaderSets[14]->UniformBaseColorLocation = AppOpenGLWrapper::get()->glGetUniformLocation(_shaderSets[14]->ShaderProgram, "u_baseColor");
-    _shaderSets[14]->UniformMultiplyColorLocation = AppOpenGLWrapper::get()->glGetUniformLocation(_shaderSets[14]->ShaderProgram, "u_multiplyColor");
-    _shaderSets[14]->UniformScreenColorLocation = AppOpenGLWrapper::get()->glGetUniformLocation(_shaderSets[14]->ShaderProgram, "u_screenColor");
+    _shaderSets[14]->AttributePositionLocation = APP_CALL_GLFUNC glGetAttribLocation(_shaderSets[14]->ShaderProgram, "a_position");
+    _shaderSets[14]->AttributeTexCoordLocation = APP_CALL_GLFUNC glGetAttribLocation(_shaderSets[14]->ShaderProgram, "a_texCoord");
+    _shaderSets[14]->SamplerTexture0Location = APP_CALL_GLFUNC glGetUniformLocation(_shaderSets[14]->ShaderProgram, "s_texture0");
+    _shaderSets[14]->SamplerTexture1Location = APP_CALL_GLFUNC glGetUniformLocation(_shaderSets[14]->ShaderProgram, "s_texture1");
+    _shaderSets[14]->UniformMatrixLocation = APP_CALL_GLFUNC glGetUniformLocation(_shaderSets[14]->ShaderProgram, "u_matrix");
+    _shaderSets[14]->UniformClipMatrixLocation = APP_CALL_GLFUNC glGetUniformLocation(_shaderSets[14]->ShaderProgram, "u_clipMatrix");
+    _shaderSets[14]->UnifromChannelFlagLocation = APP_CALL_GLFUNC glGetUniformLocation(_shaderSets[14]->ShaderProgram, "u_channelFlag");
+    _shaderSets[14]->UniformBaseColorLocation = APP_CALL_GLFUNC glGetUniformLocation(_shaderSets[14]->ShaderProgram, "u_baseColor");
+    _shaderSets[14]->UniformMultiplyColorLocation = APP_CALL_GLFUNC glGetUniformLocation(_shaderSets[14]->ShaderProgram, "u_multiplyColor");
+    _shaderSets[14]->UniformScreenColorLocation = APP_CALL_GLFUNC glGetUniformLocation(_shaderSets[14]->ShaderProgram, "u_screenColor");
 
     // 乗算（クリッピング・反転）
-    _shaderSets[15]->AttributePositionLocation = AppOpenGLWrapper::get()->glGetAttribLocation(_shaderSets[15]->ShaderProgram, "a_position");
-    _shaderSets[15]->AttributeTexCoordLocation = AppOpenGLWrapper::get()->glGetAttribLocation(_shaderSets[15]->ShaderProgram, "a_texCoord");
-    _shaderSets[15]->SamplerTexture0Location = AppOpenGLWrapper::get()->glGetUniformLocation(_shaderSets[15]->ShaderProgram, "s_texture0");
-    _shaderSets[15]->SamplerTexture1Location = AppOpenGLWrapper::get()->glGetUniformLocation(_shaderSets[15]->ShaderProgram, "s_texture1");
-    _shaderSets[15]->UniformMatrixLocation = AppOpenGLWrapper::get()->glGetUniformLocation(_shaderSets[15]->ShaderProgram, "u_matrix");
-    _shaderSets[15]->UniformClipMatrixLocation = AppOpenGLWrapper::get()->glGetUniformLocation(_shaderSets[15]->ShaderProgram, "u_clipMatrix");
-    _shaderSets[15]->UnifromChannelFlagLocation = AppOpenGLWrapper::get()->glGetUniformLocation(_shaderSets[15]->ShaderProgram, "u_channelFlag");
-    _shaderSets[15]->UniformBaseColorLocation = AppOpenGLWrapper::get()->glGetUniformLocation(_shaderSets[15]->ShaderProgram, "u_baseColor");
-    _shaderSets[15]->UniformMultiplyColorLocation = AppOpenGLWrapper::get()->glGetUniformLocation(_shaderSets[15]->ShaderProgram, "u_multiplyColor");
-    _shaderSets[15]->UniformScreenColorLocation = AppOpenGLWrapper::get()->glGetUniformLocation(_shaderSets[15]->ShaderProgram, "u_screenColor");
+    _shaderSets[15]->AttributePositionLocation = APP_CALL_GLFUNC glGetAttribLocation(_shaderSets[15]->ShaderProgram, "a_position");
+    _shaderSets[15]->AttributeTexCoordLocation = APP_CALL_GLFUNC glGetAttribLocation(_shaderSets[15]->ShaderProgram, "a_texCoord");
+    _shaderSets[15]->SamplerTexture0Location = APP_CALL_GLFUNC glGetUniformLocation(_shaderSets[15]->ShaderProgram, "s_texture0");
+    _shaderSets[15]->SamplerTexture1Location = APP_CALL_GLFUNC glGetUniformLocation(_shaderSets[15]->ShaderProgram, "s_texture1");
+    _shaderSets[15]->UniformMatrixLocation = APP_CALL_GLFUNC glGetUniformLocation(_shaderSets[15]->ShaderProgram, "u_matrix");
+    _shaderSets[15]->UniformClipMatrixLocation = APP_CALL_GLFUNC glGetUniformLocation(_shaderSets[15]->ShaderProgram, "u_clipMatrix");
+    _shaderSets[15]->UnifromChannelFlagLocation = APP_CALL_GLFUNC glGetUniformLocation(_shaderSets[15]->ShaderProgram, "u_channelFlag");
+    _shaderSets[15]->UniformBaseColorLocation = APP_CALL_GLFUNC glGetUniformLocation(_shaderSets[15]->ShaderProgram, "u_baseColor");
+    _shaderSets[15]->UniformMultiplyColorLocation = APP_CALL_GLFUNC glGetUniformLocation(_shaderSets[15]->ShaderProgram, "u_multiplyColor");
+    _shaderSets[15]->UniformScreenColorLocation = APP_CALL_GLFUNC glGetUniformLocation(_shaderSets[15]->ShaderProgram, "u_screenColor");
 
     // 乗算（PremultipliedAlpha）
-    _shaderSets[16]->AttributePositionLocation = AppOpenGLWrapper::get()->glGetAttribLocation(_shaderSets[16]->ShaderProgram, "a_position");
-    _shaderSets[16]->AttributeTexCoordLocation = AppOpenGLWrapper::get()->glGetAttribLocation(_shaderSets[16]->ShaderProgram, "a_texCoord");
-    _shaderSets[16]->SamplerTexture0Location = AppOpenGLWrapper::get()->glGetUniformLocation(_shaderSets[16]->ShaderProgram, "s_texture0");
-    _shaderSets[16]->UniformMatrixLocation = AppOpenGLWrapper::get()->glGetUniformLocation(_shaderSets[16]->ShaderProgram, "u_matrix");
-    _shaderSets[16]->UniformBaseColorLocation = AppOpenGLWrapper::get()->glGetUniformLocation(_shaderSets[16]->ShaderProgram, "u_baseColor");
-    _shaderSets[16]->UniformMultiplyColorLocation = AppOpenGLWrapper::get()->glGetUniformLocation(_shaderSets[16]->ShaderProgram, "u_multiplyColor");
-    _shaderSets[16]->UniformScreenColorLocation = AppOpenGLWrapper::get()->glGetUniformLocation(_shaderSets[16]->ShaderProgram, "u_screenColor");
+    _shaderSets[16]->AttributePositionLocation = APP_CALL_GLFUNC glGetAttribLocation(_shaderSets[16]->ShaderProgram, "a_position");
+    _shaderSets[16]->AttributeTexCoordLocation = APP_CALL_GLFUNC glGetAttribLocation(_shaderSets[16]->ShaderProgram, "a_texCoord");
+    _shaderSets[16]->SamplerTexture0Location = APP_CALL_GLFUNC glGetUniformLocation(_shaderSets[16]->ShaderProgram, "s_texture0");
+    _shaderSets[16]->UniformMatrixLocation = APP_CALL_GLFUNC glGetUniformLocation(_shaderSets[16]->ShaderProgram, "u_matrix");
+    _shaderSets[16]->UniformBaseColorLocation = APP_CALL_GLFUNC glGetUniformLocation(_shaderSets[16]->ShaderProgram, "u_baseColor");
+    _shaderSets[16]->UniformMultiplyColorLocation = APP_CALL_GLFUNC glGetUniformLocation(_shaderSets[16]->ShaderProgram, "u_multiplyColor");
+    _shaderSets[16]->UniformScreenColorLocation = APP_CALL_GLFUNC glGetUniformLocation(_shaderSets[16]->ShaderProgram, "u_screenColor");
 
     // 乗算（クリッピング、PremultipliedAlpha）
-    _shaderSets[17]->AttributePositionLocation = AppOpenGLWrapper::get()->glGetAttribLocation(_shaderSets[17]->ShaderProgram, "a_position");
-    _shaderSets[17]->AttributeTexCoordLocation = AppOpenGLWrapper::get()->glGetAttribLocation(_shaderSets[17]->ShaderProgram, "a_texCoord");
-    _shaderSets[17]->SamplerTexture0Location = AppOpenGLWrapper::get()->glGetUniformLocation(_shaderSets[17]->ShaderProgram, "s_texture0");
-    _shaderSets[17]->SamplerTexture1Location = AppOpenGLWrapper::get()->glGetUniformLocation(_shaderSets[17]->ShaderProgram, "s_texture1");
-    _shaderSets[17]->UniformMatrixLocation = AppOpenGLWrapper::get()->glGetUniformLocation(_shaderSets[17]->ShaderProgram, "u_matrix");
-    _shaderSets[17]->UniformClipMatrixLocation = AppOpenGLWrapper::get()->glGetUniformLocation(_shaderSets[17]->ShaderProgram, "u_clipMatrix");
-    _shaderSets[17]->UnifromChannelFlagLocation = AppOpenGLWrapper::get()->glGetUniformLocation(_shaderSets[17]->ShaderProgram, "u_channelFlag");
-    _shaderSets[17]->UniformBaseColorLocation = AppOpenGLWrapper::get()->glGetUniformLocation(_shaderSets[17]->ShaderProgram, "u_baseColor");
-    _shaderSets[17]->UniformMultiplyColorLocation = AppOpenGLWrapper::get()->glGetUniformLocation(_shaderSets[17]->ShaderProgram, "u_multiplyColor");
-    _shaderSets[17]->UniformScreenColorLocation = AppOpenGLWrapper::get()->glGetUniformLocation(_shaderSets[17]->ShaderProgram, "u_screenColor");
+    _shaderSets[17]->AttributePositionLocation = APP_CALL_GLFUNC glGetAttribLocation(_shaderSets[17]->ShaderProgram, "a_position");
+    _shaderSets[17]->AttributeTexCoordLocation = APP_CALL_GLFUNC glGetAttribLocation(_shaderSets[17]->ShaderProgram, "a_texCoord");
+    _shaderSets[17]->SamplerTexture0Location = APP_CALL_GLFUNC glGetUniformLocation(_shaderSets[17]->ShaderProgram, "s_texture0");
+    _shaderSets[17]->SamplerTexture1Location = APP_CALL_GLFUNC glGetUniformLocation(_shaderSets[17]->ShaderProgram, "s_texture1");
+    _shaderSets[17]->UniformMatrixLocation = APP_CALL_GLFUNC glGetUniformLocation(_shaderSets[17]->ShaderProgram, "u_matrix");
+    _shaderSets[17]->UniformClipMatrixLocation = APP_CALL_GLFUNC glGetUniformLocation(_shaderSets[17]->ShaderProgram, "u_clipMatrix");
+    _shaderSets[17]->UnifromChannelFlagLocation = APP_CALL_GLFUNC glGetUniformLocation(_shaderSets[17]->ShaderProgram, "u_channelFlag");
+    _shaderSets[17]->UniformBaseColorLocation = APP_CALL_GLFUNC glGetUniformLocation(_shaderSets[17]->ShaderProgram, "u_baseColor");
+    _shaderSets[17]->UniformMultiplyColorLocation = APP_CALL_GLFUNC glGetUniformLocation(_shaderSets[17]->ShaderProgram, "u_multiplyColor");
+    _shaderSets[17]->UniformScreenColorLocation = APP_CALL_GLFUNC glGetUniformLocation(_shaderSets[17]->ShaderProgram, "u_screenColor");
 
     // 乗算（クリッピング・反転、PremultipliedAlpha）
-    _shaderSets[18]->AttributePositionLocation = AppOpenGLWrapper::get()->glGetAttribLocation(_shaderSets[18]->ShaderProgram, "a_position");
-    _shaderSets[18]->AttributeTexCoordLocation = AppOpenGLWrapper::get()->glGetAttribLocation(_shaderSets[18]->ShaderProgram, "a_texCoord");
-    _shaderSets[18]->SamplerTexture0Location = AppOpenGLWrapper::get()->glGetUniformLocation(_shaderSets[18]->ShaderProgram, "s_texture0");
-    _shaderSets[18]->SamplerTexture1Location = AppOpenGLWrapper::get()->glGetUniformLocation(_shaderSets[18]->ShaderProgram, "s_texture1");
-    _shaderSets[18]->UniformMatrixLocation = AppOpenGLWrapper::get()->glGetUniformLocation(_shaderSets[18]->ShaderProgram, "u_matrix");
-    _shaderSets[18]->UniformClipMatrixLocation = AppOpenGLWrapper::get()->glGetUniformLocation(_shaderSets[18]->ShaderProgram, "u_clipMatrix");
-    _shaderSets[18]->UnifromChannelFlagLocation = AppOpenGLWrapper::get()->glGetUniformLocation(_shaderSets[18]->ShaderProgram, "u_channelFlag");
-    _shaderSets[18]->UniformBaseColorLocation = AppOpenGLWrapper::get()->glGetUniformLocation(_shaderSets[18]->ShaderProgram, "u_baseColor");
-    _shaderSets[18]->UniformMultiplyColorLocation = AppOpenGLWrapper::get()->glGetUniformLocation(_shaderSets[18]->ShaderProgram, "u_multiplyColor");
-    _shaderSets[18]->UniformScreenColorLocation = AppOpenGLWrapper::get()->glGetUniformLocation(_shaderSets[18]->ShaderProgram, "u_screenColor");
+    _shaderSets[18]->AttributePositionLocation = APP_CALL_GLFUNC glGetAttribLocation(_shaderSets[18]->ShaderProgram, "a_position");
+    _shaderSets[18]->AttributeTexCoordLocation = APP_CALL_GLFUNC glGetAttribLocation(_shaderSets[18]->ShaderProgram, "a_texCoord");
+    _shaderSets[18]->SamplerTexture0Location = APP_CALL_GLFUNC glGetUniformLocation(_shaderSets[18]->ShaderProgram, "s_texture0");
+    _shaderSets[18]->SamplerTexture1Location = APP_CALL_GLFUNC glGetUniformLocation(_shaderSets[18]->ShaderProgram, "s_texture1");
+    _shaderSets[18]->UniformMatrixLocation = APP_CALL_GLFUNC glGetUniformLocation(_shaderSets[18]->ShaderProgram, "u_matrix");
+    _shaderSets[18]->UniformClipMatrixLocation = APP_CALL_GLFUNC glGetUniformLocation(_shaderSets[18]->ShaderProgram, "u_clipMatrix");
+    _shaderSets[18]->UnifromChannelFlagLocation = APP_CALL_GLFUNC glGetUniformLocation(_shaderSets[18]->ShaderProgram, "u_channelFlag");
+    _shaderSets[18]->UniformBaseColorLocation = APP_CALL_GLFUNC glGetUniformLocation(_shaderSets[18]->ShaderProgram, "u_baseColor");
+    _shaderSets[18]->UniformMultiplyColorLocation = APP_CALL_GLFUNC glGetUniformLocation(_shaderSets[18]->ShaderProgram, "u_multiplyColor");
+    _shaderSets[18]->UniformScreenColorLocation = APP_CALL_GLFUNC glGetUniformLocation(_shaderSets[18]->ShaderProgram, "u_screenColor");
 }
 
 void CubismShader_OpenGLES2::SetupShaderProgramForDraw(CubismRenderer_OpenGLES2* renderer, const CubismModel& model, const csmInt32 index)
@@ -850,7 +850,7 @@ void CubismShader_OpenGLES2::SetupShaderProgramForDraw(CubismRenderer_OpenGLES2*
         break;
     }
 
-    AppOpenGLWrapper::get()->glUseProgram(shaderSet->ShaderProgram);
+    APP_CALL_GLFUNC glUseProgram(shaderSet->ShaderProgram);
 
     //テクスチャ設定
     SetupTexture(renderer, model, index, shaderSet);
@@ -860,23 +860,23 @@ void CubismShader_OpenGLES2::SetupShaderProgramForDraw(CubismRenderer_OpenGLES2*
 
     if (masked)
     {
-        AppOpenGLWrapper::get()->glActiveTexture(GL_TEXTURE1);
+        APP_CALL_GLFUNC glActiveTexture(GL_TEXTURE1);
 
         // frameBufferに書かれたテクスチャ
         GLuint tex = renderer->GetMaskBuffer(renderer->GetClippingContextBufferForDraw()->_bufferIndex)->GetColorBuffer();
 
-        AppOpenGLWrapper::get()->glBindTexture(GL_TEXTURE_2D, tex);
-        AppOpenGLWrapper::get()->glUniform1i(shaderSet->SamplerTexture1Location, 1);
+        APP_CALL_GLFUNC glBindTexture(GL_TEXTURE_2D, tex);
+        APP_CALL_GLFUNC glUniform1i(shaderSet->SamplerTexture1Location, 1);
 
         // View座標をClippingContextの座標に変換するための行列を設定
-        AppOpenGLWrapper::get()->glUniformMatrix4fv(shaderSet->UniformClipMatrixLocation, 1, 0, renderer->GetClippingContextBufferForDraw()->_matrixForDraw.GetArray());
+        APP_CALL_GLFUNC glUniformMatrix4fv(shaderSet->UniformClipMatrixLocation, 1, 0, renderer->GetClippingContextBufferForDraw()->_matrixForDraw.GetArray());
 
         // 使用するカラーチャンネルを設定
         SetColorChannelUniformVariables(shaderSet, renderer->GetClippingContextBufferForDraw());
     }
 
     //座標変換
-    AppOpenGLWrapper::get()->glUniformMatrix4fv(shaderSet->UniformMatrixLocation, 1, 0, renderer->GetMvpMatrix().GetArray()); //
+    APP_CALL_GLFUNC glUniformMatrix4fv(shaderSet->UniformMatrixLocation, 1, 0, renderer->GetMvpMatrix().GetArray()); //
 
     // ユニフォーム変数設定
     CubismRenderer::CubismTextureColor baseColor = renderer->GetModelColorWithOpacity(model.GetDrawableOpacity(index));
@@ -884,7 +884,7 @@ void CubismShader_OpenGLES2::SetupShaderProgramForDraw(CubismRenderer_OpenGLES2*
     CubismRenderer::CubismTextureColor screenColor = model.GetScreenColor(index);
     SetColorUniformVariables(renderer, model, index, shaderSet, baseColor, multiplyColor, screenColor);
 
-    AppOpenGLWrapper::get()->glBlendFuncSeparate(SRC_COLOR, DST_COLOR, SRC_ALPHA, DST_ALPHA);
+    APP_CALL_GLFUNC glBlendFuncSeparate(SRC_COLOR, DST_COLOR, SRC_ALPHA, DST_ALPHA);
 }
 
 void CubismShader_OpenGLES2::SetupShaderProgramForMask(CubismRenderer_OpenGLES2* renderer, const CubismModel& model, const csmInt32 index)
@@ -901,7 +901,7 @@ void CubismShader_OpenGLES2::SetupShaderProgramForMask(CubismRenderer_OpenGLES2*
     csmInt32 DST_ALPHA = GL_ONE_MINUS_SRC_ALPHA;
 
     CubismShaderSet* shaderSet = _shaderSets[ShaderNames_SetupMask];
-    AppOpenGLWrapper::get()->glUseProgram(shaderSet->ShaderProgram);
+    APP_CALL_GLFUNC glUseProgram(shaderSet->ShaderProgram);
 
     //テクスチャ設定
     SetupTexture(renderer, model, index, shaderSet);
@@ -912,7 +912,7 @@ void CubismShader_OpenGLES2::SetupShaderProgramForMask(CubismRenderer_OpenGLES2*
     // 使用するカラーチャンネルを設定
     SetColorChannelUniformVariables(shaderSet, renderer->GetClippingContextBufferForMask());
 
-    AppOpenGLWrapper::get()->glUniformMatrix4fv(shaderSet->UniformClipMatrixLocation, 1, GL_FALSE, renderer->GetClippingContextBufferForMask()->_matrixForMask.GetArray());
+    APP_CALL_GLFUNC glUniformMatrix4fv(shaderSet->UniformClipMatrixLocation, 1, GL_FALSE, renderer->GetClippingContextBufferForMask()->_matrixForMask.GetArray());
 
     // ユニフォーム変数設定
     csmRectF* rect = renderer->GetClippingContextBufferForMask()->_layoutBounds;
@@ -921,7 +921,7 @@ void CubismShader_OpenGLES2::SetupShaderProgramForMask(CubismRenderer_OpenGLES2*
     CubismRenderer::CubismTextureColor screenColor = model.GetScreenColor(index);
     SetColorUniformVariables(renderer, model, index, shaderSet, baseColor, multiplyColor, screenColor);
 
-    AppOpenGLWrapper::get()->glBlendFuncSeparate(SRC_COLOR, DST_COLOR, SRC_ALPHA, DST_ALPHA);
+    APP_CALL_GLFUNC glBlendFuncSeparate(SRC_COLOR, DST_COLOR, SRC_ALPHA, DST_ALPHA);
 }
 
 csmBool CubismShader_OpenGLES2::CompileShaderSource(GLuint* outShader, GLenum shaderType, const csmChar* shaderSource)
@@ -929,24 +929,24 @@ csmBool CubismShader_OpenGLES2::CompileShaderSource(GLuint* outShader, GLenum sh
     GLint status;
     const GLchar* source = shaderSource;
 
-    *outShader = AppOpenGLWrapper::get()->glCreateShader(shaderType);
-    AppOpenGLWrapper::get()->glShaderSource(*outShader, 1, &source, NULL);
-    AppOpenGLWrapper::get()->glCompileShader(*outShader);
+    *outShader = APP_CALL_GLFUNC glCreateShader(shaderType);
+    APP_CALL_GLFUNC glShaderSource(*outShader, 1, &source, NULL);
+    APP_CALL_GLFUNC glCompileShader(*outShader);
 
     GLint logLength;
-    AppOpenGLWrapper::get()->glGetShaderiv(*outShader, GL_INFO_LOG_LENGTH, &logLength);
+    APP_CALL_GLFUNC glGetShaderiv(*outShader, GL_INFO_LOG_LENGTH, &logLength);
     if (logLength > 0)
     {
         GLchar* log = reinterpret_cast<GLchar*>(CSM_MALLOC(logLength));
-        AppOpenGLWrapper::get()->glGetShaderInfoLog(*outShader, logLength, &logLength, log);
+        APP_CALL_GLFUNC glGetShaderInfoLog(*outShader, logLength, &logLength, log);
         CubismLogError("Shader compile log: %s", log);
         CSM_FREE(log);
     }
 
-    AppOpenGLWrapper::get()->glGetShaderiv(*outShader, GL_COMPILE_STATUS, &status);
+    APP_CALL_GLFUNC glGetShaderiv(*outShader, GL_COMPILE_STATUS, &status);
     if (status == GL_FALSE)
     {
-        AppOpenGLWrapper::get()->glDeleteShader(*outShader);
+        APP_CALL_GLFUNC glDeleteShader(*outShader);
         return false;
     }
 
@@ -956,19 +956,19 @@ csmBool CubismShader_OpenGLES2::CompileShaderSource(GLuint* outShader, GLenum sh
 csmBool CubismShader_OpenGLES2::LinkProgram(GLuint shaderProgram)
 {
     GLint status;
-    AppOpenGLWrapper::get()->glLinkProgram(shaderProgram);
+    APP_CALL_GLFUNC glLinkProgram(shaderProgram);
 
     GLint logLength;
-    AppOpenGLWrapper::get()->glGetProgramiv(shaderProgram, GL_INFO_LOG_LENGTH, &logLength);
+    APP_CALL_GLFUNC glGetProgramiv(shaderProgram, GL_INFO_LOG_LENGTH, &logLength);
     if (logLength > 0)
     {
         GLchar* log = reinterpret_cast<GLchar*>(CSM_MALLOC(logLength));
-        AppOpenGLWrapper::get()->glGetProgramInfoLog(shaderProgram, logLength, &logLength, log);
+        APP_CALL_GLFUNC glGetProgramInfoLog(shaderProgram, logLength, &logLength, log);
         CubismLogError("Program link log: %s", log);
         CSM_FREE(log);
     }
 
-    AppOpenGLWrapper::get()->glGetProgramiv(shaderProgram, GL_LINK_STATUS, &status);
+    APP_CALL_GLFUNC glGetProgramiv(shaderProgram, GL_LINK_STATUS, &status);
     if (status == GL_FALSE)
     {
         return false;
@@ -981,17 +981,17 @@ csmBool CubismShader_OpenGLES2::ValidateProgram(GLuint shaderProgram)
 {
     GLint logLength, status;
 
-    AppOpenGLWrapper::get()->glValidateProgram(shaderProgram);
-    AppOpenGLWrapper::get()->glGetProgramiv(shaderProgram, GL_INFO_LOG_LENGTH, &logLength);
+    APP_CALL_GLFUNC glValidateProgram(shaderProgram);
+    APP_CALL_GLFUNC glGetProgramiv(shaderProgram, GL_INFO_LOG_LENGTH, &logLength);
     if (logLength > 0)
     {
         GLchar* log = reinterpret_cast<GLchar*>(CSM_MALLOC(logLength));
-        AppOpenGLWrapper::get()->glGetProgramInfoLog(shaderProgram, logLength, &logLength, log);
+        APP_CALL_GLFUNC glGetProgramInfoLog(shaderProgram, logLength, &logLength, log);
         CubismLogError("Validate program log: %s", log);
         CSM_FREE(log);
     }
 
-    AppOpenGLWrapper::get()->glGetProgramiv(shaderProgram, GL_VALIDATE_STATUS, &status);
+    APP_CALL_GLFUNC glGetProgramiv(shaderProgram, GL_VALIDATE_STATUS, &status);
     if (status == GL_FALSE)
     {
         return false;
@@ -1005,7 +1005,7 @@ GLuint CubismShader_OpenGLES2::LoadShaderProgram(const csmChar* vertShaderSrc, c
     GLuint vertShader, fragShader;
 
     // Create shader program.
-    GLuint shaderProgram = AppOpenGLWrapper::get()->glCreateProgram();
+    GLuint shaderProgram = APP_CALL_GLFUNC glCreateProgram();
 
     if (!CompileShaderSource(&vertShader, GL_VERTEX_SHADER, vertShaderSrc))
     {
@@ -1021,10 +1021,10 @@ GLuint CubismShader_OpenGLES2::LoadShaderProgram(const csmChar* vertShaderSrc, c
     }
 
     // Attach vertex shader to program.
-    AppOpenGLWrapper::get()->glAttachShader(shaderProgram, vertShader);
+    APP_CALL_GLFUNC glAttachShader(shaderProgram, vertShader);
 
     // Attach fragment shader to program.
-    AppOpenGLWrapper::get()->glAttachShader(shaderProgram, fragShader);
+    APP_CALL_GLFUNC glAttachShader(shaderProgram, fragShader);
 
     // Link program.
     if (!LinkProgram(shaderProgram))
@@ -1033,17 +1033,17 @@ GLuint CubismShader_OpenGLES2::LoadShaderProgram(const csmChar* vertShaderSrc, c
 
         if (vertShader)
         {
-            AppOpenGLWrapper::get()->glDeleteShader(vertShader);
+            APP_CALL_GLFUNC glDeleteShader(vertShader);
             vertShader = 0;
         }
         if (fragShader)
         {
-            AppOpenGLWrapper::get()->glDeleteShader(fragShader);
+            APP_CALL_GLFUNC glDeleteShader(fragShader);
             fragShader = 0;
         }
         if (shaderProgram)
         {
-            AppOpenGLWrapper::get()->glDeleteProgram(shaderProgram);
+            APP_CALL_GLFUNC glDeleteProgram(shaderProgram);
             shaderProgram = 0;
         }
 
@@ -1053,14 +1053,14 @@ GLuint CubismShader_OpenGLES2::LoadShaderProgram(const csmChar* vertShaderSrc, c
     // Release vertex and fragment shaders.
     if (vertShader)
     {
-        AppOpenGLWrapper::get()->glDetachShader(shaderProgram, vertShader);
-        AppOpenGLWrapper::get()->glDeleteShader(vertShader);
+        APP_CALL_GLFUNC glDetachShader(shaderProgram, vertShader);
+        APP_CALL_GLFUNC glDeleteShader(vertShader);
     }
 
     if (fragShader)
     {
-        AppOpenGLWrapper::get()->glDetachShader(shaderProgram, fragShader);
-        AppOpenGLWrapper::get()->glDeleteShader(fragShader);
+        APP_CALL_GLFUNC glDetachShader(shaderProgram, fragShader);
+        APP_CALL_GLFUNC glDeleteShader(fragShader);
     }
 
     return shaderProgram;
@@ -1070,37 +1070,37 @@ void CubismShader_OpenGLES2::SetVertexAttributes(const CubismModel& model, const
 {
     // 頂点位置属性の設定
     const csmFloat32* vertexArray = model.GetDrawableVertices(index);
-    AppOpenGLWrapper::get()->glEnableVertexAttribArray(shaderSet->AttributePositionLocation);
-    AppOpenGLWrapper::get()->glVertexAttribPointer(shaderSet->AttributePositionLocation, 2, GL_FLOAT, GL_FALSE, sizeof(csmFloat32) * 2, vertexArray);
+    APP_CALL_GLFUNC glEnableVertexAttribArray(shaderSet->AttributePositionLocation);
+    APP_CALL_GLFUNC glVertexAttribPointer(shaderSet->AttributePositionLocation, 2, GL_FLOAT, GL_FALSE, sizeof(csmFloat32) * 2, vertexArray);
 
     // テクスチャ座標属性の設定
     const csmFloat32* uvArray = reinterpret_cast<const csmFloat32*>(model.GetDrawableVertexUvs(index));
-    AppOpenGLWrapper::get()->glEnableVertexAttribArray(shaderSet->AttributeTexCoordLocation);
-    AppOpenGLWrapper::get()->glVertexAttribPointer(shaderSet->AttributeTexCoordLocation, 2, GL_FLOAT, GL_FALSE, sizeof(csmFloat32) * 2, uvArray);
+    APP_CALL_GLFUNC glEnableVertexAttribArray(shaderSet->AttributeTexCoordLocation);
+    APP_CALL_GLFUNC glVertexAttribPointer(shaderSet->AttributeTexCoordLocation, 2, GL_FLOAT, GL_FALSE, sizeof(csmFloat32) * 2, uvArray);
 }
 
 void CubismShader_OpenGLES2::SetupTexture(CubismRenderer_OpenGLES2* renderer, const CubismModel& model, const csmInt32 index, CubismShaderSet* shaderSet)
 {
     const csmInt32 textureIndex = model.GetDrawableTextureIndex(index);
     const GLuint textureId = renderer->GetBindedTextureId(textureIndex);
-    AppOpenGLWrapper::get()->glActiveTexture(GL_TEXTURE0);
-    AppOpenGLWrapper::get()->glBindTexture(GL_TEXTURE_2D, textureId);
-    AppOpenGLWrapper::get()->glUniform1i(shaderSet->SamplerTexture0Location, 0);
+    APP_CALL_GLFUNC glActiveTexture(GL_TEXTURE0);
+    APP_CALL_GLFUNC glBindTexture(GL_TEXTURE_2D, textureId);
+    APP_CALL_GLFUNC glUniform1i(shaderSet->SamplerTexture0Location, 0);
 }
 
 void CubismShader_OpenGLES2::SetColorUniformVariables(CubismRenderer_OpenGLES2* renderer, const CubismModel& model, const csmInt32 index, CubismShaderSet* shaderSet,
                                                       CubismRenderer::CubismTextureColor& baseColor, CubismRenderer::CubismTextureColor& multiplyColor, CubismRenderer::CubismTextureColor& screenColor)
 {
-    AppOpenGLWrapper::get()->glUniform4f(shaderSet->UniformBaseColorLocation, baseColor.R, baseColor.G, baseColor.B, baseColor.A);
-    AppOpenGLWrapper::get()->glUniform4f(shaderSet->UniformMultiplyColorLocation, multiplyColor.R, multiplyColor.G, multiplyColor.B, multiplyColor.A);
-    AppOpenGLWrapper::get()->glUniform4f(shaderSet->UniformScreenColorLocation, screenColor.R, screenColor.G, screenColor.B, screenColor.A);
+    APP_CALL_GLFUNC glUniform4f(shaderSet->UniformBaseColorLocation, baseColor.R, baseColor.G, baseColor.B, baseColor.A);
+    APP_CALL_GLFUNC glUniform4f(shaderSet->UniformMultiplyColorLocation, multiplyColor.R, multiplyColor.G, multiplyColor.B, multiplyColor.A);
+    APP_CALL_GLFUNC glUniform4f(shaderSet->UniformScreenColorLocation, screenColor.R, screenColor.G, screenColor.B, screenColor.A);
 }
 
 void CubismShader_OpenGLES2::SetColorChannelUniformVariables(CubismShaderSet* shaderSet, CubismClippingContext_OpenGLES2* contextBuffer)
 {
     const csmInt32 channelIndex = contextBuffer->_layoutChannelIndex;
     CubismRenderer::CubismTextureColor* colorChannel = contextBuffer->GetClippingManager()->GetChannelFlagAsColor(channelIndex);
-    AppOpenGLWrapper::get()->glUniform4f(shaderSet->UnifromChannelFlagLocation, colorChannel->R, colorChannel->G, colorChannel->B, colorChannel->A);
+    APP_CALL_GLFUNC glUniform4f(shaderSet->UnifromChannelFlagLocation, colorChannel->R, colorChannel->G, colorChannel->B, colorChannel->A);
 }
 
 }}}}

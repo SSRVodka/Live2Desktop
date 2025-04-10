@@ -2,6 +2,7 @@
 #include <sys/stat.h>
 
 #include <AppOpenGLWrapper.hpp>
+#include <QtCore/QString>
 
 #include <Model/CubismMoc.hpp>
 

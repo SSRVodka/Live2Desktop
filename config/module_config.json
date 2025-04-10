@@ -7,6 +7,6 @@
         "server_url": "http://localhost:8880/v1/audio/speech",
         "api_key": "",
         "model": "kokoro",
-        "voice": "af_bella"
+        "voice": "af_jessica"
     }
 }
