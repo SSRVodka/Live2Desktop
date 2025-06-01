@@ -33,6 +33,9 @@ private slots:
     void testHistory();
     void testTimeout();
 
+    // TODO
+    // void testStream();
+
 protected slots:
     void recvResp(const QString& response);
     void recvError(const QString& error);

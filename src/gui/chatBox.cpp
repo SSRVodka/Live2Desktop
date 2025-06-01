@@ -17,7 +17,9 @@
 ChatBox::ChatBox(mainWindow *parent)
     :QDialog(parent),
     main(parent),
-    last_pending_msg(nullptr) {
+    last_pending_msg(nullptr),
+    last_output_msg(nullptr),
+    current_stream_reply_buf("") {
     
     this->setupUi(this);
     QWidget *scrollWidget = new QWidget;
@@ -34,7 +36,11 @@ ChatBox::ChatBox(mainWindow *parent)
     connect(this->main->audio_handler, SIGNAL(stt_reply(bool,QString)),
         this, SLOT(recv_stt_reply(bool, QString)));
     connect(this->main->chat_client, SIGNAL(asyncResponseReceived(const QString&)),
-        this, SLOT(recv_chat_reply(QString)));
+        this, SLOT(recv_chat_async_reply(QString)));
+    connect(this->main->chat_client, SIGNAL(streamResponseReceived(const QString&)),
+        this, SLOT(recv_chat_stream_ready(QString)));
+    connect(this->main->chat_client, SIGNAL(streamFinished()),
+        this, SLOT(recv_chat_stream_fin()));
     connect(this->main->chat_client, SIGNAL(errorOccurred(const QString&)),
         this, SLOT(recv_chat_error(QString)));
 
@@ -96,13 +102,6 @@ MessageBubble *ChatBox::addMessageBubble(const QString &text, bool isUser) {
     MessageBubble *bubble = new MessageBubble(text, QDateTime::currentDateTime(), isUser, this);
     layout->addWidget(bubble);
 
-    // 自动滚动到底部
-    QTimer::singleShot(500, [this](){
-        this->scrollArea->verticalScrollBar()->setValue(
-            this->scrollArea->verticalScrollBar()->maximum()
-        );
-    });
-
     // 限制历史消息数量（超过100条时删除最早的）
     if(layout->count() > 100){
         QLayoutItem* item = layout->takeAt(0);
@@ -110,13 +109,64 @@ MessageBubble *ChatBox::addMessageBubble(const QString &text, bool isUser) {
         delete item;
     }
 
+    updateScrollLayout();
+
     return bubble;
+}
+
+void ChatBox::updateScrollLayout() {
+    QWidget *scrollWidget = this->scrollArea->widget();
+    QVBoxLayout *scrollLayout = qobject_cast<QVBoxLayout*>(scrollWidget->layout());
+    
+    // 强制重新计算布局
+    scrollLayout->activate();
+    scrollLayout->update();
+    
+    // 更新滚动区域尺寸
+    scrollArea->widget()->adjustSize();
+    
+    // 滚动到底部（可选）
+    QTimer::singleShot(50, [this]() {
+        auto scrollBar = this->scrollArea->verticalScrollBar();
+        scrollBar->setValue(scrollBar->maximum());
+    });
+}
+
+void ChatBox::listenMessageBubble(MessageBubble *bubble) {
+    connect(bubble, SIGNAL(textChanged()), this, SLOT(updateScrollLayout()));
+}
+void ChatBox::unlistenMessageBubble(MessageBubble *bubble) {
+    disconnect(bubble, SIGNAL(textChanged()), this, SLOT(updateScrollLayout()));
 }
 
 void ChatBox::loadHistory() {
     QVector<Chat::Client::Message> history = this->main->chat_client->getHistory();
     foreach (const Chat::Client::Message &message, history) {
         this->addMessageBubble(message.content, message.role == "user");
+    }
+}
+
+void ChatBox::clearHistory() {
+    QWidget *scrollWidget = this->scrollArea->widget();
+    QVBoxLayout *layout = qobject_cast<QVBoxLayout*>(scrollWidget->layout());
+    while (layout->count() > 0) {
+        QLayoutItem* item = layout->takeAt(0);
+        delete item->widget();
+        delete item;
+    }
+    this->main->chat_client->clearHistory();
+}
+
+void ChatBox::parseCmdAndExec(const QString &cmd) {
+    if (cmd.startsWith("/say")) {
+        QString stripped = cmd.mid(strlen("/say"));
+        stripped = stripped.trimmed();
+        this->main->recv_chat_async_reply(stripped);
+        this->addMessageBubble("[COMMAND:SAY] " + stripped, true);
+        return;
+    } else if (cmd.startsWith("/clear")) {
+        this->clearHistory();
+        return;
     }
 }
 
@@ -128,8 +178,16 @@ void ChatBox::on_sendBtn_clicked() {
 
     // update UI
     this->inputEdit->clear();
+
+    // command parser
+    this->parseCmdAndExec(text);
+
     this->toRcvUIState();
     this->last_pending_msg = this->addMessageBubble(text, true);
+    
+    // 这里先放出来空的回复框，并监听变化
+    this->last_output_msg = this->addMessageBubble("", false);
+    this->listenMessageBubble(this->last_output_msg);
 
     // send to server
     this->main->chat_client->sendMessageAsync(text);
@@ -168,14 +226,26 @@ void ChatBox::recv_stt_reply(bool valid, QString transcribed_text) {
     // 自动发送识别信息
     this->on_sendBtn_clicked();
 }
-void ChatBox::recv_chat_reply(QString text) {
-    this->addMessageBubble(text, false);
+void ChatBox::recv_chat_async_reply(QString text) {
+    this->last_output_msg->setText(text);
+    this->unlistenMessageBubble(this->last_output_msg);
     this->last_pending_msg = nullptr;
+    this->last_output_msg = nullptr;
     this->toNormUIState();
+}
+void ChatBox::recv_chat_stream_ready(QString chunk) {
+    this->current_stream_reply_buf += chunk;
+    this->last_output_msg->setText(this->current_stream_reply_buf);
+}
+void ChatBox::recv_chat_stream_fin() {
+    QString msg = this->current_stream_reply_buf;
+    this->current_stream_reply_buf = "";
+    this->recv_chat_async_reply(msg);
 }
 void ChatBox::recv_chat_error(QString msg) {
     this->last_pending_msg->showErrorIndicator();
     this->last_pending_msg = nullptr;
+    this->last_output_msg = nullptr;
     this->toNormUIState();
 }
 

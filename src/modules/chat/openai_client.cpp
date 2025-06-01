@@ -2,7 +2,6 @@
 
 #include <QtCore/QEventLoop>
 #include <QtCore/QAtomicInteger>
-#include <QtCore/QTimer>
 #include <QtCore/QJsonArray>
 #include <QtCore/QJsonDocument>
 #include <QtCore/QJsonObject>
@@ -14,6 +13,24 @@
 using namespace Chat;
 
 #define CLIENT_TYPE "OpenAI Client"
+
+
+// 注意：流式传输和非流式传输的处理方法不同。
+
+// 非流式：
+
+// - 直接发送消息；
+// - 未回复的消息由 m_pendingReplies 管理；
+// - 使用 QNetworkReply::finished 处理回复；
+// - 使用 Client::handleAsyncTimeout 处理超时；
+// - 使用 Client::handleAsyncResponse 更新等待状态、解析回复信息、发出完成信号；
+
+// 流式：
+
+// - 和非流式一样正常发送消息，但是加上特殊报头；
+// - QNetworkReply::readyRead 处理流式数据到达；
+// - 
+
 
 
 Client::Client(
@@ -41,8 +58,8 @@ std::pair<QString, bool> Client::sendMessageSync(const QString& message) {
     stdLogger.Info(CLIENT_TYPE ": user send message (sync) to server");
     Message msgInHistory = addUserMessage(message);
     
-    QNetworkRequest request = createRequest();
-    QNetworkReply* reply = m_manager->post(request, createRequestBody());
+    QNetworkRequest request = createRequest(false);
+    QNetworkReply* reply = m_manager->post(request, createRequestBody(false));
     
     QEventLoop eventLoop;
     QTimer timeoutTimer;
@@ -78,27 +95,62 @@ void Client::sendMessageAsync(const QString& message) {
     Message msgInHistory = addUserMessage(message);
 
     this->m_currentFin.storeRelaxed(0);
+
+    bool stream = m_stream;
     
-    QNetworkRequest request = createRequest();
-    QNetworkReply* reply = m_manager->post(request, createRequestBody());
+    QNetworkRequest request = createRequest(stream);
+    QNetworkReply* reply = m_manager->post(request, createRequestBody(stream));
     
     QTimer* timeoutTimer = new QTimer(this);
     timeoutTimer->setSingleShot(true);
+
+    if (stream) {
+        m_streamContexts[reply] = {
+            QByteArray(),       // 空缓冲区
+            QString(),          // 空累积响应
+            timeoutTimer,       // 关联定时器
+            msgInHistory        // 用户消息
+        };
+
+        connect(reply, &QNetworkReply::readyRead, this, [this, reply]() {
+            auto& context = m_streamContexts[reply];
+            
+            // 收到数据时重置超时计时器
+            if (context.timeoutTimer->isActive()) {
+                context.timeoutTimer->start(m_timeout);
+            }
+            
+            // 累积数据到缓冲区
+            context.buffer += reply->readAll();
+            
+            // 解析完整事件 (以\n\n分隔)
+            processStreamBuffer(reply);
+        });
+    }
     
-    // 注意 handleTimeout 和 handleResponse 的互斥条件
-    connect(timeoutTimer, &QTimer::timeout, this, [this, reply, msgInHistory]() {
+    // 注意 handleAsyncTimeout 和 handleAsyncResponse 的互斥条件
+    connect(timeoutTimer, &QTimer::timeout, this, [this, reply, msgInHistory, stream]() {
         if (this->m_currentFin.testAndSetRelaxed(false, true)) {
-            // remove the message from the history if failed
-            m_history.removeOne(msgInHistory);
-            handleTimeout(reply);
+            if (m_stream) {
+                handleStreamTimeout(reply);
+            } else {
+                // remove the message from the history if failed
+                m_history.removeOne(msgInHistory);
+                handleAsyncTimeout(reply);
+            }
         }
         // else: QNetworkReply::finished arrived first, so we do nothing here
     });
-    connect(reply, &QNetworkReply::finished, this, [this, reply, timeoutTimer]() {
+    connect(reply, &QNetworkReply::finished, this, [this, reply, timeoutTimer, stream]() {
         if (this->m_currentFin.testAndSetRelaxed(false, true)) {
-            timeoutTimer->stop();
-            handleResponse(reply);
-            timeoutTimer->deleteLater();
+            if (stream) {
+                // 由于 StreamContext 的封装，这里计时器停止的工作已经下沉到函数中进行。
+                handleStreamFinished(reply);
+            } else {
+                timeoutTimer->stop();
+                handleAsyncResponse(reply);
+                timeoutTimer->deleteLater();
+            }
         }
     });
 
@@ -115,9 +167,14 @@ void Client::clearHistory() {
     m_history.clear();
 }
 
-QNetworkRequest Client::createRequest() const {
+QNetworkRequest Client::createRequest(bool stream) const {
     QNetworkRequest request(m_serverUrl);
     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
+
+    if (stream) {
+        request.setRawHeader("Accept", "text/event-stream");
+    }
+
     if (!m_apiKey.isEmpty()) {
         QString token = QString("Bearer ") + m_apiKey;
         request.setRawHeader("Authorization", token.toUtf8());
@@ -125,7 +182,7 @@ QNetworkRequest Client::createRequest() const {
     return request;
 }
 
-QByteArray Client::createRequestBody() const {
+QByteArray Client::createRequestBody(bool stream) const {
     QJsonObject requestBody;
     QJsonArray messagesArray;
     QJsonObject messageObj;
@@ -161,6 +218,11 @@ QByteArray Client::createRequestBody() const {
     // toolObj["web_search"] = toolOptObj;
     // toolArray.append(toolObj);
     // requestBody["tools"] = toolArray;
+
+    if (stream) {
+        requestBody["stream"] = true;
+    }
+
     stdLogger.Debug(QJsonDocument(requestBody).toJson().toStdString());
     return QJsonDocument(requestBody).toJson();
 }
@@ -207,7 +269,63 @@ std::pair<QString, bool> Client::processReply(QNetworkReply* reply) {
     return {content, true};
 }
 
-void Client::handleResponse(QNetworkReply* reply) {
+void Client::processStreamBuffer(QNetworkReply* reply) {
+    auto& context = m_streamContexts[reply];
+    
+    // 解析所有完整事件 (以\n\n分隔)
+    while (true) {
+        int pos = context.buffer.indexOf("\n\n");
+        if (pos == -1) break;  // 没有完整事件
+        
+        QByteArray eventData = context.buffer.left(pos);
+        context.buffer = context.buffer.mid(pos + 2);
+        
+        processStreamEvent(reply, eventData);
+    }
+}
+
+void Client::processStreamEvent(QNetworkReply* reply, const QByteArray& eventData) {
+    stdLogger.Debug(CLIENT_TYPE ": stream event received. Ready to process");
+    // 忽略注释行和空事件
+    if (eventData.startsWith(":") || eventData.isEmpty()) 
+        return;
+
+    // 检查DONE事件
+    if (eventData.startsWith("data: [DONE]")) {
+        return;
+    }
+
+    // 提取有效数据部分
+    if (eventData.startsWith("data: ")) {
+        QByteArray jsonData = eventData.mid(6); // 跳过"data: "
+        
+        QJsonParseError parseError;
+        QJsonDocument doc = QJsonDocument::fromJson(jsonData, &parseError);
+        
+        if (parseError.error != QJsonParseError::NoError) {
+            stdLogger.Exception(CLIENT_TYPE ": SSE JSON parse error: " + parseError.errorString().toStdString());
+            return;
+        }
+        
+        QJsonObject obj = doc.object();
+        QJsonArray choices = obj["choices"].toArray();
+        if (!choices.isEmpty()) {
+            QJsonObject choice = choices[0].toObject();
+            QJsonObject delta = choice["delta"].toObject();
+            
+            if (delta.contains("content")) {
+                QString chunk = delta["content"].toString();
+                auto& context = m_streamContexts[reply];
+                context.accumulatedResponse += chunk;
+                emit streamResponseReceived(chunk);
+            }
+        }
+    } else {
+        stdLogger.Warning(CLIENT_TYPE ": invalid stream data: " + eventData.toStdString());
+    }
+}
+
+void Client::handleAsyncResponse(QNetworkReply* reply) {
     m_pendingReplies.remove(reply);
     
     // auto [response, success] = processReply(reply);
@@ -223,16 +341,68 @@ void Client::handleResponse(QNetworkReply* reply) {
     }
 }
 
-void Client::handleTimeout(QNetworkReply* reply) {
+void Client::handleAsyncTimeout(QNetworkReply* reply) {
     stdLogger.Warning(CLIENT_TYPE ": user message timeout (async)");
     if (m_pendingReplies.contains(reply)) {
         reply->abort();
         m_pendingReplies.remove(reply);
         reply->deleteLater();
-        emit errorOccurred("Request timeout");
+        emit errorOccurred("Async request timeout");
     } else {
-        stdLogger.Exception("pending reply lost");
+        stdLogger.Exception(CLIENT_TYPE ": pending reply lost");
     }
+}
+
+void Client::handleStreamFinished(QNetworkReply *reply) {
+    if (!m_streamContexts.contains(reply)) {
+        stdLogger.Warning(CLIENT_TYPE ": received a stream finish event but not recognized");
+        return;
+    }
+    
+    auto context = m_streamContexts.take(reply);
+    context.timeoutTimer->stop();
+    context.timeoutTimer->deleteLater();
+    
+    // 处理缓冲区中剩余数据
+    if (!context.buffer.isEmpty()) {
+        processStreamEvent(reply, context.buffer);
+    }
+    
+    // 添加到历史记录
+    if (!context.accumulatedResponse.isEmpty()) {
+        addAssistantMessage(context.accumulatedResponse);
+    }
+    
+    // 清理
+    m_pendingReplies.remove(reply);
+    reply->deleteLater();
+    
+    emit streamFinished();
+}
+
+void Client::handleStreamTimeout(QNetworkReply *reply) {
+    if (!m_streamContexts.contains(reply)) {
+        stdLogger.Warning(CLIENT_TYPE ": received a stream timeout event but not recognized");
+        return;
+    }
+    
+    auto context = m_streamContexts.take(reply);
+    context.timeoutTimer->deleteLater();
+    
+    // 添加部分响应到历史记录
+    if (!context.accumulatedResponse.isEmpty()) {
+        addAssistantMessage(context.accumulatedResponse);
+    } else {
+        // 没有任何响应时回滚用户消息
+        m_history.removeOne(context.userMessage);
+    }
+    
+    // 清理
+    m_pendingReplies.remove(reply);
+    reply->abort();
+    reply->deleteLater();
+    
+    emit errorOccurred("Stream Request timeout");
 }
 
 void Client::abortAllRequests() {
@@ -268,4 +438,9 @@ void Client::setTimeout(int ms) {
     std::string msg = CLIENT_TYPE ": client timeout (ms) is set to " + std::to_string(ms);
     stdLogger.Debug(msg.c_str());
     m_timeout = ms;
+}
+void Client::setUseStream(bool stream) {
+    std::string msg = CLIENT_TYPE ": client use stream is set to " + std::to_string(stream);
+    stdLogger.Debug(msg.c_str());
+    m_stream = stream;
 }

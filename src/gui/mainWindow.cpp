@@ -349,13 +349,18 @@ void mainWindow::initClients() {
     cp.system_prompt = this->mcp_config->system_prompt.data();
     this->chat_client->setChatParams(cp);
     this->chat_client->setTimeout(120000);
+    this->chat_client->setUseStream(this->mcp_config->llm.stream);
 
     connect(this->audio_handler, SIGNAL(stt_reply(bool,QString)),
         this, SLOT(recv_stt_reply(bool, QString)));
     connect(this->audio_handler, SIGNAL(tts_reply(bool,QString)),
         this, SLOT(recv_tts_reply(bool, QString)));
     connect(this->chat_client, SIGNAL(asyncResponseReceived(const QString&)),
-        this, SLOT(recv_chat_reply(QString)));
+        this, SLOT(recv_chat_async_reply(QString)));
+    connect(this->chat_client, SIGNAL(streamResponseReceived(const QString&)),
+        this, SLOT(recv_chat_stream_ready(QString)));
+    connect(this->chat_client, SIGNAL(streamFinished()),
+        this, SLOT(recv_chat_stream_fin()));
     connect(this->chat_client, SIGNAL(errorOccurred(const QString&)),
         this, SLOT(recv_chat_error(QString)));
 }
@@ -417,11 +422,21 @@ void mainWindow::recv_tts_reply(bool success, QString msg) {
             + "' due to: " + msg.toStdString());
     }
 }
-void mainWindow::recv_chat_reply(QString text) {
+void mainWindow::recv_chat_async_reply(QString text) {
     this->is_receiving = false;
     QString gen_audio_file = this->audio_handler->tts_request(text);
     // we don't care much about exception (only log), because sound is not important :)
     this->last_tts_pending_audio_file = gen_audio_file;
+}
+void mainWindow::recv_chat_stream_ready(QString chunk) {
+    // TODO TTS stream
+    this->current_stream_reply_buf += chunk;
+}
+void mainWindow::recv_chat_stream_fin() {
+    // TODO TTS stream
+    QString msg = this->current_stream_reply_buf;
+    this->current_stream_reply_buf = "";
+    this->recv_chat_async_reply(msg);
 }
 void mainWindow::recv_chat_error(QString msg) {
     this->is_receiving = false;

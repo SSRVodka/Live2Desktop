@@ -125,6 +125,7 @@
         "qjsonobject": "cpp",
         "qobject": "cpp",
         "qmediaplayer": "cpp",
-        "typeindex": "cpp"
+        "typeindex": "cpp",
+        "qjsonarray": "cpp"
     }
 }

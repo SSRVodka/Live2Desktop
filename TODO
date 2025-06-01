@@ -1,5 +1,6 @@
 - [x] Implement module hotkey for Windows OS
-- [] Support chat stream output & stream TTS
+- [x] Support chat stream output
+- [] Support stream TTS
 - [] Add MCP (Model Context Protocol) clients & capabilities
 - [] Persist conversation data for chat client
 - [] Simplify configurations for STT model
@@ -9,3 +10,4 @@
 - [] Extract style string of message bubble from code
 - [] Replace cJSON with modern nlohmann/json.hpp (resourceLoader.cpp, configDialog.cpp)
 - [] Add configuration manager for LLM instead of naive implementation (direct JSON read)
+- [] Add tests for OPENAI Client Stream

@@ -52,7 +52,9 @@ private slots:
 
     void recv_stt_reply(bool valid, QString transcribed_text);
     void recv_tts_reply(bool success, QString msg);
-    void recv_chat_reply(QString text);
+    void recv_chat_async_reply(QString text);
+    void recv_chat_stream_ready(QString chunk);
+    void recv_chat_stream_fin();
     void recv_chat_error(QString msg);
 
     void toggle_keyboard_record();
@@ -99,4 +101,6 @@ private:
     // global hotkey
     GlobalHotKeyHandler *hotkey_handler;
     bool is_keyboard_recording;
+
+    QString current_stream_reply_buf;
 };

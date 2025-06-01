@@ -21,6 +21,7 @@ public:
     std::optional<std::string> api_key;
     float temperature = 0.0;
     std::optional<std::string> base_url;
+    bool stream;
 
     // Constructor
     LLMConfig() {}
@@ -35,6 +36,7 @@ public:
                             : std::getenv("OPENAI_API_KEY") ? std::getenv("OPENAI_API_KEY") : "");
         llmConfig.temperature = config.value("temperature", llmConfig.temperature);
         llmConfig.base_url = config.contains("base_url") ? std::optional<std::string>(config["base_url"]) : std::nullopt;
+        llmConfig.stream = config.contains("stream") ? std::optional<bool>(config["stream"]).value_or(false) : false;
         return llmConfig;
     }
 };

@@ -5,7 +5,8 @@
       "model": "gpt-4o",
       "api_key": "sk-dwjeifjiewrpijepwjiw",
       "temperature": 0.7,
-      "base_url": "http://localhost:8000"
+      "base_url": "http://localhost:17100",
+      "stream": true
     },
     "mcpServers": {
       "filesystem": {
