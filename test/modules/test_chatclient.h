@@ -33,6 +33,8 @@ private slots:
     void testHistory();
     void testTimeout();
 
+    void testTagsAndBlocks();
+
     // TODO
     // void testStream();
 

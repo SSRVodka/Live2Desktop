@@ -347,6 +347,7 @@ void mainWindow::initClients() {
     cp.api_key = this->mcp_config->llm.api_key.value_or("").data();
     cp.model = this->mcp_config->llm.model.data();
     cp.system_prompt = this->mcp_config->system_prompt.data();
+    cp.enable_thinking = this->mcp_config->llm.enable_thinking;
     this->chat_client->setChatParams(cp);
     this->chat_client->setTimeout(120000);
     this->chat_client->setUseStream(this->mcp_config->llm.stream);
@@ -424,6 +425,9 @@ void mainWindow::recv_tts_reply(bool success, QString msg) {
 }
 void mainWindow::recv_chat_async_reply(QString text) {
     this->is_receiving = false;
+    // Note: you won't speak out code blocks or your thinkings XP
+    text = Chat::Client::removeCodeBlocks(text);
+    text = Chat::Client::removeTags("think", text);
     QString gen_audio_file = this->audio_handler->tts_request(text);
     // we don't care much about exception (only log), because sound is not important :)
     this->last_tts_pending_audio_file = gen_audio_file;

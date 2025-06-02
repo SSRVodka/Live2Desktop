@@ -37,6 +37,8 @@ public:
         QString api_key;
         QString model;
         QString system_prompt;
+        // only valid for reasoning model
+        bool enable_thinking;
     };
 
     explicit Client(int timeoutMs = 30000, 
@@ -51,6 +53,10 @@ public:
     void setUseStream(bool stream);
     QVector<Message> getHistory();
     void clearHistory();
+
+    // 处理回复字符串的工具函数
+    static QString removeTags(const char *tagName, const QString &text);
+    static QString removeCodeBlocks(const QString &text);
 
 signals:
     void asyncResponseReceived(const QString& response);
@@ -103,6 +109,7 @@ private:
     // (仅对异步操作) 当前请求是否已经确认结果（不再 pending），可以是超时或者回应
     QAtomicInteger<qint8> m_currentFin;
     int m_timeout;
+    bool m_thinking;
     bool m_stream;
 };
 

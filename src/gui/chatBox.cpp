@@ -167,6 +167,8 @@ void ChatBox::parseCmdAndExec(const QString &cmd) {
     } else if (cmd.startsWith("/clear")) {
         this->clearHistory();
         return;
+    } else if (cmd.startsWith("/")) {
+        stdLogger.Warning("unknown command: " + cmd.toStdString());
     }
 }
 

@@ -167,6 +167,44 @@ void Client::clearHistory() {
     m_history.clear();
 }
 
+
+QString Client::removeTags(const char *tagName, const QString &text) {
+    QString result = text;
+    QString openTag = QString::asprintf("<%s>", tagName);
+    QString closeTag = QString::asprintf("</%s>", tagName);
+
+    int startIndex = 0;
+    while ((startIndex = result.indexOf(openTag, startIndex)) != -1) {
+        int endIndex = result.indexOf(closeTag, startIndex);
+        if (endIndex != -1) {
+            // 删除包括标签在内的整个内容
+            result.remove(startIndex, endIndex - startIndex + closeTag.length());
+        } else {
+            result.remove(startIndex, result.length() - startIndex);
+            break;
+        }
+    }
+    
+    return result.trimmed();
+}
+QString Client::removeCodeBlocks(const QString &text) {
+    QString result = text;
+    QString startCodeTag = "```";
+    QString endCodeTag = startCodeTag;
+    
+    int startCodeIndex = 0;
+    while ((startCodeIndex = result.indexOf(startCodeTag, startCodeIndex)) != -1) {
+        int endCodeIndex = result.indexOf(endCodeTag, startCodeIndex + startCodeTag.length());
+        if (endCodeIndex != -1) {
+            result.remove(startCodeIndex, endCodeIndex - startCodeIndex + endCodeTag.length());
+        } else {
+            result.remove(startCodeIndex, result.length() - startCodeIndex);
+            break;
+        }
+    }
+    return result.trimmed();
+}
+
 QNetworkRequest Client::createRequest(bool stream) const {
     QNetworkRequest request(m_serverUrl);
     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
@@ -234,7 +272,14 @@ Client::Message Client::addUserMessage(const QString& message) {
 }
 
 Client::Message Client::addAssistantMessage(const QString& message) {
-    Message msg {generateMsgId(), "assistant", message};
+    // 注意：如果有 think 块则不放入历史记录中
+    QString convMsg;
+    if (m_thinking) {
+        convMsg = Client::removeTags("think", message);
+    } else {
+        convMsg = message;
+    }
+    Message msg {generateMsgId(), "assistant", convMsg};
     m_history.append(msg);
     return msg;
 }
@@ -416,19 +461,24 @@ void Client::abortAllRequests() {
 
 void Client::setChatParams(const chat_params_t &params) {
     std::string msg = CLIENT_TYPE ": sever url is set to " + params.server_url.toStdString();
-    stdLogger.Debug(msg.c_str());
+    stdLogger.Debug(msg);
     m_serverUrl = params.server_url;
 
     stdLogger.Debug(CLIENT_TYPE ": api key is set to ***");
     m_apiKey = params.api_key;
 
     msg = CLIENT_TYPE ": chat model is set to " + params.model.toStdString();
-    stdLogger.Debug(msg.c_str());
+    stdLogger.Debug(msg);
     m_model = params.model;
 
     msg = CLIENT_TYPE ": system prompt is set to: " + params.system_prompt.toStdString();
-    stdLogger.Debug(msg.c_str());
+    stdLogger.Debug(msg);
     m_sysprompt = params.system_prompt;
+
+    msg = CLIENT_TYPE ": enable thinking is set to: " + std::to_string(params.enable_thinking);
+    stdLogger.Debug(msg);
+    m_thinking = params.enable_thinking;
+    m_sysprompt += m_thinking ? " /think" : " /no_think";
 }
 void Client::setTimeout(int ms) {
     if (ms < 0) {
@@ -436,11 +486,11 @@ void Client::setTimeout(int ms) {
         return;
     }
     std::string msg = CLIENT_TYPE ": client timeout (ms) is set to " + std::to_string(ms);
-    stdLogger.Debug(msg.c_str());
+    stdLogger.Debug(msg);
     m_timeout = ms;
 }
 void Client::setUseStream(bool stream) {
     std::string msg = CLIENT_TYPE ": client use stream is set to " + std::to_string(stream);
-    stdLogger.Debug(msg.c_str());
+    stdLogger.Debug(msg);
     m_stream = stream;
 }

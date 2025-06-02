@@ -11,6 +11,7 @@
 #include <nlohmann/json.hpp>
 
 #include "utils/consts.h"
+#include "utils/logger.h"
 
 using json = nlohmann::json;
 
@@ -22,6 +23,7 @@ public:
     float temperature = 0.0;
     std::optional<std::string> base_url;
     bool stream;
+    bool enable_thinking;
 
     // Constructor
     LLMConfig() {}
@@ -37,6 +39,7 @@ public:
         llmConfig.temperature = config.value("temperature", llmConfig.temperature);
         llmConfig.base_url = config.contains("base_url") ? std::optional<std::string>(config["base_url"]) : std::nullopt;
         llmConfig.stream = config.contains("stream") ? std::optional<bool>(config["stream"]).value_or(false) : false;
+        llmConfig.enable_thinking = config.contains("enable_thinking") ? std::optional<bool>(config["enable_thinking"]).value_or(false) : false;
         return llmConfig;
     }
 };
@@ -92,12 +95,14 @@ public:
         }
 
         if (chosenPath.empty()) {
-            throw std::runtime_error("Could not find config file in any of the specified paths.");
+            stdLogger.Exception("Could not find config file in any of the specified paths.");
+            return false;
         }
 
         std::ifstream file(chosenPath);
         if (!file.is_open()) {
-            throw std::runtime_error("Failed to open config file: " + chosenPath);
+            stdLogger.Exception("Failed to open config file: " + chosenPath);
+            return false;
         }
 
         json config;

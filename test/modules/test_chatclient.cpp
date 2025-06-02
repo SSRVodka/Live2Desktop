@@ -143,11 +143,32 @@ void TestChatClient::testTimeout() {
     this->client->setChatParams(this->params);
     this->client->setTimeout(1000); // 1s
     this->client->clearHistory();
-    this->submit_and_check(true, true, "Request timeout");
+    this->submit_and_check(true, true, "Async request timeout");
 
     // the client shouldn't keep history if timeout,
     // because caller is responsible to the re-submission
     QCOMPARE(this->client->getHistory().size(), 0);
+}
+
+void TestChatClient::testTagsAndBlocks() {
+    QString testStr = "Hello! this is a text.<think> I'm <think>ing now... 12345678 </think>\n\n"
+        "Here is my code:\n"
+        "```python\n"
+        "print(\"Hello! world.\")\n"
+        "```\n"
+        "And HTML:\n"
+        "```html\n"
+        "<think>Pretend to think</think>"
+        "```\n"
+        "Done!";
+    QString answer = "Hello! this is a text.\n\n"
+        "Here is my code:\n\n"
+        "And HTML:\n\n"
+        "Done!";
+    QString res;
+    res = Client::removeCodeBlocks(testStr);
+    res = Client::removeTags("think", res);
+    QCOMPARE(res, answer);
 }
 
 void TestChatClient::recvResp(const QString& response) {
