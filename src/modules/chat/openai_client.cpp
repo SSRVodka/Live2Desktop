@@ -21,7 +21,7 @@ using namespace Chat;
 
 // - 直接发送消息；
 // - 未回复的消息由 m_pendingReplies 管理；
-// - 使用 QNetworkReply::finished 处理回复；
+// - 使用 QNetworkReply::finished 处理回复、QNetworkReply::timeout 处理超时；
 // - 使用 Client::handleAsyncTimeout 处理超时；
 // - 使用 Client::handleAsyncResponse 更新等待状态、解析回复信息、发出完成信号；
 
@@ -29,7 +29,8 @@ using namespace Chat;
 
 // - 和非流式一样正常发送消息，但是加上特殊报头；
 // - QNetworkReply::readyRead 处理流式数据到达；
-// - 
+// - 超时和完成的信号与非流式相同（finished, timeout）；
+// - 使用 Client::handleStreamTimeout / Client::handleStreamFinished 则对应非流式的相应功能
 
 
 
@@ -478,6 +479,7 @@ void Client::setChatParams(const chat_params_t &params) {
     msg = CLIENT_TYPE ": enable thinking is set to: " + std::to_string(params.enable_thinking);
     stdLogger.Debug(msg);
     m_thinking = params.enable_thinking;
+    // TODO: fit model's jinja template (using configuration file)
     m_sysprompt += m_thinking ? " /think" : " /no_think";
 }
 void Client::setTimeout(int ms) {
