@@ -175,3 +175,5 @@ make -j
 - [cpp-httplib](https://github.com/yhirose/cpp-httplib)
 
 - [ggml](https://github.com/ggml-org/ggml)
+
+- [cpp-mcp](https://github.com/hkr04/cpp-mcp)

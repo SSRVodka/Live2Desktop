@@ -180,3 +180,4 @@ Statements `@Author SSRVodka` follow the license of this project.
 
 - [ggml](https://github.com/ggml-org/ggml)
 
+- [cpp-mcp](https://github.com/hkr04/cpp-mcp)
