@@ -125,6 +125,9 @@ add_subdirectory(${PROJECT_SOURCE_DIR}/src/modules/tts)
 
 add_subdirectory(${PROJECT_SOURCE_DIR}/src/modules/chat)
 
+# MCP library (libname: mcp)
+add_subdirectory(${PROJECT_SOURCE_DIR}/thirdParty/mcp.cpp)
+
 # -------------- Build App --------------
 
 # Add source files.
@@ -221,6 +224,7 @@ target_link_libraries(${APP_NAME}
   modulechat
   moduleaudio
   modulehotkey
+  mcp
 )
 
 # Copy resource directory to build directory.
@@ -249,8 +253,6 @@ target_sources(${APP_NAME}
   PRIVATE
   src/config/module_config.cpp
   src/config/module_config.h
-  src/config/mcp_config.cpp
-  src/config/mcp_config.h
 )
 
 # move configurations to destination
@@ -269,14 +271,6 @@ endif()
 
 file(MAKE_DIRECTORY ${FINAL_CONFIG_DIR})
 
-add_custom_command(
-    TARGET ${APP_NAME}
-    POST_BUILD
-    COMMAND
-        ${CMAKE_COMMAND} -E
-            copy ${PROJECT_SOURCE_DIR}/config/mcp_config.json ${FINAL_CONFIG_DIR}/mcp_config.json
-    COMMENT "Copying configuration template mcp_config.json to destination"
-)
 add_custom_command(
     TARGET ${APP_NAME}
     POST_BUILD

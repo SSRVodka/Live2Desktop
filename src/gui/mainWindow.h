@@ -8,6 +8,7 @@
 
 #pragma once
 
+#include <QtCore/QJsonArray>
 #include <QtWidgets/QAction>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QMainWindow>
@@ -24,6 +25,11 @@ class GlobalHotKeyHandler;
 
 namespace Chat {
 class Client;
+};
+
+namespace mcp {
+class client;
+class tool;
 };
 
 class MCPConfig;
@@ -52,8 +58,11 @@ private slots:
 
     void recv_stt_reply(bool valid, QString transcribed_text);
     void recv_tts_reply(bool success, QString msg);
-    void recv_chat_reply(QString text);
+    void recv_chat_async_reply(QString text);
+    void recv_chat_stream_ready(QString chunk);
+    void recv_chat_stream_fin();
     void recv_chat_error(QString msg);
+    void recv_tool_calls(QJsonArray tool_calls);
 
     void toggle_keyboard_record();
 private:
@@ -64,8 +73,15 @@ private:
     void loadModels();
     void setupTray();
 
+    void initMCPServers();
     void initClients();
     void initGlobalHotKey();
+
+    // 按照模型指令调用指定工具（可能有多个），这会更改 Chat Client 的历史记录
+    // 调用错误时（例如指定的 tool 不存在）会直接向历史记录中追加
+    void callingTools(const QJsonArray &tool_calls);
+
+    QJsonArray mcpTools2OAIFormatQJsonArray(std::vector<mcp::tool> mcp_tool);
 
     QSystemTrayIcon* systemTray;
     QMenu *mainMenu;
@@ -82,7 +98,6 @@ private:
     QApplication* app;
 
     // configurations
-    MCPConfig *mcp_config;
     ModuleConfigManager *module_config_manager;
     ASRHandler::asr_params stt_params;
     TTS::tts_params_t tts_params;
@@ -96,7 +111,12 @@ private:
     Chat::Client *chat_client;
     bool is_receiving;
 
+    // tool calling & MCP utilities
+    mcp::client *mcp_client;
+
     // global hotkey
     GlobalHotKeyHandler *hotkey_handler;
     bool is_keyboard_recording;
+
+    QString current_stream_reply_buf;
 };

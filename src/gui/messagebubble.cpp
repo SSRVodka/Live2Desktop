@@ -3,9 +3,10 @@
 #include <QtWidgets/QVBoxLayout>
 
 #include "gui/messagebubble.h"
+#include "utils/logger.h"
 
 // TODO: extract style string from code
-MessageBubble::MessageBubble(const QString &text, const QDateTime &time, bool isUser, QWidget *parent)
+MessageBubble::MessageBubble(const QString &text, const QDateTime &time, const QString &role, QWidget *parent)
     : QWidget(parent)
 {
     QVBoxLayout *mainLayout = new QVBoxLayout(this);
@@ -19,7 +20,9 @@ MessageBubble::MessageBubble(const QString &text, const QDateTime &time, bool is
 
     // 创建内容容器
     QWidget *contentWidget = new QWidget;
+    _contentWidget = contentWidget;
     QHBoxLayout *contentLayout = new QHBoxLayout(contentWidget);
+    _contentLayout = contentLayout;
     contentLayout->setContentsMargins(0, 0, 0, 0);
     
     // 错误图标（初始隐藏）
@@ -43,6 +46,8 @@ MessageBubble::MessageBubble(const QString &text, const QDateTime &time, bool is
     // 添加最小宽度保证
     // msgLabel->setMinimumWidth(50);
 
+    bool isUser = role == "user";
+
     // 设置样式
     QString style = QString(
         "background: %1;"
@@ -52,6 +57,9 @@ MessageBubble::MessageBubble(const QString &text, const QDateTime &time, bool is
     msgLabel->setStyleSheet(style);
 
     contentLayout->addWidget(msgLabel);
+
+    // 存下 label 指针方便更新文本
+    textRef = msgLabel;
 
     // 主气泡布局
     bubbleLayout = new QHBoxLayout;
@@ -66,6 +74,17 @@ MessageBubble::MessageBubble(const QString &text, const QDateTime &time, bool is
     }
 
     mainLayout->addLayout(bubbleLayout);
+}
+
+void MessageBubble::setText(QString text) {
+    this->textRef->setText(text);
+    this->textRef->adjustSize();
+    this->_contentLayout->activate();
+    this->_contentLayout->update();
+    this->_contentWidget->adjustSize();
+    this->_contentWidget->updateGeometry();
+    this->updateGeometry();
+    emit textChanged();
 }
 
 void MessageBubble::showErrorIndicator()

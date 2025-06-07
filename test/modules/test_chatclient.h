@@ -1,5 +1,6 @@
 #pragma once
 
+#include <QtCore/QJsonArray>
 #include <QtCore/QObject>
 #include <QtCore/QProcess>
 #include <QtTest/QTest>
@@ -33,9 +34,16 @@ private slots:
     void testHistory();
     void testTimeout();
 
+    void testTagsAndBlocks();
+
+    // TODO
+    void testToolCalls();
+    // void testStream();
+
 protected slots:
     void recvResp(const QString& response);
     void recvError(const QString& error);
+    void recvToolCalls(const QJsonArray &tool_calls);
 
 private:
 
@@ -57,4 +65,8 @@ private:
     Client::chat_params_t params;
     QString endpoint;
     QProcess mock_server;
+
+    int tool_call_cnt;
+    int tool_call_round;
+    QAtomicInt tool_call_term;
 };

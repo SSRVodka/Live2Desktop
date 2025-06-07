@@ -7,3 +7,6 @@
 [submodule "thirdParty/sv.cpp"]
 	path = thirdParty/sv.cpp
 	url = https://github.com/SSRVodka/sense-voice.cpp
+[submodule "thirdParty/mcp.cpp"]
+	path = thirdParty/mcp.cpp
+	url = https://github.com/SSRVodka/mcp.cpp

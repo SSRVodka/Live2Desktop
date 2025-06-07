@@ -1,10 +1,14 @@
 #include <QtCore/QSettings>
+#include <QtCore/QJsonDocument>
+#include <QtCore/QJsonObject>
+#include <QtCore/QJsonValue>
 
 #include <QtWidgets/QMenu>
 #include <QtWidgets/QMessageBox>
 #include <QtGui/QMouseEvent>
 
-#include "config/mcp_config.h"
+#include <mcp.cpp/include/mcp_sse_client.h>
+
 #include "config/module_config.h"
 
 #include "gui/animeWidget.h"
@@ -18,6 +22,7 @@
 #include "modules/audio/audio_recorder.h"
 #include "modules/hotkey/shortcut_handler.h"
 
+#include "utils/cleaner.hpp"
 #include "utils/logger.h"
 
 #define PREPARE_FOR_POPUP setWindowFlags(windowFlags() & ~Qt::Tool); show();
@@ -49,6 +54,7 @@ mainWindow::mainWindow(QApplication* mapp)
     loadSettings();
     loadStyleSheet();
 
+    initMCPServers();
     initClients();
     initGlobalHotKey();
 }
@@ -60,8 +66,7 @@ mainWindow::~mainWindow() {
     delete this->chat_client;
     delete this->audio_handler;
 
-    resourceLoader::get_instance().release();
-    stdLogger.Info("App exited normally.");
+    // MCP Client, Servers 等其他资源已经委托全局 Cleaner 回收
 }
 
 void mainWindow::loadModels() {
@@ -301,17 +306,6 @@ void mainWindow::loadSettings() {
             msgIcon, 5000
         );
     }
-
-    // MCP config
-    mcp_config = MCPConfig::getInstance();
-    if (!mcp_config->load({MCP_CONFIG_FILE_PATH})) {
-        stdLogger.Exception("Failed to load MCP configurations");
-        this->systemTray->showMessage(
-            appName,
-            tr("Failed to load MCP configurations"),
-            msgIcon, 5000
-        );
-    }
 }
 
 void mainWindow::loadStyleSheet() {
@@ -330,6 +324,42 @@ void mainWindow::loadStyleSheet() {
     }
 }
 
+void mainWindow::initMCPServers() {
+    if (!this->module_config_manager->is_mcp_enabled()) {
+        stdLogger.Debug("mcp disabled. Skipped initializing mcp servers");
+        return;
+    }
+    this->module_config_manager->start_enabled_mcp_servers();
+
+    // 委托停止并回收 MCP servers
+    auto mcm_instance = this->module_config_manager;
+    Cleaner::instance().register_cleanup([mcm_instance]() {
+        mcm_instance->deinit();
+    });
+}
+
+QJsonArray mainWindow::mcpTools2OAIFormatQJsonArray(std::vector<mcp::tool> vtools) {
+    QJsonArray qtools;
+    for (const auto &func_tool: vtools) {
+        json func_tool_json = func_tool.to_json();
+        // use OAI format (inputSchema -> parameters)
+        func_tool_json["parameters"] = func_tool_json["inputSchema"];
+        func_tool_json.erase("inputSchema");
+        json general_tool;
+        general_tool["type"] = "function";
+        general_tool["function"] = func_tool_json;
+        std::string toolStr = general_tool.dump();
+        auto toolDoc = QJsonDocument::fromJson(toolStr.data());
+        if (toolDoc.isNull()) {
+            QString msg = QString::asprintf("failed to parse tool: '%s'. ignored", toolStr.data());
+            stdLogger.Exception(msg.toStdString());
+            continue;
+        }
+        qtools.append(toolDoc.object());
+    }
+    return qtools;
+}
+
 void mainWindow::initClients() {
     this->audio_handler = new AudioHandler;
     this->chat_client = new Chat::Client;
@@ -342,22 +372,75 @@ void mainWindow::initClients() {
     this->audio_handler->set_stt_params(this->stt_params);
     this->audio_handler->set_tts_params(this->tts_params);
     Chat::Client::chat_params_t cp;
-    std::string chat_url = this->mcp_config->llm.base_url.value_or("") + "/chat/completions";
+    LLMConfig llm_config = this->module_config_manager->get_llm_config();
+    std::string chat_url = llm_config.base_url + "/v1/chat/completions";
     cp.server_url = chat_url.data();
-    cp.api_key = this->mcp_config->llm.api_key.value_or("").data();
-    cp.model = this->mcp_config->llm.model.data();
-    cp.system_prompt = this->mcp_config->system_prompt.data();
+    cp.api_key = llm_config.api_key.data();
+    cp.model = llm_config.model.data();
+    cp.system_prompt = llm_config.system_prompt.data();
+    cp.enable_thinking = llm_config.enable_thinking;
     this->chat_client->setChatParams(cp);
     this->chat_client->setTimeout(120000);
+    this->chat_client->setUseStream(llm_config.stream);
+
+    // MCP config (tools calling config)
+    while (this->module_config_manager->is_mcp_enabled()) {
+        std::string mcp_host;
+        int mcp_port;
+        std::tie<std::string, int>(mcp_host, mcp_port) = this->module_config_manager->get_mcp_server_info();
+        this->mcp_client = new mcp::sse_client(mcp_host, mcp_port);
+
+        bool mcp_client_init_succ = false;
+        int mcp_client_retry_cnt = 0;
+
+        while (++mcp_client_retry_cnt <= MCP_SSE_CLIENT_MAX_RETRY_TIMES) {
+            mcp_client_init_succ = this->mcp_client->initialize(appName "SSE MCP Client", mcp::MCP_VERSION);
+            if (!mcp_client_init_succ) continue;
+            // ping server
+            if (!this->mcp_client->ping()) {
+                stdLogger.Warning("failed to ping mcp frontend server: retry");
+            }
+            if (mcp_client_init_succ) break;
+        }
+
+        if (!mcp_client_init_succ) {
+            stdLogger.Exception("failed to initialize mcp sse client / ping mcp server. Will not use tools");
+            break;
+        }
+
+        // 委托回收 MCP client、断开连接（不放在析构函数中，一是耗时，而是退出时一定要执行的安全性）
+        auto temp_mcp_client = this->mcp_client;
+        // 注意 ModuleConfigManager 是单例模式
+        auto mcm_instance = this->module_config_manager;
+        Cleaner::instance().register_cleanup([temp_mcp_client, mcm_instance]() {
+            if (mcm_instance->is_mcp_enabled() && temp_mcp_client) {
+                // 析构以断开连接
+                delete temp_mcp_client;
+            }
+        });
+        
+        auto vtools = this->mcp_client->get_tools();
+        QJsonArray qtools = this->mcpTools2OAIFormatQJsonArray(vtools);
+        this->chat_client->setTools(qtools);
+        
+        // do while(0)
+        break;
+    }
 
     connect(this->audio_handler, SIGNAL(stt_reply(bool,QString)),
         this, SLOT(recv_stt_reply(bool, QString)));
     connect(this->audio_handler, SIGNAL(tts_reply(bool,QString)),
         this, SLOT(recv_tts_reply(bool, QString)));
     connect(this->chat_client, SIGNAL(asyncResponseReceived(const QString&)),
-        this, SLOT(recv_chat_reply(QString)));
+        this, SLOT(recv_chat_async_reply(QString)));
+    connect(this->chat_client, SIGNAL(streamResponseReceived(const QString&)),
+        this, SLOT(recv_chat_stream_ready(QString)));
+    connect(this->chat_client, SIGNAL(streamFinished()),
+        this, SLOT(recv_chat_stream_fin()));
     connect(this->chat_client, SIGNAL(errorOccurred(const QString&)),
         this, SLOT(recv_chat_error(QString)));
+    connect(this->chat_client, SIGNAL(toolCallsReceived(const QJsonArray&)),
+        this, SLOT(recv_tool_calls(QJsonArray)));
 }
 
 void mainWindow::initGlobalHotKey() {
@@ -417,16 +500,95 @@ void mainWindow::recv_tts_reply(bool success, QString msg) {
             + "' due to: " + msg.toStdString());
     }
 }
-void mainWindow::recv_chat_reply(QString text) {
+void mainWindow::recv_chat_async_reply(QString text) {
     this->is_receiving = false;
+    // Note: you won't speak out code blocks or your thinkings XP
+    text = Chat::Client::removeCodeBlocks(text);
+    text = Chat::Client::removeTags("think", text);
     QString gen_audio_file = this->audio_handler->tts_request(text);
     // we don't care much about exception (only log), because sound is not important :)
     this->last_tts_pending_audio_file = gen_audio_file;
+}
+void mainWindow::recv_tool_calls(QJsonArray tool_calls) {
+    // this->is_receiving = false;
+    this->callingTools(tool_calls);
+    // this->is_receiving = true;
+    // 控制流交给 model
+    this->chat_client->continueConversation();
+}
+void mainWindow::recv_chat_stream_ready(QString chunk) {
+    // TODO TTS stream
+    this->current_stream_reply_buf += chunk;
+}
+void mainWindow::recv_chat_stream_fin() {
+    // TODO TTS stream
+    QString msg = this->current_stream_reply_buf;
+    this->current_stream_reply_buf = "";
+    this->recv_chat_async_reply(msg);
 }
 void mainWindow::recv_chat_error(QString msg) {
     this->is_receiving = false;
     stdLogger.Exception("failed to retrieve response message due to client error: "
         + msg.toStdString());
+}
+
+void mainWindow::callingTools(const QJsonArray &tool_calls) {
+
+    auto func_args_to_encoded_str = [](const QJsonValue& tool_args)->QString {
+        QJsonDocument args_doc;
+        if (tool_args.isString()) {
+            QString tool_args_intern_str = tool_args.toString();
+            args_doc = QJsonDocument::fromJson(tool_args_intern_str.toLocal8Bit().data());
+        } else if (tool_args.isObject()) {
+            args_doc = QJsonDocument(tool_args.toObject());
+        } else if (tool_args.isArray()) {
+            args_doc = QJsonDocument(tool_args.toArray());
+        } else {
+            // unsupported
+            return "";
+        }
+        return args_doc.toJson(QJsonDocument::Compact);
+    };
+
+    for (const auto &tool_call: tool_calls) {
+        QString tool_name = "<invalid>";
+        try {
+            if (!tool_call.toObject().contains("function")) {
+                throw std::runtime_error("unsupported tool call other than function");
+            }
+            QJsonObject func_obj = tool_call.toObject()["function"].toObject();
+            tool_name = func_obj["name"].toString();
+            QString tool_call_id = tool_call.toObject()["id"].toString();
+            QJsonValue tool_args;
+            QString args_encoded;
+            if (func_obj.contains("args")) {
+                tool_args = func_obj["args"];
+                args_encoded = func_args_to_encoded_str(tool_args);
+            } else if (func_obj.contains("arguments")) {
+                tool_args = func_obj["arguments"];
+                args_encoded = func_args_to_encoded_str(tool_args);
+            } else {
+                // no arguments
+                args_encoded = "{}";
+            }
+            if (args_encoded.isEmpty()) {
+                throw std::runtime_error("unsupported tool arguments format");
+            }
+            // re-decoded to mcp::json
+            json tool_args_fin = json::parse(args_encoded.toStdString());
+            json result = this->mcp_client->call_tool(tool_name.toStdString(), tool_args_fin);
+            auto content = result.value("content", mcp::json::array());
+            std::string content_str = content.dump();
+            // write to history
+            this->chat_client->addToolMessage(tool_call_id, QString::fromStdString(content_str));
+        } catch (std::exception &ex) {
+            QString msg = QString::asprintf("Error when calling tool: '%s'. Reason: '%s'",
+                tool_name.toStdString().data(), ex.what());
+            stdLogger.Exception(msg.toStdString());
+            // write error to history as well
+            this->chat_client->addToolMessage("<invalid>", msg);
+        }
+    }
 }
 
 void mainWindow::aboutAuthor() {
