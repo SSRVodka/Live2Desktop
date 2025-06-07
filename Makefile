@@ -63,8 +63,8 @@ else
 	$(MKDIR) $(PACK_DIR)/usr/bin $(PACK_DIR)/usr/lib $(PACK_DIR)/usr/share
 	$(MKDIR) $(PACK_DIR)/usr/share/applications $(PACK_DIR)/usr/share/icons/hicolor/128x128/apps
 	$(CP) misc/${APP_NAME}.desktop $(PACK_DIR)/usr/share/applications/
-	$(CP) misc/${APP_NAME}.ico $(PACK_DIR)/usr/share/icons/hicolor/128x128/apps/
-	$(CP) misc/${APP_NAME}.png $(PACK_DIR)
+	$(CP) misc/icons/${APP_NAME}.ico $(PACK_DIR)/usr/share/icons/hicolor/128x128/apps/
+	$(CP) misc/icons/${APP_NAME}.png $(PACK_DIR)
 	$(CP) $(BUILD_DIR)/bin/${APP_NAME} $(PACK_DIR)/usr/bin/
 	$(CP) -r $(BUILD_DIR)/bin/config $(PACK_DIR)/usr/bin/
 	$(CP) -r $(BUILD_DIR)/bin/models $(PACK_DIR)/usr/bin/
