@@ -20,7 +20,7 @@ CMAKE_FLAGS += -DGGML_BLAS=ON
 # CMAKE_FLAGS += -DDEBUG=ON
 # CMAKE_BUILD_FLAGS += --config Debug
 # release
-CMAKE_BUILD_FLAGS += --config Release
+CMAKE_BUILD_FLAGS += --config Release -- -j
 BUILD_DIR := build
 PACK_DIR := pack
 

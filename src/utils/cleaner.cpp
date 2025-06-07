@@ -15,17 +15,8 @@ void Cleaner::register_cleanup(std::function<void()> func) {
 }
 
 Cleaner::Cleaner() {
-    // 注册正常退出处理
-    std::atexit([]() {
-        Cleaner::instance().execute_cleanup();
-    });
-
-    // 注册信号处理
     auto signal_handler = [](int sig) {
-        // 立即调用清理函数
         Cleaner::instance().execute_cleanup();
-        
-        // 重新抛出信号使用默认处理
         std::signal(sig, SIG_DFL);
         std::raise(sig);
     };
@@ -58,7 +49,7 @@ void Cleaner::execute_cleanup() {
     for (; it != functions_to_run.rend(); ++it) {
         try {
             snprintf(func_ptr_buf, Cleaner::FUNC_PTR_BUFSIZE, "%p", (void*)&(*it));
-            stdLogger.Info(std::string("excuting cleanup function ") + func_ptr_buf);
+            stdLogger.Info(std::string("executing cleanup function ") + func_ptr_buf);
             (*it)();
         } catch (std::exception &ex) {
             // 忽略所有异常，确保所有函数都能被执行

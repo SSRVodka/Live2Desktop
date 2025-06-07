@@ -5,6 +5,7 @@
 - [] Persist conversation data for chat client
 - [] Simplify configurations for STT model
 - [] Use user custom configurations & default configurations
+- [] stdLogger output to file (in custom configuration dir, including app.lock)
 - [] Support remote STT server (other than sense-voice local model)
 - [] Add error reason for STT server
 - [] Replace ffmpeg dependency with media process logic

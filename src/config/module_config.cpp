@@ -1,4 +1,6 @@
 
+#include <QtWidgets/QMessageBox>
+
 #include <mcp.cpp/include/mcp_stdio_client.h>
 #include <mcp.cpp/include/mcp_server.h>
 
@@ -198,10 +200,10 @@ std::unordered_map<std::string, ServerConfig> ModuleConfigManager::get_enabled_m
     return enabledServers;
 }
 
-void ModuleConfigManager::start_enabled_mcp_servers() {
+bool ModuleConfigManager::start_enabled_mcp_servers() {
     if (!this->is_mcp_enabled()) {
         stdLogger.Warning("mcp not enabled. Skip starting mcp servers");
-        return;
+        return false;
     }
     // 启动所有 stdio client 以及对应的 MCP 服务进程
     for (const auto& [name, mcp_svr_instance] : ModuleConfigManager::instance->mcp_backend_servers) {
@@ -209,7 +211,11 @@ void ModuleConfigManager::start_enabled_mcp_servers() {
         mcp::stdio_client *current_client = mcp_svr_instance.second;
         if (!current_client->initialize(name, mcp::MCP_VERSION)) {
             stdLogger.Exception("failed to start mcp backend server: " + name);
-            continue;
+            // continue;
+            // 策略：立即同步停止 mcp servers 并禁用 mcp，防止出现更多问题。
+            stdLogger.Exception("disabling mcp to avoid further problems...");
+            this->stop_and_cleanup_mcp_servers();
+            return false;
         }
         stdLogger.Info("mcp server '" + name + "' started");
 
@@ -234,6 +240,7 @@ void ModuleConfigManager::start_enabled_mcp_servers() {
 
     // 启动前端 MCP server
     this->mcp_server->start(false);
+    return true;
 }
 
 void ModuleConfigManager::stop_and_cleanup_mcp_servers(bool async) {

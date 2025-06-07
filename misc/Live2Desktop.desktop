@@ -2,6 +2,6 @@
 Type=Application
 Name=Live2Desktop
 Comment=A Live2D Desktop Viewer powered by Qt5. See: https://github.com/SSRVodka/Live2Desktop.git
-Exec=Live2Desktop
+Exec=env DBUS_SESSION_BUS_ADDRESS=unix:path=$XDG_RUNTIME_DIR/bus Live2Desktop
 Icon=Live2Desktop
 Categories=Game;

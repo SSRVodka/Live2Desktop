@@ -329,7 +329,12 @@ void mainWindow::initMCPServers() {
         stdLogger.Debug("mcp disabled. Skipped initializing mcp servers");
         return;
     }
-    this->module_config_manager->start_enabled_mcp_servers();
+    if (!this->module_config_manager->start_enabled_mcp_servers()) {
+        stdLogger.Exception("failed to start mcp servers. mcp will be disabled");
+        // 有必要提示用户
+        QMessageBox::warning(this, "ModuleConfigManager",
+            tr("failed to start mcp servers. mcp will be disabled"));
+    }
 
     // 委托停止并回收 MCP servers
     auto mcm_instance = this->module_config_manager;
@@ -371,6 +376,8 @@ void mainWindow::initClients() {
     // preparing for client parameters
     this->audio_handler->set_stt_params(this->stt_params);
     this->audio_handler->set_tts_params(this->tts_params);
+
+    stdLogger.Debug("initializing chat client...");
     Chat::Client::chat_params_t cp;
     LLMConfig llm_config = this->module_config_manager->get_llm_config();
     std::string chat_url = llm_config.base_url + "/v1/chat/completions";
@@ -385,6 +392,7 @@ void mainWindow::initClients() {
 
     // MCP config (tools calling config)
     while (this->module_config_manager->is_mcp_enabled()) {
+        stdLogger.Debug("initializing mcp client...");
         std::string mcp_host;
         int mcp_port;
         std::tie<std::string, int>(mcp_host, mcp_port) = this->module_config_manager->get_mcp_server_info();

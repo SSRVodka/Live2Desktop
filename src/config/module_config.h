@@ -89,7 +89,7 @@ public:
     // Get only enabled server configurations
     std::unordered_map<std::string, ServerConfig> get_enabled_mcp_backend_servers() const;
     // 同时启动后端 MCP servers 以及注册好的前端 MCP server
-    void start_enabled_mcp_servers();
+    bool start_enabled_mcp_servers();
 
 private:
 
