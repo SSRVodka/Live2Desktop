@@ -6,7 +6,7 @@
 #include "utils/logger.h"
 
 // TODO: extract style string from code
-MessageBubble::MessageBubble(const QString &text, const QDateTime &time, bool isUser, QWidget *parent)
+MessageBubble::MessageBubble(const QString &text, const QDateTime &time, const QString &role, QWidget *parent)
     : QWidget(parent)
 {
     QVBoxLayout *mainLayout = new QVBoxLayout(this);
@@ -45,6 +45,8 @@ MessageBubble::MessageBubble(const QString &text, const QDateTime &time, bool is
     // contentWidget->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Preferred);
     // 添加最小宽度保证
     // msgLabel->setMinimumWidth(50);
+
+    bool isUser = role == "user";
 
     // 设置样式
     QString style = QString(

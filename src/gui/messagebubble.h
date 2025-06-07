@@ -17,7 +17,7 @@ class MessageBubble : public QWidget
 {
     Q_OBJECT
 public:
-    explicit MessageBubble(const QString &text, const QDateTime &time, bool isUser, QWidget *parent = nullptr);
+    explicit MessageBubble(const QString &text, const QDateTime &time, const QString &role, QWidget *parent = nullptr);
 
     void setText(QString text);
     void showErrorIndicator();

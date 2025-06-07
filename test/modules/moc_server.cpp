@@ -33,6 +33,25 @@ int main() {
         res.set_content(R"({"valid": true, "message": "OK"})", "application/json");
     });
 
+    svr.Post("/v1/toolcall", [](const httplib::Request& req, httplib::Response& res) {
+        stdLogger.Test("Mock server: receive client message (toolcall)");
+        
+        std::string resp = "[{"
+            R"("function":{ "id": "test-id", "name":"test_echo", "arguments":{"param0":"test-param0-value"} })"
+        "}]";
+        // 简单验证 JSON 格式（检查是否以 { 或 [ 开头和以 } 或 ] 结尾）
+        if ((!resp.empty() && resp.front() == '{' && resp.back() == '}') ||
+            (!resp.empty() && resp.front() == '[' && resp.back() == ']')) {
+            std::string response = R"({"valid": true, "choices": [{"finish_reason": "tool_calls", "message": {"tool_calls": )" + 
+                                resp + 
+                                R"(}}]})";
+            res.set_content(response, "application/json");
+        } else {
+            res.status = 400;
+            res.set_content("Invalid JSON format", "text/plain");
+        }
+    });
+
     svr.set_error_handler([](const httplib::Request&, httplib::Response& res) {
         stdLogger.Exception("Mock server: unknown request");
         res.status = 404;

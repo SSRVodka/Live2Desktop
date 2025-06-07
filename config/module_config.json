@@ -8,5 +8,30 @@
         "api_key": "",
         "model": "kokoro",
         "voice": "af_jessica"
+    },
+    "llm": {
+        "provider": "openai",
+        "model": "gpt-4o",
+        "api_key": "sk-dwjeifjiewrpijepwjiw",
+        "temperature": 0.7,
+        "base_url": "http://localhost:17100",
+        "system_prompt": "You are an AI assistant helping a software engineer...",
+        "stream": true,
+        "enable_thinking": false
+    },
+    "mcp": {
+        "enable": true,
+        "listen_addr": "localhost",
+        "server_port": 8889
+    },
+    "mcpServers": {
+        "filesystem": {
+            "command": "npx",
+            "args": [
+                "-y",
+                "@modelcontextprotocol/server-filesystem",
+                "/home/xhw/Desktop/mcp.cpp/build/files/testdir/"
+            ]
+        }
     }
 }

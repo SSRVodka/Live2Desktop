@@ -13,6 +13,11 @@ int main(int argc, char *argv[]) {
             throw new std::runtime_error("failed to load module configurations");
         }
         std::cout << "Loaded module configuration successfully.\n";
+        auto enabledServers = manager->get_enabled_mcp_backend_servers();
+        std::cout << "Enabled servers:\n";
+        for (const auto& [name, serverConfig] : enabledServers) {
+            std::cout << " - " << name << ": " << serverConfig.command << "\n";
+        }
     } catch (const std::exception& ex) {
         std::cerr << "Error: " << ex.what() << "\n";
     }

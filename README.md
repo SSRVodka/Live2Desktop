@@ -34,18 +34,12 @@
 
 - No need to open a dialog box, global hotkey recording (CTRL+SHIFT+R, press again to stop and submit), large model output voice response.
 
+- Support for streaming chat & MCP tool calls (OpenAI standard format).
+
 
 ## Possible future support 
 
-- MCP (Model Context Protocol) adaption, or other ways to implement multimodal, function calling; 
-
-- Graphically set up rather than manually editing the JSON files for these sections: speech to text, text to speech, AI conversations;
-
-- Digital People; 
-
-- More in [TODO file](./TODO).
-
-
+- [x] See [TODO file](./TODO).
 
 ## Update Log
 
@@ -57,7 +51,8 @@
 
 - 2025/03/28: Updated voice, chat features (WIP).
 
-- 2025/04/-8: Updated Live2Desktop's Live2D Core to `5-r.3` version.
+- 2025/04/08: Updated Live2Desktop's Live2D Core to `5-r.3` version, support for LLM big models, speech input and output (STT/TTS).
+- 2025/06/07: Added supports for streaming chat & MCP tool calls.
 
 ## Background
 
@@ -68,11 +63,11 @@ In addition, the official Cubism SDK uses glew / glfw linked libraries, **not on
 This application starts from the perspective of **modifying the official SDK**, and does things like replacing glew with Qt's built-in `OpenGL` functions, which provides a new way to develop Live2D in the Qt framework.
 
 
-## Configure the Chat Model 
+## Configure the Chat Model
 
-Any model service that supports the OpenAI API will work. Please modify `config/mcp_config.json` in the repository directory before compiling (CMake will copy it to the runtime directory), or modify `build/bin/config/mcp_config.json` after compiling;
+Any model service that supports the OpenAI API will work. Please modify `config/module_config.json` in the repository directory and run `make update-config`;
 
-Don't forget to compile the project after modifications.
+⚠️ **Remember to `make update-config` after making any changes to the configuration file.**
 
 As the project is under development and I don't have enough time to write GUI, please forgive me :(
 
@@ -86,6 +81,8 @@ Then in `config/module_config.json` change the filename in `stt -> model` to rep
 
 Now the speech-to-text feature is configured.
 
+⚠️ **Remember to `make update-config` after making any changes to the configuration file.**
+
 This project currently uses a web service solution to support text-to-speech. You can choose any speech-to-text model service that follows the OpenAI API, and fill in the `tts` subsection of `config/module_config.json` with the full URL and API information.
 
 > Example: you can use [Kokoro FastAPI](https://github.com/remsky/Kokoro-FastAPI.git) to run a docker container on your machine, and fill in the configurations.
@@ -94,8 +91,11 @@ The text-to-speech functionality is now configured.
 
 It is expected that in the future, both of these will be handled in a unified manner, so you won't need to do this manually.
 
-Don't forget to compile the project after modifications.
+## Configure MCP tool calls
 
+Emm, all MCP-compliant servers should be supported (see [modelcontextprotocol/**servers** - github](https://github.com/modelcontextprotocol/servers));
+
+The configuration method is similar to the above and will not be repeated. Examples are already given in the repository's configuration file. Note that you need to make sure that the commands in `command` field work on the host.
 
 ## Quick Start
 
@@ -119,6 +119,11 @@ Before compiling, you need to prepare the following development environment:
 
 > Please note that the version of Qt should not be too low, and the `QOpenGLWidget` feature needs to be supported.
 
+#### Using Binary
+
+See Release.
+
+#### Compilation Using CMake
 
 The compilation commands for Unix are as follows:
 
@@ -131,10 +136,20 @@ cmake -B build && cmake --build build
 By default `CMAKE_BUILD_TYPE=Release` (`--config Release` is needed on Windows). You can pass in the `-DDEBUG=ON` macro to build the Debug version, adding the GDB debugging symbols. For example: 
 
 ```bash 
-cmake -B build -DDEBUG=ON 
-cd build 
-make -j 
+cmake -B build -DDEBUG=ON
+cd build
+make -j
 ```
+
+> In addition to the above compilation commands, you can use Makefiles to help you manipulate cmake and its arguments. There is a default Makefile in the repositories, so all you need to do is:
+>
+> ```shell
+> # Use the make script (if you need to change the CMake Flags you may need to manually change the root Makefile yourself)
+> # Default flags: (cmake) -DGGML_BLAS=ON (build) --config Release
+> make clean && make build
+> ```
+>
+> If you need to change compilation parameters and so on, you need to change the Makefile yourself.
 
 This project references ggml, and if your machine supports BLAS, you can add the argument `-DGGML_BLAS=ON`.
 

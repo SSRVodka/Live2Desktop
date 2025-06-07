@@ -5,11 +5,11 @@
 **一个基于 Qt 框架的 Live2D 模型展示、互动的桌面应用。**
 
 
-## 注意
+## **⚠️** 注意
 
-- 当前分支正在开发，可能有稳定性问题。如果希望更稳定的版本，请回到 `stable` 分支。
+- **当前分支正在开发，可能有稳定性问题。如果希望更稳定的版本，请回到 `stable` 分支**。
 
-- Release 中没有本分支的编译产物。如果想尝试本分支的程序，请自行编译。
+- <u>Release 中没有本分支的编译产物。如果想尝试本分支的程序，请自行编译</u>。
 
 
 ## 功能
@@ -30,32 +30,25 @@
 
 - 无需打开对话框，全局热键录音（CTRL+SHIFT+R，再次按下停止并提交）、大模型输出语音回复。
 
+- 支持流式对话、MCP 工具调用（OpenAI 标准格式）；
+
 ## 已知问题
 
 - Windows 下需要在生成 Makefile 时指定静态链接库 `cmake -B build -DBUILD_SHARED_LIBS=OFF`，不能使用动态链接库。
 
-## 未来可能会支持的
+## 正在支持/未来可能会支持的
 
-- MCP (Model Context Protocol) 适配，或者其他实现多模态、工具调用的方法；
-
-- 图形化设置而不是手动编辑这些部分的 JSON 文件：语音转文字、文字转语音、AI 对话；
-
-- 数字人；
-
-- 更多内容请参见 [TODO 文件](./TODO);
+- [x] 请参见 [TODO 文件](./TODO);
 
 
 ## 更新日志
 
 - 2024/02/14：Live2Desktop 去除 Live2D 官方 `glfw / glew` 耦合，迁移至 Qt Platform（`QOpenGLWidget`）；
-
 - 2024/07/29：更新 Live2Desktop 的 Live2D 内核为 `5-r.1` 版本。可能支持 moc3 为 `5.0` 的版本，并未进行测试。
-
 - 2024/08/19：更新 Live2Desktop 的 `Framework/Rendering`，Framework 代码接口与 `5-r.1` 完成同步，移除备份目录；
-
 - 2025/03/28：更新语音、聊天功能（仍在测试开发中）；
-
-- 2025/04/08：更新 Live2Desktop 的 Live2D 内核为 `5-r.3` 版本。
+- 2025/04/08：更新 Live2Desktop 的 Live2D 内核为 `5-r.3` 版本、支持 LLM 大模型、语音输入输出（STT/TTS）；
+- 2025/06/07：支持流式对话、MCP 工具调用；
 
 
 ## 背景
@@ -69,9 +62,9 @@
 
 ## 配置对话模型
 
-任意支持 OpenAI API 的模型服务均可。请修改仓库目录下的 `config/mcp_config.json` 再编译（CMake 会将它复制到运行时目录），或者编译后再修改 `build/bin/config/mcp_config.json`；
+任意支持 OpenAI API 的模型服务均可。请修改仓库目录下的 `config/module_config.json` 然后执行 `make update-config`；
 
-作出任何修改后记得重新编译。
+对配置文件作出任何修改后记得都需要执行 `make update-config`。
 
 由于项目正在开发，且个人时间不充足，因此暂时不支持图形化设置，请见谅。
 
@@ -91,9 +84,15 @@
 
 现在就配置好了文字转语音功能。
 
-作出任何修改后记得重新编译。
+对配置文件作出任何修改后记得 `make update-config`。
 
 预计未来将以上两种统一处理，无需再手动操作。
+
+## 配置 MCP 工具调用
+
+理论上应该支持所有符合 MCP 标准的 servers（参见 [modelcontextprotocol/**servers** - github](https://github.com/modelcontextprotocol/servers)）；
+
+配置方法类似上文，不再赘述。示例已经给出在仓库的配置文件中。注意，你需要保证 `command` 里面的指令能够在宿主机上正常运行。
 
 
 ## 快速开始
@@ -118,6 +117,11 @@ git submodule sync && git submodule update --init --recursive
 
 > 请注意，Qt 的版本不宜过低，需要支持 `QOpenGLWidget` 特性。
 
+#### 直接下载二进制程序
+
+参见 Release。
+
+#### 使用 CMake 编译
 
 Unix 下的编译指令如下：
 
@@ -134,6 +138,16 @@ cmake -B build -DDEBUG=ON
 cd build
 make -j
 ```
+
+> 除了上述编译指令，您还可以使用 Makefile 帮助您操作 cmake 以及参数。仓库里有默认的 Makefile，您只需：
+>
+> ```shell
+> # 使用 make 脚本（如果需要修改 CMake Flags 可能需要自己手动更改根目录 Makefile）
+> # 默认 flags：(cmake) -DGGML_BLAS=ON  (build) --config Release
+> make clean && make build
+> ```
+>
+> 如果您需要修改编译参数等等，则需要您自行修改 Makefile。
 
 本项目引用了 ggml，如果您的机器支持 BLAS 加速，可以加入参数 `-DGGML_BLAS=ON`。
 

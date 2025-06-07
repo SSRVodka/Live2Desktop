@@ -1,7 +1,7 @@
 - [x] Implement module hotkey for Windows OS
 - [x] Support chat stream output
 - [] Support stream TTS
-- [] Add MCP (Model Context Protocol) clients & capabilities
+- [x] Add MCP (Model Context Protocol) clients & capabilities
 - [] Persist conversation data for chat client
 - [] Simplify configurations for STT model
 - [] Support remote STT server (other than sense-voice local model)

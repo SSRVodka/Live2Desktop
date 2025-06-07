@@ -13,7 +13,29 @@
 #include <cstring>
 #include <string>
 
-#define _ENABLE_DEBUG
+#include "utils/consts.h"
+
+#ifdef APP_LOG_LEVEL_ERROR
+    #define _ENABLE_ERROR
+#elif defined(APP_LOG_LEVEL_WARN)
+    #define _ENABLE_ERROR
+    #define _ENABLE_WARN
+#elif defined(APP_LOG_LEVEL_INFO)
+    #define _ENABLE_ERROR
+    #define _ENABLE_WARN
+    #define _ENABLE_INFO
+#elif defined(APP_LOG_LEVEL_DEBUG)
+    #define _ENABLE_ERROR
+    #define _ENABLE_WARN
+    #define _ENABLE_INFO
+    #define _ENABLE_DEBUG
+#elif defined(APP_LOG_LEVEL_VERBOSE)
+    #define _ENABLE_ERROR
+    #define _ENABLE_WARN
+    #define _ENABLE_INFO
+    #define _ENABLE_DEBUG
+    #define _ENABLE_VERBOSE
+#endif
 
 class Logger {
 public:
@@ -44,6 +66,10 @@ public:
     #define Test(msg) _test(msg, __FILE__, __LINE__)
     void _test(const char* msg, const char* fn, int lineno) const;
     void _test(const std::string &msg, const char *fn, int lineno) const;
+
+    #define Verbose(msg) _verbose(msg, __FILE__, __LINE__)
+    void _verbose(const char* msg, const char* fn, int lineno) const;
+    void _verbose(const std::string &msg, const char *fn, int lineno) const;
 
 private:
     const char* destFn;

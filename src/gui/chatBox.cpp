@@ -43,6 +43,8 @@ ChatBox::ChatBox(mainWindow *parent)
         this, SLOT(recv_chat_stream_fin()));
     connect(this->main->chat_client, SIGNAL(errorOccurred(const QString&)),
         this, SLOT(recv_chat_error(QString)));
+    connect(this->main->chat_client, SIGNAL(toolCallsReceived(const QJsonArray&)),
+        this, SLOT(recv_tool_calls(QJsonArray)));
 
     popup = new Popup(
         tr("🎉 Welcome to %1! 🎉")
@@ -95,11 +97,11 @@ void ChatBox::toRcvUIState() {
     this->configBtn->setEnabled(false);
 }
 
-MessageBubble *ChatBox::addMessageBubble(const QString &text, bool isUser) {
+MessageBubble *ChatBox::addMessageBubble(const QString &text, const QString &role) {
     QWidget *scrollWidget = this->scrollArea->widget();
     QVBoxLayout *layout = qobject_cast<QVBoxLayout*>(scrollWidget->layout());
     
-    MessageBubble *bubble = new MessageBubble(text, QDateTime::currentDateTime(), isUser, this);
+    MessageBubble *bubble = new MessageBubble(text, QDateTime::currentDateTime(), role, this);
     layout->addWidget(bubble);
 
     // 限制历史消息数量（超过100条时删除最早的）
@@ -142,7 +144,11 @@ void ChatBox::unlistenMessageBubble(MessageBubble *bubble) {
 void ChatBox::loadHistory() {
     QVector<Chat::Client::Message> history = this->main->chat_client->getHistory();
     foreach (const Chat::Client::Message &message, history) {
-        this->addMessageBubble(message.content, message.role == "user");
+        if (message.role == "tool") {
+            this->addMessageBubble("[TOOL-CALL] tool_call_id=" + message.tool_call_id, message.role);
+        } else {
+            this->addMessageBubble(message.content, message.role);
+        }
     }
 }
 
@@ -162,7 +168,7 @@ void ChatBox::parseCmdAndExec(const QString &cmd) {
         QString stripped = cmd.mid(strlen("/say"));
         stripped = stripped.trimmed();
         this->main->recv_chat_async_reply(stripped);
-        this->addMessageBubble("[COMMAND:SAY] " + stripped, true);
+        this->addMessageBubble("[COMMAND:SAY] " + stripped, "user");
         return;
     } else if (cmd.startsWith("/clear")) {
         this->clearHistory();
@@ -185,10 +191,10 @@ void ChatBox::on_sendBtn_clicked() {
     this->parseCmdAndExec(text);
 
     this->toRcvUIState();
-    this->last_pending_msg = this->addMessageBubble(text, true);
+    this->last_pending_msg = this->addMessageBubble(text, "user");
     
     // 这里先放出来空的回复框，并监听变化
-    this->last_output_msg = this->addMessageBubble("", false);
+    this->last_output_msg = this->addMessageBubble("", "assistant");
     this->listenMessageBubble(this->last_output_msg);
 
     // send to server
@@ -234,6 +240,15 @@ void ChatBox::recv_chat_async_reply(QString text) {
     this->last_pending_msg = nullptr;
     this->last_output_msg = nullptr;
     this->toNormUIState();
+}
+void ChatBox::recv_tool_calls(QJsonArray tool_calls) {
+    this->last_output_msg->setText("I'm calling the tools!");
+    // 模型下达 tool call 指令也算回复，需要取消监听
+    this->unlistenMessageBubble(this->last_output_msg);
+    this->last_output_msg = nullptr;
+    this->last_output_msg = this->addMessageBubble("", "assistant");
+    this->listenMessageBubble(this->last_output_msg);
+    // 但是工具调用中不能把控制权交给用户
 }
 void ChatBox::recv_chat_stream_ready(QString chunk) {
     this->current_stream_reply_buf += chunk;

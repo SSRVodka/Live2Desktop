@@ -38,7 +38,7 @@ private:
 
     void parseCmdAndExec(const QString &cmd);
 
-    MessageBubble *addMessageBubble(const QString &text, bool isUser);
+    MessageBubble *addMessageBubble(const QString &text, const QString &role);
     // 监听 message bubble 中的文字变化，反之亦然
     void listenMessageBubble(MessageBubble *bubble);
     void unlistenMessageBubble(MessageBubble *bubble);
@@ -73,6 +73,7 @@ private slots:
     void recv_chat_stream_ready(QString chunk);
     void recv_chat_stream_fin();
     void recv_chat_error(QString msg);
+    void recv_tool_calls(QJsonArray tool_calls);
 
     void updateScrollLayout();
 

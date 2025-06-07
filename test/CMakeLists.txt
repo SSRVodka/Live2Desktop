@@ -173,27 +173,6 @@ target_include_directories(test_hotkey
 )
 
 
-##### MCP Config Test
-
-add_executable(test_mcpconfig)
-target_sources(test_mcpconfig
-    PRIVATE
-    ${CMAKE_SOURCE_DIR}/test/modules/test_mcpconfig.cpp
-    ${CMAKE_SOURCE_DIR}/src/config/mcp_config.cpp
-)
-target_include_directories(test_mcpconfig
-    PRIVATE
-    ${CMAKE_SOURCE_DIR}/src
-    ${CMAKE_SOURCE_DIR}/thirdParty
-)
-target_link_libraries(test_mcpconfig
-    PRIVATE
-    utils
-    Qt5::Core
-    Qt5::Widgets
-    svcore
-)
-
 ##### Module Config Test
 
 add_executable(test_moduleconfig)
@@ -213,4 +192,5 @@ target_link_libraries(test_moduleconfig
     Qt5::Core
     Qt5::Widgets
     svcore
+    mcp
 )

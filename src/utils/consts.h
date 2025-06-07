@@ -28,6 +28,8 @@ inline bool fileExists(const std::string& path) {
 
 #define appName "Live2Desktop"
 
+#define APP_LOG_LEVEL_VERBOSE
+
 #define RESOURCE_ROOT_DIR "Resources/"
 #define CONFIG_FILE_PATH  RESOURCE_ROOT_DIR"config.json"
 #define TRAY_ICON_PATH CONFIG_FILE_PATH
@@ -77,5 +79,13 @@ struct tts_params_t {
 #define MODULE_STT_MODEL_LOCAL_PROTOCOL "approot://"
 #define MODULE_CONFIG_FILE_PATH "config/module_config.json"
 
-/* --- Model Chat Configurations --- */
-#define MCP_CONFIG_FILE_PATH "config/mcp_config.json"
+/* --------- LLM & MCP related ---------- */
+
+#define LLM_BASE_URL_DEFAULT "http://localhost:8888"
+
+#define MCP_SERVER_LISTEN_DEFAULT "localhost"
+#define MCP_SERVER_PORT_DEFAULT 8889
+
+#define MCP_SSE_CLIENT_MAX_RETRY_TIMES 5
+// unit: second
+#define MCP_SSE_CLIENT_RETRY_INTERVAL 2

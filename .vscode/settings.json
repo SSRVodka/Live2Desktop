@@ -6,6 +6,7 @@
         "${workspaceFolder}/Core/include/",
         "${workspaceFolder}/Framework/",
         "${workspaceFolder}/thirdParty/",
+        "${workspaceFolder}/thirdParty/mcp.cpp/common",
         "${workspaceFolder}/build/uic/",
     ],
     "files.associations": {
@@ -126,6 +127,7 @@
         "qobject": "cpp",
         "qmediaplayer": "cpp",
         "typeindex": "cpp",
-        "qjsonarray": "cpp"
+        "qjsonarray": "cpp",
+        "qatomicinteger": "cpp"
     }
 }
