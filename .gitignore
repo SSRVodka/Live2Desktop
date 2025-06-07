@@ -1,6 +1,7 @@
 build/**
 Resources/*
 modelRepo/*
+pack/*
 
 # Global model configurations
 # !Resources/tray.png

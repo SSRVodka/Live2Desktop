@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=Live2Desktop
+Comment=A Live2D Desktop Viewer powered by Qt5. See: https://github.com/SSRVodka/Live2Desktop.git
+Exec=Live2Desktop
+Icon=Live2Desktop
+Categories=Game;
