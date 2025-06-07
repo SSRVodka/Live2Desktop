@@ -97,6 +97,8 @@ Emm, all MCP-compliant servers should be supported (see [modelcontextprotocol/**
 
 The configuration method is similar to the above and will not be repeated. Examples are already given in the repository's configuration file. Note that you need to make sure that the commands in `command` field work on the host.
 
+For Linux users, if the program is not launched from the command line (i.e., the GNOME/other GUI), note that the program within `command` needs to be located in the system's global `$PATH`, not just in the current user's `.bashrc/.zshrc/...` configuration files.
+
 ## Quick Start
 
 Obtain this repo & submodules:
