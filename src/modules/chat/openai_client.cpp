@@ -223,6 +223,34 @@ QString Client::removeCodeBlocks(const QString &text) {
     return result.trimmed();
 }
 
+QString Client::removeBoldAndHashTags(const QString &text) {
+    QString result;
+    result.reserve(text.size());
+    
+    int starCount = 0;
+    
+    for (int i = 0; i < text.size(); ++i) {
+        QChar current = text[i];
+        
+        if (current == '*') {
+            starCount++;
+        } else {
+            if (starCount == 1) {
+                result.append('*'); // 单个星号保留
+            }
+            starCount = 0; // 重置星号计数
+            if (current != '#') {
+                result.append(current);
+            }
+        }
+    }
+    if (starCount == 1) {
+        result.append('*');
+    }
+    
+    return result;
+}
+
 QNetworkRequest Client::createRequest(bool stream) const {
     QNetworkRequest request(m_serverUrl);
     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");

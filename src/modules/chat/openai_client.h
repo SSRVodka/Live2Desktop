@@ -68,6 +68,8 @@ public:
     // 处理回复字符串的工具函数
     static QString removeTags(const char *tagName, const QString &text);
     static QString removeCodeBlocks(const QString &text);
+    // 方便 TTS 识别
+    static QString removeBoldAndHashTags(const QString &text);
 
 signals:
     void asyncResponseReceived(const QString& response);

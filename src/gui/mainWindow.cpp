@@ -513,6 +513,7 @@ void mainWindow::recv_chat_async_reply(QString text) {
     // Note: you won't speak out code blocks or your thinkings XP
     text = Chat::Client::removeCodeBlocks(text);
     text = Chat::Client::removeTags("think", text);
+    text = Chat::Client::removeBoldAndHashTags(text);
     QString gen_audio_file = this->audio_handler->tts_request(text);
     // we don't care much about exception (only log), because sound is not important :)
     this->last_tts_pending_audio_file = gen_audio_file;
