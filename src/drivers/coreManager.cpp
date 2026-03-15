@@ -6,6 +6,8 @@
 #include "drivers/textureManager.h"
 #include "drivers/tools.h"
 
+#include "utils/logger.h"
+
 using namespace Csm;
 
 namespace {
@@ -104,7 +106,11 @@ CoreManager::~CoreManager() {
 
 void CoreManager::InitializeCubism() {
     /* Setup Cubism SDK. */
-    Csm::CubismFramework::StartUp(&_cubismAllocator);
+    _cubismOption.LogFunction = ToolFunctions::PrintMessage;
+    _cubismOption.LoggingLevel = CubismLoggingLevel;
+    _cubismOption.LoadFileFunction = ToolFunctions::LoadFileAsBytes;
+    _cubismOption.ReleaseBytesFunction = ToolFunctions::ReleaseBytes;
+    Csm::CubismFramework::StartUp(&_cubismAllocator, &_cubismOption);
 
     /* Initialize Cubism SDK. */
     CubismFramework::Initialize();

@@ -73,3 +73,60 @@ void ToolFunctions::UpdateTime() {
     s_deltaTime = s_currentFrame - s_lastFrame;
     s_lastFrame = s_currentFrame;
 }
+
+void ToolFunctions::PrintLogV(const Csm::csmChar* format, va_list args) {
+    csmChar buf[256];
+    
+    va_list argsCopy;
+    va_copy(argsCopy, args);
+    vsnprintf(buf, sizeof(buf), format, argsCopy);
+    va_end(argsCopy);
+
+    // skip leading spaces
+    const csmChar* ptr = buf;
+    while (*ptr == ' ') ++ptr;
+    
+    // Check if the string starts with [CSM][?] (where ? is a single character, and the prefix is 8 characters long: [CSM][X])
+    // Ensure the string is long enough to prevent out-of-bounds access
+    if (strncmp(ptr, "[CSM][", 6) == 0 && ptr[6] != '\0' && ptr[7] == ']') {
+        csmChar level = ptr[6];
+        // skip prefix "[CSM][?]"
+        const csmChar* msg = ptr + 8;
+        
+        switch (level) {
+            case 'I': stdLogger._info(msg, "CubismCore", 0); break;
+            case 'W': stdLogger._warning(msg, "CubismCore", 0); break;
+            case 'D': stdLogger._debug(msg, "CubismCore", 0); break;
+            case 'V': stdLogger._verbose(msg, "CubismCore", 0); break;
+            case 'E': stdLogger._error(msg, "CubismCore", 0); break;
+            default:  stdLogger.Exception(buf); break;
+        }
+    } else {
+        stdLogger.Exception(buf);
+    }
+}
+
+void ToolFunctions::PrintLog(const Csm::csmChar* format, ...) {
+    va_list args;
+    va_start(args, format);
+    ToolFunctions::PrintLogV(format, args);
+    va_end(args);
+}
+
+void ToolFunctions::PrintLogLn(const Csm::csmChar* format, ...) {
+    csmChar formatWithNewline[260];  // 256 + "\n\0"
+    snprintf(formatWithNewline, sizeof(formatWithNewline), "%s\n", format);
+    
+    va_list args;
+    va_start(args, format);
+    ToolFunctions::PrintLogV(formatWithNewline, args);
+    va_end(args);
+}
+
+void ToolFunctions::PrintMessage(const Csm::csmChar* message) {
+    ToolFunctions::PrintLog("%s", message);
+}
+
+void ToolFunctions::PrintMessageLn(const Csm::csmChar* message) {
+    ToolFunctions::PrintLogLn("%s", message);
+}

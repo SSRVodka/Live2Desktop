@@ -68,6 +68,9 @@ else()
 endif()
 
 set(FRAMEWORK_SOURCE "OpenGL")
+# NOTE: PROJECT_SHADER not used up to now
+set(PROJECT_SHADER_PATH ${PROJECT_SOURCE_DIR}/src/shaders/OpenGL/Standard)
+set(FRAMEWORK_SHADER_PATH ${FRAMEWORK_PATH}/Rendering/OpenGL/Shaders/Standard)
 # Note: You need to set glad source & header manually if you switch this option ON !
 option(FRAMEWORK_USE_GLAD_GLLOADER "Live2Desktop Project Uses GLAD OpenGL Function Loader" OFF)
 if(FRAMEWORK_USE_GLAD_GLLOADER)
@@ -231,10 +234,10 @@ target_link_libraries(${APP_NAME}
 add_custom_command(
   TARGET ${APP_NAME}
   POST_BUILD
-  COMMAND
-    ${CMAKE_COMMAND} -E
-      copy_directory ${RES_PATH} $<TARGET_FILE_DIR:${APP_NAME}>/Resources
-  COMMENT "Copying resource directory ${RES_PATH} to destination"
+  COMMAND ${CMAKE_COMMAND} -E copy_directory ${RES_PATH} $<TARGET_FILE_DIR:${APP_NAME}>/Resources
+  COMMAND ${CMAKE_COMMAND} -E copy_directory ${PROJECT_SHADER_PATH} $<TARGET_FILE_DIR:${APP_NAME}>/ProjectShaders
+  COMMAND ${CMAKE_COMMAND} -E copy_directory ${FRAMEWORK_SHADER_PATH} $<TARGET_FILE_DIR:${APP_NAME}>/FrameworkShaders
+  COMMENT "Copying resources (Live2D assets, framework shaders, project shaders) to destination"
 )
 
 # Build Framework & Core at specific platform AND link.

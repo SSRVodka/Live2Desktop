@@ -49,7 +49,7 @@
 - 2025/03/28：更新语音、聊天功能（仍在测试开发中）；
 - 2025/04/08：更新 Live2Desktop 的 Live2D 内核为 `5-r.3` 版本、支持 LLM 大模型、语音输入输出（STT/TTS）；
 - 2025/06/07：支持流式对话、MCP 工具调用；
-- 2026/03/15：支持 Wayland/Hyprland 桌面；
+- 2026/03/15：更新 Live2Desktop 的 Live2D 内核为 `5-r.4.1` 版本，支持 Wayland/Hyprland 桌面；
 
 
 ## 背景

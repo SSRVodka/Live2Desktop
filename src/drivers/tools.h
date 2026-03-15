@@ -47,7 +47,51 @@ public:
 
     static void UpdateTime();
 
+    /**
+    * @brief Outputs a log message
+    *
+    * Outputs a log message
+    *
+    * @param[in]   format  Formatted string
+    * @param[in]   ...     (Variable-length argument) String
+    *
+    */
+    static void PrintLog(const Csm::csmChar* format, ...);
+
+    /**
+    * @brief Outputs a log message followed by a newline
+    *
+    * Outputs a log message followed by a newline
+    *
+    * @param[in]   format  Formatted string
+    * @param[in]   ...     (Variable-length argument) String
+    *
+    */
+    static void PrintLogLn(const Csm::csmChar* format, ...);
+
+    /**
+    * @brief Display a message
+    *
+    * Display a message
+    *
+    * @param[in]   message  String
+    *
+    */
+    static void PrintMessage(const Csm::csmChar* message);
+
+    /**
+    * @brief Outputs a message followed by a newline
+    *
+    * Outputs a message followed by a newline
+    *
+    * @param[in]   message  String
+    *
+    */
+    static void PrintMessageLn(const Csm::csmChar* message);
+
 private:
+    static void PrintLogV(const Csm::csmChar* format, va_list args);
+
     static double s_currentFrame;
     static double s_lastFrame;
     static double s_deltaTime;

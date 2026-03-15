@@ -55,7 +55,7 @@
 
 - 2025/06/07: Added supports for streaming chat & MCP tool calls.
 
-- 2026/03/15: Support Wayland/Hyprland.
+- 2026/03/15: Updated Live2Desktop's Live2D Core to `5-r.4.1` version. Support Wayland/Hyprland.
 
 ## Background
 

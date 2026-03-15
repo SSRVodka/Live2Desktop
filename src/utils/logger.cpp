@@ -1,5 +1,6 @@
 #include <string>
 #include <ctime>
+#include <cstdarg>
 
 #include "utils/consts.h"
 #include "utils/logger.h"
@@ -39,24 +40,26 @@
   "\033[1;" fg "m" msg "\033[0m"
 
 
-#define LOG_BODY(format) \
-    time_t now; tm *localP; \
-    std::string full = fn; \
-    std::string tmp; \
-    size_t pos = full.find_last_of("/\\"); \
-    tmp = full.substr(pos + 1); \
-    time(&now); \
-    localP = localtime(&now); \
-    fprintf( \
-        dest, \
-        format, \
-        localP->tm_year + 1900, \
-        localP->tm_mon + 1, \
-        localP->tm_mday, localP->tm_hour, \
-        localP->tm_min, localP->tm_sec, \
-        tmp.c_str(), lineno, msg \
-    ); \
-    fflush(dest);
+#define LOG_BODY(format, ...) \
+    do { \
+        time_t now; tm *localP; \
+        std::string full = fn; \
+        std::string tmp; \
+        size_t pos = full.find_last_of("/\\"); \
+        tmp = full.substr(pos + 1); \
+        time(&now); \
+        localP = localtime(&now); \
+        fprintf( \
+            dest, \
+            format, \
+            localP->tm_year + 1900, \
+            localP->tm_mon + 1, \
+            localP->tm_mday, localP->tm_hour, \
+            localP->tm_min, localP->tm_sec, \
+            tmp.c_str(), lineno, __VA_ARGS__ \
+        ); \
+        fflush(dest); \
+    } while(0)
 
 
 Logger::Logger(const char* fn) {
@@ -70,63 +73,129 @@ Logger::~Logger() {
     if (destFn) fclose(dest);
 }
 
-void Logger::_debug(const char* msg, const char* fn, int lineno) const {
+void Logger::_debug(const char* fmt, const char* fn, int lineno, ...) const {
 #ifdef _ENABLE_DEBUG
-    LOG_BODY(BRACKET(_COLOUR_SIM("DEBUG", FG_BLUE)) BRACKET(DATETIME_FORMAT) "[ %s:%d ] %s\n");
-#else
+    char buffer[1024];
+    va_list args;
+    va_start(args, lineno);
+    vsnprintf(buffer, sizeof(buffer), fmt, args);
+    va_end(args);
+    LOG_BODY(BRACKET(_COLOUR_SIM("DEBUG", FG_BLUE)) BRACKET(DATETIME_FORMAT) "[ %s:%d ] %s\n", buffer);
 #endif
 }
 
-void Logger::_info(const char* msg, const char* fn, int lineno) const {
+void Logger::_info(const char* fmt, const char* fn, int lineno, ...) const {
 #ifdef _ENABLE_INFO
-    LOG_BODY(BRACKET(_COLOUR_SIM("INFO ", FG_GREEN)) BRACKET(DATETIME_FORMAT) "[ %s:%d ] %s\n");
-#else
+    char buffer[1024];
+    va_list args;
+    va_start(args, lineno);
+    vsnprintf(buffer, sizeof(buffer), fmt, args);
+    va_end(args);
+    LOG_BODY(BRACKET(_COLOUR_SIM("INFO ", FG_GREEN)) BRACKET(DATETIME_FORMAT) "[ %s:%d ] %s\n", buffer);
 #endif
 }
 
-void Logger::_warning(const char* msg, const char* fn, int lineno) const {
+void Logger::_warning(const char* fmt, const char* fn, int lineno, ...) const {
 #ifdef _ENABLE_WARN
-    LOG_BODY(BRACKET(_COLOUR_SIM("WARN ", FG_YELLOW)) BRACKET(DATETIME_FORMAT) "[ %s:%d ] %s\n");
-#else
+    char buffer[1024];
+    va_list args;
+    va_start(args, lineno);
+    vsnprintf(buffer, sizeof(buffer), fmt, args);
+    va_end(args);
+    LOG_BODY(BRACKET(_COLOUR_SIM("WARN ", FG_YELLOW)) BRACKET(DATETIME_FORMAT) "[ %s:%d ] %s\n", buffer);
 #endif
 }
 
-void Logger::_error(const char* msg, const char* fn, int lineno) const {
+void Logger::_error(const char* fmt, const char* fn, int lineno, ...) const {
 #ifdef _ENABLE_ERROR
-    LOG_BODY(BRACKET(_COLOUR_SIM("ERROR", FG_RED)) BRACKET(DATETIME_FORMAT) "[ %s:%d ] %s\n");
-#else
+    char buffer[1024];
+    va_list args;
+    va_start(args, lineno);
+    vsnprintf(buffer, sizeof(buffer), fmt, args);
+    va_end(args);
+    LOG_BODY(BRACKET(_COLOUR_SIM("ERROR", FG_RED)) BRACKET(DATETIME_FORMAT) "[ %s:%d ] %s\n", buffer);
 #endif
 }
 
-void Logger::_test(const char* msg, const char* fn, int lineno) const {
+void Logger::_test(const char* fmt, const char* fn, int lineno, ...) const {
 #ifdef _ENABLE_DEBUG
-    LOG_BODY(BRACKET(_COLOUR_SIM("TEST ", FG_MAGENTA)) BRACKET(DATETIME_FORMAT) "[ %s:%d ] %s\n");
-#else
+    char buffer[1024];
+    va_list args;
+    va_start(args, lineno);
+    vsnprintf(buffer, sizeof(buffer), fmt, args);
+    va_end(args);
+    LOG_BODY(BRACKET(_COLOUR_SIM("TEST ", FG_MAGENTA)) BRACKET(DATETIME_FORMAT) "[ %s:%d ] %s\n", buffer);
 #endif
 }
 
-void Logger::_verbose(const char* msg, const char* fn, int lineno) const {
+void Logger::_verbose(const char* fmt, const char* fn, int lineno, ...) const {
 #ifdef _ENABLE_VERBOSE
-    LOG_BODY(BRACKET(_COLOUR_SIM("VERB ", FG_CYAN)) BRACKET(DATETIME_FORMAT) "[ %s:%d ] %s\n");
-#else
+    char buffer[1024];
+    va_list args;
+    va_start(args, lineno);
+    vsnprintf(buffer, sizeof(buffer), fmt, args);
+    va_end(args);
+    LOG_BODY(BRACKET(_COLOUR_SIM("VERB ", FG_CYAN)) BRACKET(DATETIME_FORMAT) "[ %s:%d ] %s\n", buffer);
 #endif
 }
 
-void Logger::_debug(const std::string &msg, const char *fn, int lineno) const {
-    this->_debug(msg.data(), fn, lineno);
+void Logger::_debug(const std::string &fmt, const char *fn, int lineno, ...) const {
+#ifdef _ENABLE_DEBUG
+    char buffer[1024];
+    va_list args;
+    va_start(args, lineno);
+    vsnprintf(buffer, sizeof(buffer), fmt.c_str(), args);
+    va_end(args);
+    LOG_BODY(BRACKET(_COLOUR_SIM("DEBUG", FG_BLUE)) BRACKET(DATETIME_FORMAT) "[ %s:%d ] %s\n", buffer);
+#endif
 }
-void Logger::_info(const std::string &msg, const char *fn, int lineno) const {
-    this->_info(msg.data(), fn, lineno);
+void Logger::_info(const std::string &fmt, const char *fn, int lineno, ...) const {
+#ifdef _ENABLE_INFO
+    char buffer[1024];
+    va_list args;
+    va_start(args, lineno);
+    vsnprintf(buffer, sizeof(buffer), fmt.c_str(), args);
+    va_end(args);
+    LOG_BODY(BRACKET(_COLOUR_SIM("INFO ", FG_GREEN)) BRACKET(DATETIME_FORMAT) "[ %s:%d ] %s\n", buffer);
+#endif
 }
-void Logger::_warning(const std::string &msg, const char *fn, int lineno) const {
-    this->_warning(msg.data(), fn, lineno);
+void Logger::_warning(const std::string &fmt, const char *fn, int lineno, ...) const {
+#ifdef _ENABLE_WARN
+    char buffer[1024];
+    va_list args;
+    va_start(args, lineno);
+    vsnprintf(buffer, sizeof(buffer), fmt.c_str(), args);
+    va_end(args);
+    LOG_BODY(BRACKET(_COLOUR_SIM("WARN ", FG_YELLOW)) BRACKET(DATETIME_FORMAT) "[ %s:%d ] %s\n", buffer);
+#endif
 }
-void Logger::_error(const std::string &msg, const char *fn, int lineno) const {
-    this->_error(msg.data(), fn, lineno);
+void Logger::_error(const std::string &fmt, const char *fn, int lineno, ...) const {
+#ifdef _ENABLE_ERROR
+    char buffer[1024];
+    va_list args;
+    va_start(args, lineno);
+    vsnprintf(buffer, sizeof(buffer), fmt.c_str(), args);
+    va_end(args);
+    LOG_BODY(BRACKET(_COLOUR_SIM("ERROR", FG_RED)) BRACKET(DATETIME_FORMAT) "[ %s:%d ] %s\n", buffer);
+#endif
 }
-void Logger::_test(const std::string &msg, const char *fn, int lineno) const {
-    this->_test(msg.data(), fn, lineno);
+void Logger::_test(const std::string &fmt, const char *fn, int lineno, ...) const {
+#ifdef _ENABLE_DEBUG
+    char buffer[1024];
+    va_list args;
+    va_start(args, lineno);
+    vsnprintf(buffer, sizeof(buffer), fmt.c_str(), args);
+    va_end(args);
+    LOG_BODY(BRACKET(_COLOUR_SIM("TEST ", FG_MAGENTA)) BRACKET(DATETIME_FORMAT) "[ %s:%d ] %s\n", buffer);
+#endif
 }
-void Logger::_verbose(const std::string &msg, const char *fn, int lineno) const {
-    this->_verbose(msg.data(), fn, lineno);
+void Logger::_verbose(const std::string &fmt, const char *fn, int lineno, ...) const {
+#ifdef _ENABLE_VERBOSE
+    char buffer[1024];
+    va_list args;
+    va_start(args, lineno);
+    vsnprintf(buffer, sizeof(buffer), fmt.c_str(), args);
+    va_end(args);
+    LOG_BODY(BRACKET(_COLOUR_SIM("VERB ", FG_CYAN)) BRACKET(DATETIME_FORMAT) "[ %s:%d ] %s\n", buffer);
+#endif
 }
