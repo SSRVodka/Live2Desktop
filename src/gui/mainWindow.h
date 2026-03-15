@@ -34,6 +34,7 @@ class tool;
 
 class MCPConfig;
 class ModuleConfigManager;
+class PlatformWindowManager;
 
 class mainWindow : public QMainWindow, public Ui::mainWindow {
     Q_OBJECT
@@ -46,6 +47,7 @@ public:
 protected:
     void closeEvent(QCloseEvent * e) override;
     void keyPressEvent(QKeyEvent *event) override;
+    void showEvent(QShowEvent *event) override;
 
 private slots:
     void exitApp();
@@ -69,7 +71,7 @@ private:
     void writeSettings();
     void loadSettings();
     void loadStyleSheet();
-    
+
     void loadModels();
     void setupTray();
 
@@ -82,6 +84,15 @@ private:
     void callingTools(const QJsonArray &tool_calls);
 
     QJsonArray mcpTools2OAIFormatQJsonArray(std::vector<mcp::tool> mcp_tool);
+
+    // Platform-specific window helpers
+    void setupPlatformWindowFlags();
+    void restorePlatformGeometry();
+    void enterGeometryEditMode();
+    void exitGeometryEditMode();
+
+    PlatformWindowManager* platformHelper;
+    bool m_geometryRestored;
 
     QSystemTrayIcon* systemTray;
     QMenu *mainMenu;

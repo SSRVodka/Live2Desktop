@@ -49,6 +49,7 @@
 - 2025/03/28：更新语音、聊天功能（仍在测试开发中）；
 - 2025/04/08：更新 Live2Desktop 的 Live2D 内核为 `5-r.3` 版本、支持 LLM 大模型、语音输入输出（STT/TTS）；
 - 2025/06/07：支持流式对话、MCP 工具调用；
+- 2026/03/15：支持 Wayland/Hyprland 桌面；
 
 
 ## 背景
@@ -157,12 +158,43 @@ make -j
 
 默认程序输出位置在 `${CMAKE_BINARY_DIR}/bin/` 目录下，链接库输出在 `${CMAKE_BINARY_DIR}/lib/` 目录下。
 
+#### Hyprland 额外配置
+
+对于 Hyprland 这类 tiling WM，您需要额外进行一些配置。在您的 hyprland.conf 或者其他配置 window rules 的文件中添加这段规则：
+
+```conf
+windowrule {
+    name = live2desktop-float
+    match:class = ^(Live2Desktop)$
+    no_initial_focus = on
+    float = on
+    pin = on
+    border_size = 0
+    no_shadow = on
+    no_blur = on
+}
+```
+
+以及修改这段：
+
+```conf
+general {
+    # ...
+
+    resize_on_border = true
+
+    # ...
+}
+```
+
 
 ## 兼容性测试
 
 - Windows: Windows 10, MSVC 19+, CMake 3.16, Qt 5.15
 
 - Linux: Ubuntu 22.04, gcc/g++ 12, CMake 3.22.1, Qt 5.15.3
+
+- Linux: Arch, gcc/g++ 15, CMake 4.2.3, Qt 5.15.18
 
 ## 声明
 

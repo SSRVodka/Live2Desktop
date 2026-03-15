@@ -52,7 +52,10 @@
 - 2025/03/28: Updated voice, chat features (WIP).
 
 - 2025/04/08: Updated Live2Desktop's Live2D Core to `5-r.3` version, support for LLM big models, speech input and output (STT/TTS).
+
 - 2025/06/07: Added supports for streaming chat & MCP tool calls.
+
+- 2026/03/15: Support Wayland/Hyprland.
 
 ## Background
 
@@ -160,11 +163,43 @@ Dependency libraries are compiled as dynamic link libraries by default. If you w
 The default program output is in `${CMAKE_BINARY_DIR}/bin/` directory, and the link library output is in `${CMAKE_BINARY_DIR}/lib/` directory.
 
 
+#### Additional Configuration for Hyprland
+
+For tiling window managers like Hyprland, you'll need to perform some additional configuration. Add the following rule to your hyprland.conf file or any other file used to configure window rules:
+
+```conf
+windowrule {
+    name = live2desktop-float
+    match:class = ^(Live2Desktop)$
+    no_initial_focus = on
+    float = on
+    pin = on
+    border_size = 0
+    no_shadow = on
+    no_blur = on
+}
+```
+
+And this one:
+
+```conf
+general {
+    # ...
+
+    resize_on_border = true
+
+    # ...
+}
+```
+
+
 ## Compatibility Test
 
 - Windows: Windows 10, MSVC 19+, CMake 3.16, Qt 5.15
 
 - Linux: Ubuntu 22.04, gcc/g++ 12, CMake 3.22.1, Qt 5.15.3
+
+- Linux: Arch, gcc/g++ 15, CMake 4.2.3, Qt 5.15.18
 
 
 ## Declaration

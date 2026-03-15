@@ -1,14 +1,14 @@
 {
     "C_Cpp.default.includePath": [
-        "/usr/include/x86_64-linux-gnu/qt5/",
         "/usr/include/qt/",
         "D:\\Qt\\Qt5.14.2\\5.15.2\\msvc2019_64\\include",
+        "/usr/include/x86_64-linux-gnu/qt5/",
         "${workspaceFolder}/src/",
         "${workspaceFolder}/Core/include/",
         "${workspaceFolder}/Framework/",
         "${workspaceFolder}/thirdParty/",
         "${workspaceFolder}/thirdParty/mcp.cpp/common",
-        "${workspaceFolder}/build/uic/",
+        "${workspaceFolder}/build/uic/"
     ],
     "files.associations": {
         "qpushbutton": "cpp",
@@ -130,5 +130,17 @@
         "typeindex": "cpp",
         "qjsonarray": "cpp",
         "qatomicinteger": "cpp"
-    }
+    },
+    "clangd.arguments": [
+        "--enable-config"
+    ],
+    "clangd.fallbackFlags": [
+        "--include-directory=/usr/include/qt/",
+        "--include-directory=${workspaceFolder}/src",
+        "--include-directory=${workspaceFolder}/Core/include",
+        "--include-directory=${workspaceFolder}/Framework",
+        "--include-directory=${workspaceFolder}/thirdParty",
+        "--include-directory=${workspaceFolder}/thirdParty/mcp.cpp/common",
+        "--include-directory=${workspaceFolder}/build/uic/"
+    ]
 }

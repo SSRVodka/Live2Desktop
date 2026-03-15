@@ -1,4 +1,6 @@
 #include <QtCore/QSettings>
+#include <QtCore/QPoint>
+#include <QtCore/QSize>
 #include <QtCore/QJsonDocument>
 #include <QtCore/QJsonObject>
 #include <QtCore/QJsonValue>
@@ -6,6 +8,7 @@
 #include <QtWidgets/QMenu>
 #include <QtWidgets/QMessageBox>
 #include <QtGui/QMouseEvent>
+#include <QtGui/QWindow>
 
 #include <mcp.cpp/include/mcp_sse_client.h>
 
@@ -24,6 +27,7 @@
 
 #include "utils/cleaner.hpp"
 #include "utils/logger.h"
+#include "utils/platformWindowManager.h"
 
 #define PREPARE_FOR_POPUP setWindowFlags(windowFlags() & ~Qt::Tool); show();
 #define HIDE_POPUP setWindowFlags(windowFlags() | Qt::Tool); show();
@@ -31,7 +35,9 @@
 
 mainWindow::mainWindow(QApplication* mapp)
     : QMainWindow(nullptr), app(mapp),
-      systemTray(new QSystemTrayIcon(this)) {
+      systemTray(new QSystemTrayIcon(this)),
+      platformHelper(nullptr),
+      m_geometryRestored(false) {
     
     setupUi(this);
 
@@ -39,20 +45,19 @@ mainWindow::mainWindow(QApplication* mapp)
 		app = qApp;
     
     setAttribute(Qt::WA_TranslucentBackground);
-    setWindowFlags(
-        Qt::FramelessWindowHint
-      | Qt::WindowStaysOnTopHint
-      | Qt::Tool
-      | Qt::X11BypassWindowManagerHint
-    );
-    setWindowTitle(
-        "Geometry Edit (Enter to confirm)"
-    );
+
+    // Initialize Hyprland helper and setup platform-specific window flags
+    platformHelper = &PlatformWindowManager::instance();
+    platformHelper->setAppClass(appName);
+    setupPlatformWindowFlags();
 
     setupTray();
 
     loadSettings();
     loadStyleSheet();
+
+    // Geometry will be restored in showEvent when window becomes visible
+    // This ensures Hyprland can see the window before attempting to restore
 
     initMCPServers();
     initClients();
@@ -201,33 +206,11 @@ void mainWindow::switchClicked(QAction* curAct) {
 
 void mainWindow::geoEditMode(bool enter) {
     if (enter) {
-        setWindowFlags(Qt::WindowStaysOnTopHint);
-        setWindowFlags(
-            windowFlags()
-          & ~Qt::WindowMaximizeButtonHint
-          & ~Qt::WindowCloseButtonHint
-        );
+        enterGeometryEditMode();
     }
     else {
-        setWindowFlags(
-            Qt::FramelessWindowHint
-          | Qt::WindowStaysOnTopHint
-          | Qt::Tool
-          | Qt::X11BypassWindowManagerHint
-        );
-        setWindowFlags(
-            windowFlags()
-          & ~Qt::WindowMaximizeButtonHint
-          & ~Qt::WindowCloseButtonHint
-        );
+        exitGeometryEditMode();
     }
-#ifdef _WIN32
-    ::SetWindowPos(HWND(this->winId()),HWND_TOPMOST,0,0,0,0,
-    SWP_NOMOVE|SWP_NOSIZE|SWP_SHOWWINDOW);
-    ::SetWindowPos(HWND(this->winId()),HWND_NOTOPMOST,0,0,0,0,
-    SWP_NOMOVE|SWP_NOSIZE|SWP_SHOWWINDOW);
-#endif
-    show();
 }
 
 void mainWindow::config() {
@@ -257,6 +240,14 @@ void mainWindow::keyPressEvent(QKeyEvent *event) {
         switch (event->key()) {
         case Qt::Key_Return:
             stdLogger.Debug("Geometry configurations confirmed");
+            // FIXME: expedient for Hyprland, get actual position from compositor after resize/move
+            if (platformHelper->isHyprland()) {
+                QPoint pos;
+                QSize size;
+                if (platformHelper->saveGeometry(pos, size)) {
+                    platformHelper->restoreGeometry(pos, size);
+                }
+            }
             geoEditAction->setChecked(false);
         }
     }
@@ -268,9 +259,25 @@ void mainWindow::closeEvent(QCloseEvent* e) {
     this->app->exit(0);
 }
 
+void mainWindow::showEvent(QShowEvent *event) {
+    QMainWindow::showEvent(event);
+
+    // FIXME: expedient for Hyprland: restore window geometry when window first becomes visible
+    // Restore geometry on Hyprland when window first becomes visible
+    // Use a delayed call to ensure window is fully mapped by the compositor
+    if (platformHelper && platformHelper->isHyprland() && !m_geometryRestored) {
+        m_geometryRestored = true;
+        // Delay longer to ensure Hyprland has mapped the window
+        QTimer::singleShot(1000, this, &mainWindow::restorePlatformGeometry);
+    }
+}
+
 void mainWindow::writeSettings() {
-    QSettings settings("SSRVodka Inc.", appName);
-    settings.setValue("geometry", saveGeometry());
+    if (platformHelper->isHyprland()) {
+        stdLogger.Info("Geometry was saved each time the user changes the window geometry on Hyprland");
+    } else {
+        platformHelper->saveGeometryToSettings("SSRVodka Inc.", appName, "geometry", this);
+    }
 
     module_config_manager->set_asr_params(this->stt_params);
     module_config_manager->set_tts_params(this->tts_params);
@@ -284,9 +291,11 @@ void mainWindow::writeSettings() {
 }
 
 void mainWindow::loadSettings() {
-    QSettings settings("SSRVodka Inc.", appName);
-    restoreGeometry(settings.value("geometry").toByteArray());
-
+    if (platformHelper->isHyprland()) {
+        stdLogger.Info("Restoring geometry from Hyprland later (delayed)");
+    } else {
+        platformHelper->restoreGeometryFromSettings("SSRVodka Inc.", appName, "geometry", this);
+    }
     QSystemTrayIcon::MessageIcon msgIcon = QSystemTrayIcon::MessageIcon::Warning;
     std::string loadMsg;
     // load from config
@@ -614,4 +623,34 @@ void mainWindow::aboutAuthor() {
         .arg(appName)
     );
     HIDE_POPUP;
+}
+
+void mainWindow::setupPlatformWindowFlags() {
+    platformHelper->applyWindowFlags(this, platformHelper->getNormalWindowFlags());
+}
+
+void mainWindow::restorePlatformGeometry() {
+    platformHelper->restoreGeometryFromSettings("SSRVodka Inc.", appName, "geometry", this);
+}
+
+void mainWindow::enterGeometryEditMode() {
+    if (platformHelper->isHyprland()) {
+        // On Hyprland: request resize/move from compositor
+        platformHelper->setFloating(true);
+        // Use Qt's system resize which works on Wayland via QWindow
+        if (QWindow* win = windowHandle()) {
+            win->startSystemResize(Qt::TopEdge | Qt::LeftEdge | Qt::RightEdge | Qt::BottomEdge);
+        }
+    } else {
+        // On X11/Windows: Show window frame for manual resize
+        platformHelper->applyGeometryEditModeFlags(this);
+    }
+}
+
+void mainWindow::exitGeometryEditMode() {
+    if (platformHelper->isHyprland()) {
+        platformHelper->setFloating(true);
+    } else {
+        platformHelper->restoreNormalModeFlags(this);
+    }
 }

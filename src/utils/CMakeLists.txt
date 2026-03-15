@@ -19,3 +19,10 @@ target_include_directories(utils
     PUBLIC
     ${PROJECT_SOURCE_DIR}/src
 )
+
+# Link QtCore for QObject, QProcess, etc.
+target_link_libraries(utils
+    PUBLIC
+    Qt5::Core
+    Qt5::Widgets
+)
